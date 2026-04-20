@@ -940,45 +940,161 @@ function addTrafficLight(x, z, ry, parent) {
   });
 }
 
+// === IMPROVED TREE SYSTEM — v1.1 ===
+// Multi-layered cone trees with species variety and randomization
+
 function addTree(x, z, parent) {
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a2a1a, roughness: 0.9 });
-  const leafMat = new THREE.MeshStandardMaterial({ color: 0x2a6a2a, roughness: 0.85 });
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 3, 8), trunkMat);
-  trunk.position.set(x, 1.5, z);
-  trunk.castShadow = SHADOWS_ENABLED;
-  parent.add(trunk);
-  const leaves = new THREE.Mesh(new THREE.SphereGeometry(2, 10, 8), leafMat);
-  leaves.position.set(x, 4, z);
-  leaves.scale.y = 1.2;
-  leaves.castShadow = SHADOWS_ENABLED;
-  parent.add(leaves);
+  const rng = () => 0.8 + Math.random() * 0.4; // 0.8–1.2 scale factor
+  const type = Math.random();
+
+  if (type < 0.35) {
+    // PINE — 3 stacked cones, narrow silhouette
+    const hScale = rng();
+    const trunkH = 3.5 * hScale;
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3a2210, roughness: 0.95 });
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.35, trunkH, 8), trunkMat);
+    trunk.position.set(x, trunkH / 2, z);
+    trunk.castShadow = SHADOWS_ENABLED;
+    parent.add(trunk);
+
+    const g = 0x1a + Math.floor(Math.random() * 30);
+    const leafCol = (0x0a << 16) | (g << 8) | 0x0a;
+    const leafMat = new THREE.MeshStandardMaterial({ color: leafCol, roughness: 0.85 });
+    const layers = [
+      { r: 2.2, h: 2.8, y: trunkH + 0.4 },
+      { r: 1.6, h: 2.4, y: trunkH + 2.2 },
+      { r: 0.9, h: 1.8, y: trunkH + 3.6 },
+    ];
+    layers.forEach(l => {
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(l.r * hScale, l.h * hScale, 8), leafMat);
+      cone.position.set(x + (Math.random() - 0.5) * 0.2, l.y * hScale, z + (Math.random() - 0.5) * 0.2);
+      cone.castShadow = SHADOWS_ENABLED;
+      parent.add(cone);
+    });
+  } else if (type < 0.7) {
+    // OAK — wide rounded canopy from overlapping spheres
+    const hScale = rng();
+    const trunkH = 3 * hScale;
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a2a1a, roughness: 0.9 });
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.45, trunkH, 8), trunkMat);
+    trunk.position.set(x, trunkH / 2, z);
+    trunk.castShadow = SHADOWS_ENABLED;
+    parent.add(trunk);
+
+    const g = 0x3a + Math.floor(Math.random() * 40);
+    const leafCol = (0x1a << 16) | (g << 8) | (0x1a + Math.floor(Math.random() * 15));
+    const leafMat = new THREE.MeshStandardMaterial({ color: leafCol, roughness: 0.8 });
+    // 3-4 overlapping spheres for organic canopy
+    const clumps = 3 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < clumps; i++) {
+      const r = (1.2 + Math.random() * 0.8) * hScale;
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), leafMat);
+      sphere.position.set(
+        x + (Math.random() - 0.5) * 1.5 * hScale,
+        trunkH + 1.2 * hScale + Math.random() * 0.8 * hScale,
+        z + (Math.random() - 0.5) * 1.5 * hScale
+      );
+      sphere.scale.y = 0.85 + Math.random() * 0.3;
+      sphere.castShadow = SHADOWS_ENABLED;
+      parent.add(sphere);
+    }
+  } else {
+    // BIRCH — thin white trunk, small scattered leaf clusters
+    const hScale = rng();
+    const trunkH = 4 * hScale;
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0xe8dcc8, roughness: 0.7 });
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.2, trunkH, 8), trunkMat);
+    trunk.position.set(x, trunkH / 2, z);
+    // Add dark bark marks
+    const lean = (Math.random() - 0.5) * 0.08;
+    trunk.rotation.z = lean;
+    trunk.castShadow = SHADOWS_ENABLED;
+    parent.add(trunk);
+
+    const g = 0x5a + Math.floor(Math.random() * 30);
+    const leafCol = (0x3a << 16) | (g << 8) | 0x15;
+    const leafMat = new THREE.MeshStandardMaterial({ color: leafCol, roughness: 0.75 });
+    for (let i = 0; i < 4; i++) {
+      const r = (0.6 + Math.random() * 0.5) * hScale;
+      const cluster = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), leafMat);
+      cluster.position.set(
+        x + (Math.random() - 0.5) * 1.8 * hScale,
+        trunkH + 0.5 + Math.random() * 1.5 * hScale,
+        z + (Math.random() - 0.5) * 1.8 * hScale
+      );
+      cluster.scale.y = 0.7 + Math.random() * 0.4;
+      cluster.castShadow = SHADOWS_ENABLED;
+      parent.add(cluster);
+    }
+  }
 }
 
 function addPalm(x, z, parent) {
+  const hScale = 0.85 + Math.random() * 0.3;
+  const trunkH = 7 * hScale;
   const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6a4a2a, roughness: 0.9 });
-  const leafMat = new THREE.MeshStandardMaterial({ color: 0x4a8a3a, roughness: 0.7 });
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 7, 8), trunkMat);
-  trunk.position.set(x, 3.5, z);
-  trunk.castShadow = SHADOWS_ENABLED;
-  parent.add(trunk);
-  for (let i = 0; i < 6; i++) {
-    const leaf = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.5), leafMat);
-    leaf.position.set(x, 6.8, z);
-    leaf.rotation.y = (i / 6) * Math.PI * 2;
-    leaf.rotation.z = -0.3;
-    leaf.position.x += Math.cos(leaf.rotation.y) * 1.3;
-    leaf.position.z += Math.sin(leaf.rotation.y) * 1.3;
+  // Segmented trunk for more natural look
+  const segs = 3;
+  for (let s = 0; s < segs; s++) {
+    const segH = trunkH / segs;
+    const t = s / segs;
+    const r1 = (0.35 - t * 0.12) * hScale;
+    const r2 = (0.35 - (t + 1/segs) * 0.12) * hScale;
+    const seg = new THREE.Mesh(new THREE.CylinderGeometry(r2, r1, segH, 8), trunkMat);
+    seg.position.set(x, segH / 2 + s * segH, z);
+    // Slight lean per segment for curve effect
+    seg.rotation.z = (Math.random() - 0.5) * 0.04 * (s + 1);
+    seg.castShadow = SHADOWS_ENABLED;
+    parent.add(seg);
+  }
+  // Improved fronds — wider, double-sided, drooping
+  const leafMat = new THREE.MeshStandardMaterial({ color: 0x3a8a2a, roughness: 0.7, side: THREE.DoubleSide });
+  const numFronds = 7 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < numFronds; i++) {
+    const angle = (i / numFronds) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+    const frondLen = (2.5 + Math.random() * 1) * hScale;
+    const leaf = new THREE.Mesh(new THREE.PlaneGeometry(frondLen, 0.6 * hScale), leafMat);
+    leaf.position.set(
+      x + Math.cos(angle) * frondLen * 0.4,
+      trunkH - 0.3 * hScale,
+      z + Math.sin(angle) * frondLen * 0.4
+    );
+    leaf.rotation.y = angle;
+    leaf.rotation.z = -0.5 - Math.random() * 0.3; // droop
+    leaf.rotation.x = (Math.random() - 0.5) * 0.15;
     parent.add(leaf);
+  }
+  // Coconut cluster at top
+  const cocoMat = new THREE.MeshStandardMaterial({ color: 0x6a5a2a, roughness: 0.8 });
+  for (let i = 0; i < 3; i++) {
+    const coco = new THREE.Mesh(new THREE.SphereGeometry(0.15 * hScale, 6, 5), cocoMat);
+    coco.position.set(
+      x + (Math.random() - 0.5) * 0.4,
+      trunkH - 0.5 * hScale,
+      z + (Math.random() - 0.5) * 0.4
+    );
+    parent.add(coco);
   }
 }
 
 function addBush(x, z, parent) {
-  const m = new THREE.MeshStandardMaterial({ color: 0x3a7a2a, roughness: 0.9 });
-  const b = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 6), m);
-  b.position.set(x, 0.6, z);
-  b.scale.y = 0.8;
-  b.castShadow = SHADOWS_ENABLED;
-  parent.add(b);
+  // Organic bush — 2-3 overlapping spheres
+  const g = 0x4a + Math.floor(Math.random() * 35);
+  const col = (0x2a << 16) | (g << 8) | (0x1a + Math.floor(Math.random() * 15));
+  const m = new THREE.MeshStandardMaterial({ color: col, roughness: 0.9 });
+  const count = 2 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < count; i++) {
+    const r = 0.4 + Math.random() * 0.5;
+    const b = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), m);
+    b.position.set(
+      x + (Math.random() - 0.5) * 0.6,
+      r * 0.7,
+      z + (Math.random() - 0.5) * 0.6
+    );
+    b.scale.y = 0.65 + Math.random() * 0.25;
+    b.castShadow = SHADOWS_ENABLED;
+    parent.add(b);
+  }
 }
 
 function addBench(x, z, ry, parent) {
@@ -1021,24 +1137,61 @@ function buildProceduralCity() {
 
   setProgress(8, 'BUILDING ROADS...');
 
-  // === GROUND (asphalt outside city, grass in suburbs) ===
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0x4a6a3a, roughness: 0.95 });
+  // === GROUND — Canvas-textured grass with variation ===
+  const grassCanvas = document.createElement('canvas');
+  grassCanvas.width = 512; grassCanvas.height = 512;
+  const gctx = grassCanvas.getContext('2d');
+  // Base grass
+  gctx.fillStyle = '#4a6a3a';
+  gctx.fillRect(0, 0, 512, 512);
+  // Patchy variation
+  for (let i = 0; i < 200; i++) {
+    const px = Math.random() * 512;
+    const py = Math.random() * 512;
+    const r = 10 + Math.random() * 40;
+    const shade = Math.random() > 0.5 ? 'rgba(60,90,45,0.4)' : 'rgba(35,55,28,0.4)';
+    gctx.beginPath();
+    gctx.arc(px, py, r, 0, Math.PI * 2);
+    gctx.fillStyle = shade;
+    gctx.fill();
+  }
+  // Dirt patches
+  for (let i = 0; i < 30; i++) {
+    const px = Math.random() * 512;
+    const py = Math.random() * 512;
+    const r = 5 + Math.random() * 15;
+    gctx.beginPath();
+    gctx.arc(px, py, r, 0, Math.PI * 2);
+    gctx.fillStyle = 'rgba(100,80,50,0.3)';
+    gctx.fill();
+  }
+  const grassTex = new THREE.CanvasTexture(grassCanvas);
+  grassTex.wrapS = THREE.RepeatWrapping;
+  grassTex.wrapT = THREE.RepeatWrapping;
+  grassTex.repeat.set(40, 40);
+  grassTex.colorSpace = THREE.SRGBColorSpace;
+  const groundMat = new THREE.MeshStandardMaterial({ map: grassTex, roughness: 0.95 });
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = SHADOWS_ENABLED;
   cityObj.add(ground);
 
-  // === ROAD GRID ===
+  // === ROAD GRID — v1.1 Enhanced with lane markings, crosswalks, curbs ===
   const ROAD_COLOR = 0x1c1c20;
   const roadMat = new THREE.MeshStandardMaterial({ color: ROAD_COLOR, roughness: 1.0 });
-  const lineMat = new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.15 });
+  const yellowLineMat = new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.15 });
+  const whiteLineMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, emissive: 0xe8e8e8, emissiveIntensity: 0.08 });
+  const crosswalkMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, emissive: 0xf0f0f0, emissiveIntensity: 0.05 });
+  const curbMat = new THREE.MeshStandardMaterial({ color: 0xb0b0a0, roughness: 0.9 });
   const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xa0a0a0, roughness: 0.95 });
+  const stopLineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.06 });
 
   const GRID = 5;
   const BLOCK = 60;
   const ROAD_W = 14;
   const TOTAL = GRID * (BLOCK + ROAD_W);
   const HALF = TOTAL / 2;
+  const LANE_W = ROAD_W / 4; // 4 lanes per road (2 each direction)
 
   // Horizontal roads
   for (let i = 0; i <= GRID; i++) {
@@ -1048,13 +1201,31 @@ function buildProceduralCity() {
     road.position.set(0, 0.02, z);
     road.receiveShadow = SHADOWS_ENABLED;
     cityObj.add(road);
-    // Dashed center line
-    for (let j = 0; j < 30; j++) {
-      const dash = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.25), lineMat);
-      dash.rotation.x = -Math.PI / 2;
-      dash.position.set(-HALF + j * (TOTAL / 30) + 1.5, 0.04, z);
-      cityObj.add(dash);
+    // Yellow center line (solid double line)
+    for (let s = -1; s <= 1; s += 2) {
+      const solidLine = new THREE.Mesh(new THREE.PlaneGeometry(TOTAL, 0.12), yellowLineMat);
+      solidLine.rotation.x = -Math.PI / 2;
+      solidLine.position.set(0, 0.04, z + s * 0.2);
+      cityObj.add(solidLine);
     }
+    // White lane dividers (dashed)
+    for (let lane = -1; lane <= 1; lane += 2) {
+      const laneZ = z + lane * LANE_W;
+      for (let j = 0; j < 45; j++) {
+        const dash = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.12), whiteLineMat);
+        dash.rotation.x = -Math.PI / 2;
+        dash.position.set(-HALF + j * (TOTAL / 45) + 1, 0.04, laneZ);
+        cityObj.add(dash);
+      }
+    }
+    // Curbs on both sides
+    const curbH = 0.15, curbD = 0.25;
+    const curbTop = new THREE.Mesh(new THREE.BoxGeometry(TOTAL, curbH, curbD), curbMat);
+    curbTop.position.set(0, curbH / 2, z + ROAD_W / 2 + curbD / 2);
+    cityObj.add(curbTop);
+    const curbBot = new THREE.Mesh(new THREE.BoxGeometry(TOTAL, curbH, curbD), curbMat);
+    curbBot.position.set(0, curbH / 2, z - ROAD_W / 2 - curbD / 2);
+    cityObj.add(curbBot);
   }
   // Vertical roads
   for (let i = 0; i <= GRID; i++) {
@@ -1064,22 +1235,75 @@ function buildProceduralCity() {
     road.position.set(x, 0.02, 0);
     road.receiveShadow = SHADOWS_ENABLED;
     cityObj.add(road);
-    for (let j = 0; j < 30; j++) {
-      const dash = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 2.5), lineMat);
-      dash.rotation.x = -Math.PI / 2;
-      dash.position.set(x, 0.04, -HALF + j * (TOTAL / 30) + 1.5);
-      cityObj.add(dash);
+    // Yellow center line (solid double line)
+    for (let s = -1; s <= 1; s += 2) {
+      const solidLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, TOTAL), yellowLineMat);
+      solidLine.rotation.x = -Math.PI / 2;
+      solidLine.position.set(x + s * 0.2, 0.04, 0);
+      cityObj.add(solidLine);
+    }
+    // White lane dividers (dashed)
+    for (let lane = -1; lane <= 1; lane += 2) {
+      const laneX = x + lane * LANE_W;
+      for (let j = 0; j < 45; j++) {
+        const dash = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 1.8), whiteLineMat);
+        dash.rotation.x = -Math.PI / 2;
+        dash.position.set(laneX, 0.04, -HALF + j * (TOTAL / 45) + 1);
+        cityObj.add(dash);
+      }
+    }
+    // Curbs
+    const curbH = 0.15, curbD = 0.25;
+    const curbL = new THREE.Mesh(new THREE.BoxGeometry(curbD, curbH, TOTAL), curbMat);
+    curbL.position.set(x + ROAD_W / 2 + curbD / 2, curbH / 2, 0);
+    cityObj.add(curbL);
+    const curbR = new THREE.Mesh(new THREE.BoxGeometry(curbD, curbH, TOTAL), curbMat);
+    curbR.position.set(x - ROAD_W / 2 - curbD / 2, curbH / 2, 0);
+    cityObj.add(curbR);
+  }
+
+  // === CROSSWALKS at every intersection ===
+  for (let i = 0; i <= GRID; i++) {
+    for (let j = 0; j <= GRID; j++) {
+      const ix = -HALF + i * (BLOCK + ROAD_W);
+      const iz = -HALF + j * (BLOCK + ROAD_W);
+      // 4 crosswalks per intersection (N, S, E, W)
+      const cwOffset = ROAD_W / 2 + 2; // just outside intersection
+      // North-South crosswalks (stripes run E-W across vertical road)
+      for (let dir of [-1, 1]) {
+        const cz = iz + dir * cwOffset;
+        for (let s = 0; s < 6; s++) {
+          const stripe = new THREE.Mesh(new THREE.PlaneGeometry(ROAD_W * 0.85, 0.45), crosswalkMat);
+          stripe.rotation.x = -Math.PI / 2;
+          stripe.position.set(ix, 0.045, cz + (s - 2.5) * 0.7 * dir);
+          cityObj.add(stripe);
+        }
+        // Stop line
+        const stop = new THREE.Mesh(new THREE.PlaneGeometry(ROAD_W * 0.42, 0.3), stopLineMat);
+        stop.rotation.x = -Math.PI / 2;
+        stop.position.set(ix + dir * ROAD_W * 0.22, 0.045, cz + dir * 3);
+        cityObj.add(stop);
+      }
+      // East-West crosswalks (stripes run N-S across horizontal road)
+      for (let dir of [-1, 1]) {
+        const cx = ix + dir * cwOffset;
+        for (let s = 0; s < 6; s++) {
+          const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.45, ROAD_W * 0.85), crosswalkMat);
+          stripe.rotation.x = -Math.PI / 2;
+          stripe.position.set(cx + (s - 2.5) * 0.7 * dir, 0.045, iz);
+          cityObj.add(stripe);
+        }
+      }
     }
   }
 
-  // Sidewalks around each block
+  // Sidewalks around each block (slightly raised)
   for (let bx = 0; bx < GRID; bx++) {
     for (let bz = 0; bz < GRID; bz++) {
       const cx = -HALF + ROAD_W/2 + bx * (BLOCK + ROAD_W) + BLOCK/2;
       const cz = -HALF + ROAD_W/2 + bz * (BLOCK + ROAD_W) + BLOCK/2;
-      const sw = new THREE.Mesh(new THREE.PlaneGeometry(BLOCK, BLOCK), sidewalkMat);
-      sw.rotation.x = -Math.PI / 2;
-      sw.position.set(cx, 0.01, cz);
+      const sw = new THREE.Mesh(new THREE.BoxGeometry(BLOCK, 0.12, BLOCK), sidewalkMat);
+      sw.position.set(cx, 0.06, cz);
       sw.receiveShadow = SHADOWS_ENABLED;
       cityObj.add(sw);
     }
