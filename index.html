@@ -501,108 +501,341 @@ function buildHouse(x, z, w, d, color, parent, hasGarage = false) {
 
 function buildHospital(x, z, parent) {
   const w = 30, d = 22, h = 18;
-  const matBody = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.6 });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  // Canvas-generated hospital facade
+  const facadeCanvas = document.createElement('canvas');
+  facadeCanvas.width = 512; facadeCanvas.height = 256;
+  const fctx = facadeCanvas.getContext('2d');
+  fctx.fillStyle = '#e8e8e8';
+  fctx.fillRect(0, 0, 512, 256);
+  // Floor lines
+  for (let f = 0; f < 6; f++) {
+    fctx.fillStyle = '#d0d0d0';
+    fctx.fillRect(0, f * 42 + 40, 512, 2);
+  }
+  // Window grid
+  const cols = 10, rows = 5;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const lit = Math.random() > 0.3;
+      fctx.fillStyle = lit ? '#88bbdd' : '#6699bb';
+      fctx.fillRect(20 + c * 48, 15 + r * 42, 32, 28);
+      fctx.strokeStyle = '#ffffff';
+      fctx.lineWidth = 1.5;
+      fctx.strokeRect(20 + c * 48, 15 + r * 42, 32, 28);
+      // Cross-bar in window
+      fctx.beginPath();
+      fctx.moveTo(20 + c * 48 + 16, 15 + r * 42);
+      fctx.lineTo(20 + c * 48 + 16, 15 + r * 42 + 28);
+      fctx.stroke();
+    }
+  }
+  // Ground floor — glass panels
+  fctx.fillStyle = '#5599aa';
+  fctx.fillRect(20, 220, 472, 30);
+  fctx.fillStyle = '#77bbcc';
+  for (let i = 0; i < 8; i++) fctx.fillRect(30 + i * 58, 222, 42, 26);
+  const facadeTex = new THREE.CanvasTexture(facadeCanvas);
+  facadeTex.colorSpace = THREE.SRGBColorSpace;
+
+  const matBody = new THREE.MeshStandardMaterial({ map: facadeTex, roughness: 0.5 });
+  const matSide = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.6 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [matSide, matSide, matSide, matSide, matBody, matBody]);
   body.position.set(x, h/2, z);
   body.castShadow = SHADOWS_ENABLED;
   body.receiveShadow = SHADOWS_ENABLED;
   parent.add(body);
   buildingsList.push({ x, z, w, d, h, type: 'hospital' });
 
-  // Glass entrance
-  const ent = new THREE.Mesh(new THREE.BoxGeometry(8, 6, 1), new THREE.MeshStandardMaterial({ color: 0x4488aa, roughness: 0.2, metalness: 0.8 }));
-  ent.position.set(x, 3, z + d/2 + 0.5);
+  // Glass entrance with frame
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x4488aa, roughness: 0.1, metalness: 0.8, transparent: true, opacity: 0.7 });
+  const ent = new THREE.Mesh(new THREE.BoxGeometry(10, 6, 1.5), glassMat);
+  ent.position.set(x, 3, z + d/2 + 0.75);
   parent.add(ent);
+  // Entrance canopy
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.5 });
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(12, 0.3, 3), canopyMat);
+  canopy.position.set(x, 6.2, z + d/2 + 1.5);
+  canopy.castShadow = SHADOWS_ENABLED;
+  parent.add(canopy);
 
-  // Big red cross sign
-  const crossMat = new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff2222, emissiveIntensity: 0.6 });
-  const crossH = new THREE.Mesh(new THREE.BoxGeometry(4, 0.8, 0.3), crossMat);
-  crossH.position.set(x, h - 3, z + d/2 + 0.2);
+  // Ambulance bay on right side
+  const bayMat = new THREE.MeshStandardMaterial({ color: 0xddddd8, roughness: 0.7 });
+  const bay = new THREE.Mesh(new THREE.BoxGeometry(8, 5, d * 0.4), bayMat);
+  bay.position.set(x + w/2 + 4, 2.5, z + d/4);
+  bay.castShadow = SHADOWS_ENABLED;
+  parent.add(bay);
+  const bayRoof = new THREE.Mesh(new THREE.BoxGeometry(9, 0.3, d * 0.4 + 2), canopyMat);
+  bayRoof.position.set(x + w/2 + 4, 5.15, z + d/4);
+  parent.add(bayRoof);
+  // Bay opening
+  const bayOpen = new THREE.Mesh(new THREE.PlaneGeometry(6, 4.5), new THREE.MeshStandardMaterial({ color: 0x222222 }));
+  bayOpen.position.set(x + w/2 + 4, 2.25, z + d/4 + d * 0.2 + 0.02);
+  parent.add(bayOpen);
+
+  // Big red cross with white circle backing
+  const crossBg = new THREE.Mesh(new THREE.CircleGeometry(3, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.2 }));
+  crossBg.position.set(x, h - 3, z + d/2 + 0.15);
+  parent.add(crossBg);
+  const crossMat = new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff2222, emissiveIntensity: 0.7 });
+  const crossH = new THREE.Mesh(new THREE.BoxGeometry(5, 1.2, 0.3), crossMat);
+  crossH.position.set(x, h - 3, z + d/2 + 0.25);
   parent.add(crossH);
-  const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.8, 4, 0.3), crossMat);
-  crossV.position.set(x, h - 3, z + d/2 + 0.2);
+  const crossV = new THREE.Mesh(new THREE.BoxGeometry(1.2, 5, 0.3), crossMat);
+  crossV.position.set(x, h - 3, z + d/2 + 0.25);
   parent.add(crossV);
 
-  addWindowsTo(body, w, h, d, x, 0, z, makeWindowMat(0xffffff, 0.4));
-
-  // "HOSPITAL" sign
+  // EMERGENCY sign over entrance
+  addSign(x, 6.5, z + d/2 + 2, 'EMERGENCY', 0xff2222, parent, 1.2);
   addSign(x, h + 1.5, z + d/2 + 0.3, 'HOSPITAL', 0xff2222, parent);
 
-  // Helipad on roof
-  const heli = new THREE.Mesh(new THREE.CircleGeometry(5, 16), new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 }));
+  // Helipad with H marking and landing lights
+  const heliMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 });
+  const heli = new THREE.Mesh(new THREE.CircleGeometry(6, 20), heliMat);
   heli.rotation.x = -Math.PI / 2;
   heli.position.set(x, h + 0.05, z);
   parent.add(heli);
-  const heliH = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.5), new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.4 }));
-  heliH.rotation.x = -Math.PI / 2;
-  heliH.position.set(x, h + 0.06, z);
-  parent.add(heliH);
+  // Yellow circle outline
+  const heliRing = new THREE.Mesh(new THREE.RingGeometry(4.5, 5, 20), new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.4 }));
+  heliRing.rotation.x = -Math.PI / 2;
+  heliRing.position.set(x, h + 0.06, z);
+  parent.add(heliRing);
+  // H marking
+  const heliHMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.3 });
+  const heliH1 = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 3), heliHMat); heliH1.rotation.x = -Math.PI/2; heliH1.position.set(x - 1, h + 0.07, z); parent.add(heliH1);
+  const heliH2 = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 3), heliHMat); heliH2.rotation.x = -Math.PI/2; heliH2.position.set(x + 1, h + 0.07, z); parent.add(heliH2);
+  const heliH3 = new THREE.Mesh(new THREE.PlaneGeometry(2, 0.6), heliHMat); heliH3.rotation.x = -Math.PI/2; heliH3.position.set(x, h + 0.07, z); parent.add(heliH3);
+  // Landing lights at 4 corners
+  const landLight = new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0xff8800, emissiveIntensity: 0.8 });
+  for (let lx = -1; lx <= 1; lx += 2) for (let lz = -1; lz <= 1; lz += 2) {
+    const ll = new THREE.Mesh(new THREE.SphereGeometry(0.2, 6, 5), landLight);
+    ll.position.set(x + lx * 5, h + 0.3, z + lz * 5);
+    parent.add(ll);
+  }
+
+  // Parking lot
+  const parkLot = new THREE.Mesh(new THREE.PlaneGeometry(15, 12), new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.95 }));
+  parkLot.rotation.x = -Math.PI / 2;
+  parkLot.position.set(x - w/2 - 8, 0.03, z);
+  parent.add(parkLot);
+  // Parking lines
+  const parkLine = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  for (let i = 0; i < 5; i++) {
+    const line = new THREE.Mesh(new THREE.PlaneGeometry(0.15, 5), parkLine);
+    line.rotation.x = -Math.PI / 2;
+    line.position.set(x - w/2 - 3 - i * 2.8, 0.04, z);
+    parent.add(line);
+  }
+
+  // Landscaping — bushes at entrance
+  for (let s = -1; s <= 1; s += 2) {
+    addBush(x + s * 6, z + d/2 + 2, parent);
+  }
 }
 
 function buildPoliceStation(x, z, parent) {
-  const w = 22, d = 16, h = 8;
-  const matBody = new THREE.MeshStandardMaterial({ color: 0x3a4a6a, roughness: 0.7 });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  const w = 26, d = 18, h = 10;
+  // Canvas facade — dark blue-gray with barred windows
+  const pCanvas = document.createElement('canvas');
+  pCanvas.width = 512; pCanvas.height = 256;
+  const pctx = pCanvas.getContext('2d');
+  pctx.fillStyle = '#3a4a6a';
+  pctx.fillRect(0, 0, 512, 256);
+  // Brick-like horizontal lines
+  for (let i = 0; i < 40; i++) {
+    pctx.fillStyle = 'rgba(50,60,80,0.3)';
+    pctx.fillRect(0, i * 6.4, 512, 1);
+  }
+  // Windows with bars
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 8; c++) {
+      pctx.fillStyle = '#1a2a3a';
+      pctx.fillRect(20 + c * 60, 30 + r * 80, 40, 50);
+      // Window bars
+      pctx.strokeStyle = '#667788';
+      pctx.lineWidth = 1.5;
+      for (let b = 0; b < 3; b++) {
+        pctx.beginPath();
+        pctx.moveTo(28 + c * 60 + b * 12, 30 + r * 80);
+        pctx.lineTo(28 + c * 60 + b * 12, 80 + r * 80);
+        pctx.stroke();
+      }
+    }
+  }
+  // POLICE text on wall
+  pctx.font = 'bold 40px Arial';
+  pctx.textAlign = 'center';
+  pctx.fillStyle = '#ffffff';
+  pctx.fillText('POLICE', 256, 230);
+  const pTex = new THREE.CanvasTexture(pCanvas);
+  pTex.colorSpace = THREE.SRGBColorSpace;
+
+  const matBody = new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.7 });
+  const matSide = new THREE.MeshStandardMaterial({ color: 0x3a4a6a, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [matSide, matSide, matSide, matSide, matBody, matBody]);
   body.position.set(x, h/2, z);
   body.castShadow = SHADOWS_ENABLED;
   body.receiveShadow = SHADOWS_ENABLED;
   parent.add(body);
   buildingsList.push({ x, z, w, d, h, type: 'police' });
 
-  // Entrance pillars
+  // Entrance with pillars and canopy
   const pillarMat = new THREE.MeshStandardMaterial({ color: 0xddddd0, roughness: 0.6 });
   for (let i = -1; i <= 1; i += 2) {
-    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 6, 8), pillarMat);
-    p.position.set(x + i * 3, 3, z + d/2 + 0.5);
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 7, 10), pillarMat);
+    p.position.set(x + i * 4, 3.5, z + d/2 + 0.5);
     p.castShadow = SHADOWS_ENABLED;
     parent.add(p);
   }
-  const canopy = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 2), pillarMat);
-  canopy.position.set(x, 6.25, z + d/2 + 0.5);
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(10, 0.4, 3), pillarMat);
+  canopy.position.set(x, 7.2, z + d/2 + 1);
+  canopy.castShadow = SHADOWS_ENABLED;
   parent.add(canopy);
+  // Double glass doors
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5588aa, roughness: 0.2, metalness: 0.6, transparent: true, opacity: 0.6 });
+  for (let i = -1; i <= 1; i += 2) {
+    const door = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 2.5), doorMat);
+    door.position.set(x + i * 0.8, 1.25, z + d/2 + 0.02);
+    parent.add(door);
+  }
 
-  // Police badge sign
-  addSign(x, h + 1, z + d/2 + 0.3, 'POLICE', 0x4488ff, parent);
+  addSign(x, h + 1.5, z + d/2 + 0.3, 'POLICE DEPARTMENT', 0x4488ff, parent, 1.1);
 
-  // Flashing lights on the roof
-  const lightMat = new THREE.MeshStandardMaterial({ color: 0x4488ff, emissive: 0x4488ff, emissiveIntensity: 1 });
-  const light = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 6), lightMat);
-  light.position.set(x, h + 0.5, z);
-  light.userData.flashColor = true;
-  parent.add(light);
+  // Dual flashing lights (red + blue)
+  const redLight = new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff2222, emissiveIntensity: 1 });
+  const blueLight = new THREE.MeshStandardMaterial({ color: 0x2244ff, emissive: 0x2244ff, emissiveIntensity: 1 });
+  const lr = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 6), redLight);
+  lr.position.set(x - 1.5, h + 0.5, z);
+  lr.userData.flashColor = true;
+  parent.add(lr);
+  const lb = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 6), blueLight);
+  lb.position.set(x + 1.5, h + 0.5, z);
+  lb.userData.flashColor = true;
+  parent.add(lb);
 
-  addWindowsTo(body, w, h, d, x, 0, z, makeWindowMat(0xffffff, 0.3));
+  // Radio antenna on roof
+  const antennaMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.6 });
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 8, 6), antennaMat);
+  antenna.position.set(x + w/3, h + 4, z - d/3);
+  parent.add(antenna);
+  const antennaLight = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 5), new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 0.8 }));
+  antennaLight.position.set(x + w/3, h + 8, z - d/3);
+  parent.add(antennaLight);
+
+  // Flagpole
+  const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 8, 6), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }));
+  flagPole.position.set(x - w/2 - 2, 4, z + d/2 + 2);
+  parent.add(flagPole);
+  const flag = new THREE.Mesh(new THREE.PlaneGeometry(2, 1.2), new THREE.MeshStandardMaterial({ color: 0x2244aa, side: THREE.DoubleSide }));
+  flag.position.set(x - w/2 - 1, 7.5, z + d/2 + 2);
+  parent.add(flag);
+
+  // Parking lot with police car shapes
+  const parkLot = new THREE.Mesh(new THREE.PlaneGeometry(18, 10), new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.95 }));
+  parkLot.rotation.x = -Math.PI / 2;
+  parkLot.position.set(x, 0.03, z - d/2 - 6);
+  parent.add(parkLot);
+  // Parked police cars (simple box shapes)
+  const policeCarMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2a, roughness: 0.5 });
+  for (let i = 0; i < 2; i++) {
+    const car = new THREE.Mesh(new THREE.BoxGeometry(2, 1.3, 4.2), policeCarMat);
+    car.position.set(x - 4 + i * 8, 0.65, z - d/2 - 6);
+    car.castShadow = SHADOWS_ENABLED;
+    parent.add(car);
+    // White door stripe
+    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 0.3), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+    stripe.position.set(x - 4 + i * 8, 0.7, z - d/2 - 3.9);
+    parent.add(stripe);
+    // Roof light bar
+    const lightBar = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.25, 0.4), new THREE.MeshStandardMaterial({ color: 0x4488ff, emissive: 0x4488ff, emissiveIntensity: 0.6 }));
+    lightBar.position.set(x - 4 + i * 8, 1.45, z - d/2 - 6);
+    parent.add(lightBar);
+  }
 }
 
 function buildFireStation(x, z, parent) {
-  const w = 24, d = 18, h = 9;
-  const matBody = new THREE.MeshStandardMaterial({ color: 0xc83a2a, roughness: 0.7 });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  const w = 26, d = 20, h = 10;
+  // Canvas facade — red brick texture
+  const fCanvas = document.createElement('canvas');
+  fCanvas.width = 512; fCanvas.height = 256;
+  const fctx = fCanvas.getContext('2d');
+  fctx.fillStyle = '#b83020';
+  fctx.fillRect(0, 0, 512, 256);
+  // Brick rows
+  for (let row = 0; row < 32; row++) {
+    const offset = (row % 2) * 16;
+    for (let col = 0; col < 18; col++) {
+      const bv = Math.floor(Math.random() * 20) - 10;
+      fctx.fillStyle = `rgb(${175+bv},${45+bv/2},${28+bv/3})`;
+      fctx.fillRect(offset + col * 30 + 1, row * 8 + 1, 28, 6);
+    }
+  }
+  // White trim line at top
+  fctx.fillStyle = '#ddddcc';
+  fctx.fillRect(0, 0, 512, 4);
+  fctx.fillRect(0, 128, 512, 3);
+  const fTex = new THREE.CanvasTexture(fCanvas);
+  fTex.colorSpace = THREE.SRGBColorSpace;
+
+  const matBody = new THREE.MeshStandardMaterial({ map: fTex, roughness: 0.8 });
+  const matSide = new THREE.MeshStandardMaterial({ color: 0xb83020, roughness: 0.8 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [matSide, matSide, matSide, matSide, matBody, matBody]);
   body.position.set(x, h/2, z);
   body.castShadow = SHADOWS_ENABLED;
   body.receiveShadow = SHADOWS_ENABLED;
   parent.add(body);
   buildingsList.push({ x, z, w, d, h, type: 'fire' });
 
-  // Big garage doors for the fire trucks
-  const doorMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 });
-  for (let i = -1; i <= 1; i += 2) {
-    const door = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), doorMat);
-    door.position.set(x + i * 6, 2.5, z + d/2 + 0.02);
+  // Three tall garage doors
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.6 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+  for (let i = -1; i <= 1; i++) {
+    // Door frame
+    const door = new THREE.Mesh(new THREE.PlaneGeometry(6, 7.5), doorMat);
+    door.position.set(x + i * 7.5, 3.75, z + d/2 + 0.02);
     parent.add(door);
-    // Red stripes
-    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(5, 0.4), new THREE.MeshStandardMaterial({ color: 0xc83a2a }));
-    stripe.position.set(x + i * 6, 4.7, z + d/2 + 0.03);
-    parent.add(stripe);
+    // Dark interior
+    const interior = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 7), darkMat);
+    interior.position.set(x + i * 7.5, 3.5, z + d/2 + 0.01);
+    parent.add(interior);
+    // Panel lines on door
+    for (let p = 0; p < 4; p++) {
+      const pline = new THREE.Mesh(new THREE.PlaneGeometry(5.8, 0.08), new THREE.MeshStandardMaterial({ color: 0xcccccc }));
+      pline.position.set(x + i * 7.5, 1 + p * 1.8, z + d/2 + 0.025);
+      parent.add(pline);
+    }
+    // Red fire truck visible inside (simple shape)
+    const truck = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.5, 5), new THREE.MeshStandardMaterial({ color: 0xcc2222, emissive: 0x331111, emissiveIntensity: 0.1 }));
+    truck.position.set(x + i * 7.5, 1.25, z + d/2 - 3);
+    parent.add(truck);
   }
 
-  // Tower with bell
-  const tower = new THREE.Mesh(new THREE.BoxGeometry(3, 5, 3), matBody);
-  tower.position.set(x - w/2 + 1.5, h + 2.5, z);
+  // Taller tower with windows and flag
+  const towerH = 14;
+  const tower = new THREE.Mesh(new THREE.BoxGeometry(4, towerH, 4), matSide);
+  tower.position.set(x - w/2 + 2, towerH/2, z - d/4);
   tower.castShadow = SHADOWS_ENABLED;
   parent.add(tower);
+  // Tower windows
+  const twinMat = makeWindowMat(0xffffff, 0.3);
+  for (let tw = 0; tw < 3; tw++) {
+    const twin = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), twinMat);
+    twin.position.set(x - w/2 + 2, 4 + tw * 4, z - d/4 + 2.02);
+    parent.add(twin);
+  }
+  // Flag on tower
+  const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 4, 6), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }));
+  flagPole.position.set(x - w/2 + 2, towerH + 2, z - d/4);
+  parent.add(flagPole);
 
-  addSign(x, h + 1, z + d/2 + 0.3, 'FIRE DEPT', 0xffff00, parent);
+  // Hose rack on side wall
+  for (let i = 0; i < 3; i++) {
+    const hose = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.12, 8, 12), new THREE.MeshStandardMaterial({ color: 0xcc8822, roughness: 0.8 }));
+    hose.position.set(x + w/2 + 0.15, 2 + i * 1.5, z);
+    hose.rotation.y = Math.PI / 2;
+    parent.add(hose);
+  }
+
+  addSign(x, h + 1.5, z + d/2 + 0.3, 'FIRE DEPARTMENT', 0xffd700, parent, 1.1);
 }
 
 function buildMechanicShop(x, z, parent) {
@@ -770,10 +1003,34 @@ function buildMansion(x, z, parent) {
 }
 
 function buildMilitaryBase(x, z, parent) {
-  // Main barracks
-  const matBunker = new THREE.MeshStandardMaterial({ color: 0x4a5a3a, roughness: 0.9 });
+  // Camo canvas texture for barracks
+  const camoCanvas = document.createElement('canvas');
+  camoCanvas.width = 256; camoCanvas.height = 256;
+  const cctx = camoCanvas.getContext('2d');
+  cctx.fillStyle = '#4a5a3a';
+  cctx.fillRect(0, 0, 256, 256);
+  // Camo blotches
+  const camoColors = ['#3a4a2a', '#5a6a4a', '#6a7050', '#3a3a28', '#4a5838'];
+  for (let i = 0; i < 60; i++) {
+    cctx.beginPath();
+    const cx = Math.random() * 256, cy = Math.random() * 256;
+    cctx.moveTo(cx, cy);
+    for (let s = 0; s < 6; s++) {
+      const angle = (s / 6) * Math.PI * 2;
+      const r = 10 + Math.random() * 25;
+      cctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    }
+    cctx.closePath();
+    cctx.fillStyle = camoColors[Math.floor(Math.random() * camoColors.length)];
+    cctx.fill();
+  }
+  const camoTex = new THREE.CanvasTexture(camoCanvas);
+  camoTex.colorSpace = THREE.SRGBColorSpace;
+
+  const matBunker = new THREE.MeshStandardMaterial({ map: camoTex, roughness: 0.9 });
   const matRoof = new THREE.MeshStandardMaterial({ color: 0x3a4a2a, roughness: 0.95 });
 
+  // 3 barracks with doors and windows
   for (let i = 0; i < 3; i++) {
     const w = 14, d = 8, h = 4;
     const bx = x + (i - 1) * 18;
@@ -785,53 +1042,158 @@ function buildMilitaryBase(x, z, parent) {
     const roof = new THREE.Mesh(new THREE.BoxGeometry(w + 0.4, 0.4, d + 0.4), matRoof);
     roof.position.set(bx, h + 0.2, z);
     parent.add(roof);
+    // Door
+    const door = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 2.5), new THREE.MeshStandardMaterial({ color: 0x3a3a28 }));
+    door.position.set(bx, 1.25, z + d/2 + 0.02);
+    parent.add(door);
+    // Small windows
+    for (let wi = -1; wi <= 1; wi += 2) {
+      const win = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.8), makeWindowMat(0xddddaa, 0.2));
+      win.position.set(bx + wi * 4, 2.8, z + d/2 + 0.02);
+      parent.add(win);
+    }
+    // Sandbag stacks at corners
+    const sandMat = new THREE.MeshStandardMaterial({ color: 0x8a7a5a, roughness: 0.95 });
+    for (let sx of [-1, 1]) {
+      for (let sb = 0; sb < 3; sb++) {
+        const sandbag = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.3, 0.5), sandMat);
+        sandbag.position.set(bx + sx * (w/2 + 0.8), 0.15 + sb * 0.3, z + d/2 + 0.5);
+        sandbag.rotation.y = (sb % 2) * 0.3;
+        parent.add(sandbag);
+      }
+    }
   }
 
-  // Watch tower
+  // Watch tower with searchlight and ladder
   const towerLeg = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.9 });
   for (let dx of [-3, 3]) for (let dz of [-3, 3]) {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.4, 12, 0.4), towerLeg);
-    leg.position.set(x + 30 + dx, 6, z - 15 + dz);
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.4, 14, 0.4), towerLeg);
+    leg.position.set(x + 30 + dx, 7, z - 15 + dz);
     parent.add(leg);
   }
+  // Cross braces
+  for (let h = 3; h < 12; h += 4) {
+    const brace = new THREE.Mesh(new THREE.BoxGeometry(6, 0.15, 0.15), towerLeg);
+    brace.position.set(x + 30, h, z - 15 + 3);
+    parent.add(brace);
+    const brace2 = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 6), towerLeg);
+    brace2.position.set(x + 30 + 3, h, z - 15);
+    parent.add(brace2);
+  }
   const towerTop = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 8), matBunker);
-  towerTop.position.set(x + 30, 13.5, z - 15);
+  towerTop.position.set(x + 30, 15.5, z - 15);
   towerTop.castShadow = SHADOWS_ENABLED;
   parent.add(towerTop);
-  buildingsList.push({ x: x + 30, z: z - 15, w: 8, d: 8, h: 15, type: 'military' });
+  // Railing
+  const railMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
+  for (let s = -1; s <= 1; s += 2) {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(9, 1, 0.1), railMat);
+    rail.position.set(x + 30, 17.5, z - 15 + s * 4.2);
+    parent.add(rail);
+    const rail2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1, 9), railMat);
+    rail2.position.set(x + 30 + s * 4.2, 17.5, z - 15);
+    parent.add(rail2);
+  }
+  // Searchlight cone
+  const searchLight = new THREE.Mesh(new THREE.ConeGeometry(0.4, 1, 8), new THREE.MeshStandardMaterial({ color: 0xffff88, emissive: 0xffff88, emissiveIntensity: 0.6 }));
+  searchLight.position.set(x + 30, 17, z - 15 + 4);
+  searchLight.rotation.x = Math.PI / 4;
+  parent.add(searchLight);
+  buildingsList.push({ x: x + 30, z: z - 15, w: 8, d: 8, h: 17, type: 'military' });
 
-  // Helipad
-  const heli = new THREE.Mesh(new THREE.CircleGeometry(8, 16), new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.95 }));
+  // Gate checkpoint with boom barrier
+  const gateBooth = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 2.5), new THREE.MeshStandardMaterial({ color: 0x4a5a3a, roughness: 0.8 }));
+  gateBooth.position.set(x + 3, 1.5, z - 25);
+  gateBooth.castShadow = SHADOWS_ENABLED;
+  parent.add(gateBooth);
+  // Boom barrier arm
+  const boomPole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3, 6), new THREE.MeshStandardMaterial({ color: 0x888888 }));
+  boomPole.position.set(x - 2, 1.5, z - 25);
+  parent.add(boomPole);
+  const boomArm = new THREE.Mesh(new THREE.BoxGeometry(8, 0.15, 0.15), new THREE.MeshStandardMaterial({ color: 0xff2222 }));
+  boomArm.position.set(x - 6, 3, z - 25);
+  parent.add(boomArm);
+  // Red/white stripes on barrier
+  for (let s = 0; s < 4; s++) {
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.16, 0.16), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+    stripe.position.set(x - 3 - s * 2, 3, z - 25);
+    parent.add(stripe);
+  }
+
+  // Helipad with H and windsock
+  const heli = new THREE.Mesh(new THREE.CircleGeometry(8, 20), new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.95 }));
   heli.rotation.x = -Math.PI / 2;
   heli.position.set(x - 25, 0.05, z + 5);
   parent.add(heli);
-  const heliH = new THREE.Mesh(new THREE.PlaneGeometry(5, 0.7), new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.4 }));
-  heliH.rotation.x = -Math.PI / 2;
-  heliH.position.set(x - 25, 0.06, z + 5);
-  parent.add(heliH);
+  const heliRing = new THREE.Mesh(new THREE.RingGeometry(6.5, 7, 20), new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.3 }));
+  heliRing.rotation.x = -Math.PI / 2;
+  heliRing.position.set(x - 25, 0.06, z + 5);
+  parent.add(heliRing);
+  // H marking
+  const hMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.2 });
+  const hh1 = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 4), hMat); hh1.rotation.x = -Math.PI/2; hh1.position.set(x - 26.2, 0.07, z + 5); parent.add(hh1);
+  const hh2 = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 4), hMat); hh2.rotation.x = -Math.PI/2; hh2.position.set(x - 23.8, 0.07, z + 5); parent.add(hh2);
+  const hh3 = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 0.8), hMat); hh3.rotation.x = -Math.PI/2; hh3.position.set(x - 25, 0.07, z + 5); parent.add(hh3);
+  // Windsock
+  const wsockPole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 3, 6), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }));
+  wsockPole.position.set(x - 18, 1.5, z + 10);
+  parent.add(wsockPole);
+  const wsock = new THREE.Mesh(new THREE.ConeGeometry(0.3, 1.2, 6), new THREE.MeshStandardMaterial({ color: 0xff6600, side: THREE.DoubleSide }));
+  wsock.position.set(x - 17.5, 2.8, z + 10);
+  wsock.rotation.z = Math.PI / 2;
+  parent.add(wsock);
 
-  // Concrete walls / fence around the perimeter
+  // Military vehicles (olive drab trucks)
+  const truckMat = new THREE.MeshStandardMaterial({ color: 0x4a5a3a, roughness: 0.85 });
+  for (let ti = 0; ti < 3; ti++) {
+    const tx = x + 12 + ti * 7;
+    const tz = z + 15;
+    const truckBody = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.8, 5), truckMat);
+    truckBody.position.set(tx, 0.9, tz);
+    truckBody.castShadow = SHADOWS_ENABLED;
+    parent.add(truckBody);
+    // Canvas top
+    const canvasTop = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.8, 3), new THREE.MeshStandardMaterial({ color: 0x6a7a5a, roughness: 0.9 }));
+    canvasTop.position.set(tx, 2.2, tz - 0.5);
+    parent.add(canvasTop);
+  }
+
+  // Perimeter walls (taller, with wire top)
   const fenceMat = new THREE.MeshStandardMaterial({ color: 0x666666, roughness: 0.95 });
+  const wireMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.7 });
   const seg = 6;
   for (let i = -5; i <= 5; i++) {
-    if (i === 0) continue; // gap for entrance
-    const f1 = new THREE.Mesh(new THREE.BoxGeometry(seg, 2.5, 0.3), fenceMat);
-    f1.position.set(x + i * seg, 1.25, z - 25);
+    if (i === 0) continue;
+    const f1 = new THREE.Mesh(new THREE.BoxGeometry(seg, 3, 0.4), fenceMat);
+    f1.position.set(x + i * seg, 1.5, z - 25);
     parent.add(f1);
-    const f2 = new THREE.Mesh(new THREE.BoxGeometry(seg, 2.5, 0.3), fenceMat);
-    f2.position.set(x + i * seg, 1.25, z + 25);
+    const w1 = new THREE.Mesh(new THREE.BoxGeometry(seg, 0.3, 0.3), wireMat);
+    w1.position.set(x + i * seg, 3.15, z - 25);
+    parent.add(w1);
+    const f2 = new THREE.Mesh(new THREE.BoxGeometry(seg, 3, 0.4), fenceMat);
+    f2.position.set(x + i * seg, 1.5, z + 25);
     parent.add(f2);
+    const w2 = new THREE.Mesh(new THREE.BoxGeometry(seg, 0.3, 0.3), wireMat);
+    w2.position.set(x + i * seg, 3.15, z + 25);
+    parent.add(w2);
   }
   for (let i = -4; i <= 4; i++) {
-    const f1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.5, seg), fenceMat);
-    f1.position.set(x - 30, 1.25, z + i * seg);
+    const f1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 3, seg), fenceMat);
+    f1.position.set(x - 30, 1.5, z + i * seg);
     parent.add(f1);
-    const f2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.5, seg), fenceMat);
-    f2.position.set(x + 30, 1.25, z + i * seg);
+    const w1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, seg), wireMat);
+    w1.position.set(x - 30, 3.15, z + i * seg);
+    parent.add(w1);
+    const f2 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 3, seg), fenceMat);
+    f2.position.set(x + 30, 1.5, z + i * seg);
     parent.add(f2);
+    const w2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, seg), wireMat);
+    w2.position.set(x + 30, 3.15, z + i * seg);
+    parent.add(w2);
   }
 
-  addSign(x, 4, z - 24.5, 'MILITARY BASE - RESTRICTED', 0xff4444, parent, 0.6);
+  addSign(x, 4.5, z - 24.5, 'MILITARY BASE - RESTRICTED AREA', 0xff4444, parent, 0.7);
+  addSign(x, 3, z - 24.5, 'AUTHORIZED PERSONNEL ONLY', 0xffffff, parent, 0.5);
 }
 
 function buildGasStation(x, z, parent) {
@@ -1183,7 +1545,81 @@ function buildProceduralCity() {
   const whiteLineMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, emissive: 0xe8e8e8, emissiveIntensity: 0.08 });
   const crosswalkMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, emissive: 0xf0f0f0, emissiveIntensity: 0.05 });
   const curbMat = new THREE.MeshStandardMaterial({ color: 0xb0b0a0, roughness: 0.9 });
-  const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xa0a0a0, roughness: 0.95 });
+  // Canvas-generated sidewalk pavement texture with tile pattern
+  const swCanvas = document.createElement('canvas');
+  swCanvas.width = 256; swCanvas.height = 256;
+  const swCtx = swCanvas.getContext('2d');
+  // Base concrete
+  swCtx.fillStyle = '#a8a8a0';
+  swCtx.fillRect(0, 0, 256, 256);
+  // Tile grid (8×8 tiles)
+  const tileSize = 32;
+  for (let ty = 0; ty < 8; ty++) {
+    for (let tx = 0; tx < 8; tx++) {
+      // Per-tile color variation
+      const v = Math.floor(Math.random() * 12) - 6;
+      swCtx.fillStyle = `rgb(${164+v},${164+v},${156+v})`;
+      swCtx.fillRect(tx * tileSize + 1, ty * tileSize + 1, tileSize - 2, tileSize - 2);
+    }
+  }
+  // Gap lines between tiles
+  swCtx.strokeStyle = 'rgba(80,80,70,0.6)';
+  swCtx.lineWidth = 1.5;
+  for (let i = 0; i <= 8; i++) {
+    swCtx.beginPath(); swCtx.moveTo(i * tileSize, 0); swCtx.lineTo(i * tileSize, 256); swCtx.stroke();
+    swCtx.beginPath(); swCtx.moveTo(0, i * tileSize); swCtx.lineTo(256, i * tileSize); swCtx.stroke();
+  }
+  // Random hairline cracks
+  swCtx.strokeStyle = 'rgba(60,60,50,0.25)';
+  swCtx.lineWidth = 0.8;
+  for (let c = 0; c < 8; c++) {
+    swCtx.beginPath();
+    let cx = Math.random() * 256, cy = Math.random() * 256;
+    swCtx.moveTo(cx, cy);
+    for (let s = 0; s < 4; s++) {
+      cx += (Math.random() - 0.5) * 30;
+      cy += (Math.random() - 0.5) * 30;
+      swCtx.lineTo(cx, cy);
+    }
+    swCtx.stroke();
+  }
+  // Dirt/grime spots
+  for (let i = 0; i < 15; i++) {
+    swCtx.beginPath();
+    swCtx.arc(Math.random() * 256, Math.random() * 256, 2 + Math.random() * 6, 0, Math.PI * 2);
+    swCtx.fillStyle = 'rgba(90,80,60,0.15)';
+    swCtx.fill();
+  }
+  const swTex = new THREE.CanvasTexture(swCanvas);
+  swTex.wrapS = THREE.RepeatWrapping;
+  swTex.wrapT = THREE.RepeatWrapping;
+  swTex.repeat.set(8, 8);
+  swTex.colorSpace = THREE.SRGBColorSpace;
+  // Bump map for surface depth
+  const swBumpCanvas = document.createElement('canvas');
+  swBumpCanvas.width = 256; swBumpCanvas.height = 256;
+  const swBCtx = swBumpCanvas.getContext('2d');
+  swBCtx.fillStyle = '#808080';
+  swBCtx.fillRect(0, 0, 256, 256);
+  // Raised tiles
+  for (let ty = 0; ty < 8; ty++) {
+    for (let tx = 0; tx < 8; tx++) {
+      swBCtx.fillStyle = '#909090';
+      swBCtx.fillRect(tx * tileSize + 2, ty * tileSize + 2, tileSize - 4, tileSize - 4);
+    }
+  }
+  // Recessed gaps
+  swBCtx.strokeStyle = '#404040';
+  swBCtx.lineWidth = 2;
+  for (let i = 0; i <= 8; i++) {
+    swBCtx.beginPath(); swBCtx.moveTo(i * tileSize, 0); swBCtx.lineTo(i * tileSize, 256); swBCtx.stroke();
+    swBCtx.beginPath(); swBCtx.moveTo(0, i * tileSize); swBCtx.lineTo(256, i * tileSize); swBCtx.stroke();
+  }
+  const swBumpTex = new THREE.CanvasTexture(swBumpCanvas);
+  swBumpTex.wrapS = THREE.RepeatWrapping;
+  swBumpTex.wrapT = THREE.RepeatWrapping;
+  swBumpTex.repeat.set(8, 8);
+  const sidewalkMat = new THREE.MeshStandardMaterial({ map: swTex, bumpMap: swBumpTex, bumpScale: 0.3, roughness: 0.92 });
   const stopLineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.06 });
 
   const GRID = 5;
