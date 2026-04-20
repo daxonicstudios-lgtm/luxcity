@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>LuxCity RP</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=VT323&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0a0a12;font-family:'Rajdhani',sans-serif;color:#fff;touch-action:none;overscroll-behavior:none}
+  canvas{display:block;width:100%;height:100%}
+  #game{position:fixed;inset:0}
+
+  .rotate{position:fixed;inset:0;background:#0a0a12;z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px}
+  @media (orientation:portrait) and (max-width:900px){.rotate{display:flex}.hud,.start,.loading{display:none!important}}
+  .rotate-icon{width:70px;height:70px;border:3px solid #ffb300;border-radius:10px;margin-bottom:20px;animation:rot 2s ease-in-out infinite}
+  @keyframes rot{0%,100%{transform:rotate(0)}50%{transform:rotate(90deg)}}
+  .rotate-title{font-family:'VT323',monospace;font-size:24px;color:#ffb300;letter-spacing:4px}
+
+  .loading{position:fixed;inset:0;background:#0a0a12;z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+  .loading-logo{font-family:'VT323',monospace;font-size:46px;letter-spacing:6px;color:#ffb300;margin-bottom:6px;text-shadow:0 0 20px rgba(255,179,0,.6)}
+  .loading-tag{color:rgba(255,255,255,.4);font-size:11px;letter-spacing:4px;margin-bottom:28px}
+  .loading-bar{width:280px;height:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,179,0,.4);overflow:hidden;margin-bottom:12px;border-radius:3px}
+  .loading-fill{height:100%;background:linear-gradient(90deg,#ffb300,#ff6a00);width:0%;transition:width .3s}
+  .loading-text{font-family:'VT323',monospace;color:rgba(255,255,255,.7);font-size:13px;letter-spacing:2px;max-width:90vw;text-align:center;margin-bottom:5px}
+
+  .start{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a12 0%,#1a1025 100%);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+  .start::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 30%,rgba(255,179,0,.12),transparent 40%),radial-gradient(circle at 80% 70%,rgba(255,46,99,.08),transparent 40%)}
+  .start-inner{position:relative;z-index:1;text-align:center}
+  .brand{font-family:'VT323',monospace;color:#ffb300;letter-spacing:8px;font-size:12px;margin-bottom:4px}
+  .title{font-family:'VT323',monospace;font-size:clamp(46px,9vw,72px);letter-spacing:6px;line-height:.9;background:linear-gradient(135deg,#fff,#ffb300);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 40px rgba(255,179,0,.3)}
+  .tagline{color:rgba(255,255,255,.55);letter-spacing:4px;font-size:12px;margin-top:8px}
+  .start-btn{margin-top:28px;background:linear-gradient(135deg,#ffb300,#ff6a00);border:none;color:#0a0a12;padding:13px 44px;font-family:'VT323',monospace;font-size:22px;letter-spacing:4px;cursor:pointer;box-shadow:0 4px 20px rgba(255,179,0,.5);border-radius:2px;font-weight:700}
+  .start-btn:active{transform:scale(.96)}
+  .start-hint{margin-top:14px;color:rgba(255,255,255,.4);font-size:11px;letter-spacing:2px;font-family:'VT323',monospace}
+  .demo-note{position:absolute;bottom:14px;font-family:'VT323',monospace;color:rgba(255,179,0,.5);font-size:10px;letter-spacing:2px;z-index:1;text-align:center;padding:0 10px}
+
+  .hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+  .hud>*{pointer-events:auto}
+  .top-row{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
+  .stat{background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,179,0,.3);border-radius:4px;padding:6px 12px;font-family:'VT323',monospace}
+  .stat-lbl{color:rgba(255,179,0,.9);font-size:10px;letter-spacing:3px}
+  .bar{width:110px;height:4px;background:rgba(0,0,0,.5);margin-top:4px;overflow:hidden;border-radius:2px}
+  .bar-fill{height:100%;transition:width .2s;background:linear-gradient(90deg,#ff3c5f,#ffb300)}
+
+  .speed{background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,179,0,.3);border-radius:4px;padding:6px 12px;font-family:'VT323',monospace;display:none;text-align:right;margin-top:6px}
+  .speed.show{display:block}
+  .speed-val{color:#ffb300;font-size:26px;line-height:1;letter-spacing:2px}
+  .speed-unit{color:rgba(255,255,255,.5);font-size:10px;letter-spacing:2px}
+
+  .swipe-layer{position:absolute;inset:0;pointer-events:auto;z-index:1}
+
+  .joy{position:absolute;bottom:16px;left:16px;width:110px;height:110px;pointer-events:auto;z-index:5}
+  .joy-base{position:absolute;inset:0;border-radius:50%;background:rgba(10,10,18,.45);border:2px solid rgba(255,179,0,.4)}
+  .joy-knob{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffcf4d,#ffb300);border:2px solid rgba(255,255,255,.9);box-shadow:0 3px 8px rgba(0,0,0,.5),0 0 15px rgba(255,179,0,.5);transition:transform .05s linear}
+
+  .btns{position:absolute;bottom:16px;right:16px;display:grid;grid-template-columns:repeat(2,56px);grid-template-rows:repeat(2,56px);gap:8px;z-index:5}
+  .btn{width:56px;height:56px;border-radius:50%;background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:2px solid rgba(255,179,0,.5);color:#ffb300;font-family:'VT323',monospace;font-size:10px;letter-spacing:1.5px;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;transition:transform .08s,background .15s}
+  .btn:active{transform:scale(.9);background:rgba(255,179,0,.2)}
+  .btn.punch{border-color:#ff3c5f;color:#ff3c5f}
+  .btn.enter{border-color:#4dd4ff;color:#4dd4ff}
+  .btn.brake{border-color:#ff3c5f;color:#ff3c5f}
+  .btn .ico{font-size:18px;line-height:1}
+  .btn .lbl{font-size:7px;opacity:.8;letter-spacing:1.5px;margin-top:1px}
+  .btn.hidden{display:none}
+
+  .prompt{position:absolute;bottom:94px;left:50%;transform:translateX(-50%);background:rgba(10,10,18,.85);border:1px solid #4dd4ff;padding:6px 14px;font-family:'VT323',monospace;color:#4dd4ff;font-size:13px;letter-spacing:2px;display:none;white-space:nowrap;border-radius:2px;z-index:6}
+  .prompt.show{display:block}
+  .toast{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(10,10,18,.88);border:1px solid #ffb300;color:#ffb300;padding:6px 14px;font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:2px;z-index:6}
+  .toast.show{opacity:1}
+
+  .minimap-right{width:90px;height:90px;background:rgba(10,10,18,.55);border:2px solid rgba(255,179,0,.4);border-radius:50%;overflow:hidden;pointer-events:none;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .minimap-right canvas{display:block;width:100%;height:100%}
+  .minimap-right::after{content:'';position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:#ffb300;border-radius:50%;box-shadow:0 0 6px #ffb300}
+</style>
+</head>
+<body>
+
+<div class="rotate"><div class="rotate-icon"></div><div class="rotate-title">ROTATE DEVICE</div></div>
+
+<div id="game"></div>
+
+<div class="loading" id="loading">
+  <div class="loading-logo">LUXCITY</div>
+  <div class="loading-tag">// RP LIFE</div>
+  <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+  <div class="loading-text" id="loadingText">STARTING...</div>
+  <div class="loading-text" id="loadingStatus" style="color:#4dd4ff;font-size:11px;margin-top:10px"></div>
+  <div class="loading-text" id="loadingErr" style="color:#ff3c5f;font-size:11px;margin-top:15px;border:1px solid #ff3c5f;padding:8px;border-radius:3px;display:none"></div>
+</div>
+
+<div class="start" id="start" style="display:none">
+  <div class="start-inner">
+    <div class="brand">// RP LIFE</div>
+    <div class="title">LUXCITY</div>
+    <div class="tagline">LIVE FREE · DRIVE HARD · ROLEPLAY</div>
+    <button class="start-btn" id="startBtn">ENTER CITY</button>
+    <div class="start-hint">JOYSTICK = MOVE · SWIPE SCREEN = ROTATE CAMERA</div>
+  </div>
+</div>
+
+<div class="hud" id="hud" style="display:none">
+  <div class="swipe-layer" id="swipeLayer"></div>
+
+  <div class="top-row">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="stat">
+        <div class="stat-lbl">HEALTH</div>
+        <div class="bar"><div class="bar-fill" id="hpBar" style="width:100%"></div></div>
+        <div style="color:#fff;font-size:12px;margin-top:2px">¢ <span id="cashVal">500</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">LVL <span style="color:#fff" id="lvlVal">1</span></div>
+        <div class="bar"><div class="bar-fill" id="xpBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div class="minimap-right"><canvas id="miniCanvas" width="90" height="90"></canvas></div>
+      <div class="speed" id="speedPanel">
+        <div class="speed-val" id="speedVal">0</div>
+        <div class="speed-unit">KM/H</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="joy" id="joy"><div class="joy-base"></div><div class="joy-knob" id="knob"></div></div>
+
+  <div class="btns">
+    <button class="btn" id="btnSprint" style="grid-column:1;grid-row:2"><span class="ico">»»</span><span class="lbl">SPRINT</span></button>
+    <button class="btn punch" id="btnPunch" style="grid-column:2;grid-row:2"><span class="ico">✊</span><span class="lbl">PUNCH</span></button>
+    <button class="btn enter hidden" id="btnEnter" style="grid-column:2;grid-row:1"><span class="ico">⇆</span><span class="lbl">ENTER</span></button>
+    <button class="btn hidden" id="btnGas" style="grid-column:2;grid-row:2"><span class="ico" style="color:#4dd4ff">▲</span><span class="lbl">GAS</span></button>
+    <button class="btn brake hidden" id="btnBrake" style="grid-column:1;grid-row:2"><span class="ico">▼</span><span class="lbl">BRAKE</span></button>
+    <button class="btn enter hidden" id="btnExit" style="grid-column:2;grid-row:1"><span class="ico">⇆</span><span class="lbl">EXIT</span></button>
+  </div>
+
+  <div class="prompt" id="prompt">// TAP ENTER</div>
+  <div class="toast" id="toast"></div>
+
+  <div id="debug" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:9px;padding:4px 8px;border-radius:3px;pointer-events:none;white-space:pre;z-index:20;line-height:1.3"></div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script>
+  window.STATUS = function(msg) { var el = document.getElementById('loadingStatus'); if (el) el.textContent = msg; };
+  window.ERR = function(msg) {
+    var el = document.getElementById('loadingErr');
+    if (el) { el.style.display = 'block'; el.textContent = 'ERROR: ' + msg; }
+  };
+  window.addEventListener('error', function(e) { window.ERR((e.message || 'unknown') + ' @ ' + (e.filename || '?') + ':' + (e.lineno || '?')); });
+  window.addEventListener('unhandledrejection', function(e) { window.ERR('Promise: ' + ((e.reason && e.reason.message) || e.reason || 'unknown')); });
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+window.STATUS('Engine ready!');
+
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
+const PIXEL_RATIO = IS_MOBILE ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.5);
+const SHADOWS_ENABLED = !IS_MOBILE;
+const VIEW_DISTANCE = IS_MOBILE ? 150 : 280;
+
+// === STATE ===
+let running = false;
+let player = null, mixer = null;
+let actIdle = null, actWalk = null, actRun = null, actPunch = null, currentAction = null;
+let playerCar = null, punching = false;
+const vehicles = [];
+let cityObj = null;
+let cameraYaw = 0, cameraPitch = 0.15;
+let playerYaw = 0;
+
+const state = { mode: 'foot', hp: 100, maxHp: 100, cash: 500, xp: 0, xpNeeded: 100, lvl: 1 };
+const input = { mx: 0, my: 0, sprint: false, punch: false, gas: false, brake: false, enter: false, exit: false };
+const keys = {};
+
+// === RENDERER ===
+const renderer = new THREE.WebGLRenderer({ antialias: !IS_MOBILE, powerPreference: 'high-performance', stencil: false });
+renderer.setPixelRatio(PIXEL_RATIO);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+if (SHADOWS_ENABLED) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap; }
+document.getElementById('game').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87b8e0);
+scene.fog = new THREE.Fog(0x87b8e0, VIEW_DISTANCE * 0.55, VIEW_DISTANCE);
+
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.3, VIEW_DISTANCE);
+
+scene.add(new THREE.HemisphereLight(0xfff4dc, 0x5a4a3a, 1.1));
+const sun = new THREE.DirectionalLight(0xfff1d0, 1.6);
+sun.position.set(60, 90, 40);
+if (SHADOWS_ENABLED) {
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.left = -80; sun.shadow.camera.right = 80;
+  sun.shadow.camera.top = 80; sun.shadow.camera.bottom = -80;
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 300;
+  sun.shadow.bias = -0.0004;
+}
+scene.add(sun);
+
+// === UI ===
+const loadingEl = document.getElementById('loading');
+const startEl = document.getElementById('start');
+const toastEl = document.getElementById('toast');
+const loadingFill = document.getElementById('loadingFill');
+const loadingText = document.getElementById('loadingText');
+let toastTimer = null;
+function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000); }
+function setProgress(pct, label) { loadingFill.style.width = pct + '%'; loadingText.textContent = label; }
+function updateHud() {
+  document.getElementById('hpBar').style.width = (state.hp / state.maxHp * 100) + '%';
+  document.getElementById('cashVal').textContent = state.cash;
+  document.getElementById('lvlVal').textContent = state.lvl;
+  document.getElementById('xpBar').style.width = (state.xp / state.xpNeeded * 100) + '%';
+}
+function setMode(mode) {
+  state.mode = mode;
+  const foot = mode === 'foot';
+  document.getElementById('btnSprint').classList.toggle('hidden', !foot);
+  document.getElementById('btnPunch').classList.toggle('hidden', !foot);
+  document.getElementById('btnGas').classList.toggle('hidden', foot);
+  document.getElementById('btnBrake').classList.toggle('hidden', foot);
+  document.getElementById('speedPanel').classList.toggle('show', !foot);
+}
+
+// === JOYSTICK ===
+const joy = document.getElementById('joy');
+const knob = document.getElementById('knob');
+let joyActive = false, joyId = null, joyCx = 0, joyCy = 0;
+function joyStart(x, y, id) {
+  const r = joy.getBoundingClientRect();
+  joyCx = r.left + r.width / 2;
+  joyCy = r.top + r.height / 2;
+  joyActive = true; joyId = id;
+  joyMoveTo(x, y);
+}
+function joyMoveTo(x, y) {
+  const dx = x - joyCx, dy = y - joyCy, max = 34;
+  const d = Math.min(Math.hypot(dx, dy), max);
+  const a = Math.atan2(dy, dx);
+  const kx = Math.cos(a) * d, ky = Math.sin(a) * d;
+  knob.style.transform = `translate(${kx}px,${ky}px)`;
+  input.mx = kx / max;
+  input.my = ky / max;
+}
+function joyEnd() { joyActive = false; joyId = null; knob.style.transform = 'translate(0,0)'; input.mx = 0; input.my = 0; }
+
+joy.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); const t = e.changedTouches[0]; joyStart(t.clientX, t.clientY, t.identifier); }, { passive: false });
+joy.addEventListener('mousedown', e => { e.stopPropagation(); joyStart(e.clientX, e.clientY, 'mouse'); });
+
+// === SWIPE-TO-ROTATE CAMERA ===
+const swipeLayer = document.getElementById('swipeLayer');
+let swipeActive = false, swipeId = null, lastSwipeX = 0, lastSwipeY = 0;
+function swipeStart(x, y, id) { swipeActive = true; swipeId = id; lastSwipeX = x; lastSwipeY = y; }
+function swipeMove(x, y) {
+  const dx = x - lastSwipeX;
+  const dy = y - lastSwipeY;
+  lastSwipeX = x; lastSwipeY = y;
+  cameraYaw -= dx * 0.005;
+  // Pitch: -0.3 = slight low angle, +0.7 = high bird's-eye. Default 0.15 = slightly above horizontal
+  cameraPitch = Math.max(-0.3, Math.min(0.7, cameraPitch + dy * 0.003));
+}
+function swipeEnd() { swipeActive = false; swipeId = null; }
+swipeLayer.addEventListener('touchstart', e => { e.preventDefault(); const t = e.changedTouches[0]; swipeStart(t.clientX, t.clientY, t.identifier); }, { passive: false });
+swipeLayer.addEventListener('mousedown', e => swipeStart(e.clientX, e.clientY, 'mouse'));
+
+window.addEventListener('touchmove', e => {
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
+    if (joyActive && t.identifier === joyId) joyMoveTo(t.clientX, t.clientY);
+    if (swipeActive && t.identifier === swipeId) swipeMove(t.clientX, t.clientY);
+  }
+}, { passive: false });
+window.addEventListener('mousemove', e => {
+  if (joyActive && joyId === 'mouse') joyMoveTo(e.clientX, e.clientY);
+  if (swipeActive && swipeId === 'mouse') swipeMove(e.clientX, e.clientY);
+});
+window.addEventListener('touchend', e => {
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
+    if (t.identifier === joyId) joyEnd();
+    if (t.identifier === swipeId) swipeEnd();
+  }
+});
+window.addEventListener('touchcancel', e => {
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
+    if (t.identifier === joyId) joyEnd();
+    if (t.identifier === swipeId) swipeEnd();
+  }
+});
+window.addEventListener('mouseup', () => { if (joyId === 'mouse') joyEnd(); if (swipeId === 'mouse') swipeEnd(); });
+
+// === BUTTON BINDINGS ===
+function bindHold(id, key) {
+  const el = document.getElementById(id);
+  const down = e => { if (e) { e.preventDefault(); e.stopPropagation(); } input[key] = true; };
+  const up = () => { input[key] = false; };
+  el.addEventListener('touchstart', down, { passive: false });
+  el.addEventListener('touchend', up);
+  el.addEventListener('touchcancel', up);
+  el.addEventListener('mousedown', down);
+  el.addEventListener('mouseup', up);
+  el.addEventListener('mouseleave', up);
+}
+function bindTap(id, key) {
+  const el = document.getElementById(id);
+  const down = e => { if (e) { e.preventDefault(); e.stopPropagation(); } input[key] = true; };
+  el.addEventListener('touchstart', down, { passive: false });
+  el.addEventListener('mousedown', down);
+}
+bindHold('btnSprint', 'sprint');
+bindTap('btnPunch', 'punch');
+bindHold('btnGas', 'gas');
+bindHold('btnBrake', 'brake');
+bindTap('btnEnter', 'enter');
+bindTap('btnExit', 'exit');
+
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === 'Shift') input.sprint = true;
+  if (e.key === ' ') input.punch = true;
+  if (e.key.toLowerCase() === 'f') input.enter = true;
+  if (e.key.toLowerCase() === 'w') input.gas = true;
+  if (e.key.toLowerCase() === 's') input.brake = true;
+});
+window.addEventListener('keyup', e => {
+  keys[e.key.toLowerCase()] = false;
+  if (e.key === 'Shift') input.sprint = false;
+  if (e.key.toLowerCase() === 'w') input.gas = false;
+  if (e.key.toLowerCase() === 's') input.brake = false;
+});
+
+// ============================================================
+// LOADER + COLLISION HELPERS
+// ============================================================
+const loader = new GLTFLoader();
+function loadGLB(url, onProg) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Timeout: ' + url)), 180000);
+    loader.load(url, g => { clearTimeout(timeout); resolve(g); }, onProg, err => { clearTimeout(timeout); reject(new Error('Load failed ' + url + ': ' + (err.message || err))); });
+  });
+}
+
+const raycaster = new THREE.Raycaster();
+const downVec = new THREE.Vector3(0, -1, 0);
+function findGroundY(x, z, fromY = 1000) {
+  if (!cityObj) return 0;
+  raycaster.set(new THREE.Vector3(x, fromY, z), downVec);
+  raycaster.far = fromY + 200;
+  const hits = raycaster.intersectObject(cityObj, true);
+  if (hits.length > 0) return hits[0].point.y;
+  return 0;
+}
+
+const collisionRay = new THREE.Raycaster();
+function canMoveTo(from, to, radius = 0.5) {
+  if (!cityObj) return true;
+  const dir = new THREE.Vector3().subVectors(to, from);
+  const dist = dir.length();
+  if (dist < 0.0001) return true;
+  dir.normalize();
+  const origin = new THREE.Vector3(from.x, from.y + 0.9, from.z);
+  collisionRay.set(origin, dir);
+  collisionRay.far = dist + radius;
+  const hits = collisionRay.intersectObject(cityObj, true);
+  if (hits.length > 0 && hits[0].distance < dist + radius) return false;
+  return true;
+}
+
+function stripRootMotion(clip) {
+  if (!clip || !clip.tracks) return clip;
+  clip.tracks = clip.tracks.filter(track => {
+    const isRootPos = track.name.endsWith('.position') &&
+      (track.name.includes('Hips') || track.name.includes('hip') || track.name.includes('Root') || track.name.startsWith('mixamorig'));
+    return !isRootPos;
+  });
+  return clip;
+}
+
+// ============================================================
+// LOAD REAL ASSETS
+// ============================================================
+async function loadAll() {
+  try {
+    // CITY — scale up to 400m so a 1.8m character looks right
+    setProgress(5, 'LOADING CITY...');
+    window.STATUS('Downloading city...');
+    const cityGLTF = await loadGLB('./assets/city.glb', e => {
+      if (e.lengthComputable) {
+        const pct = 5 + (e.loaded / e.total) * 30;
+        setProgress(pct, 'LOADING CITY...');
+        window.STATUS(`City: ${(e.loaded/1024/1024).toFixed(1)} / ${(e.total/1024/1024).toFixed(1)}MB`);
+      }
+    });
+    cityObj = cityGLTF.scene;
+
+    const rawBox = new THREE.Box3().setFromObject(cityObj);
+    const rawSize = rawBox.getSize(new THREE.Vector3());
+    const rawDim = Math.max(rawSize.x, rawSize.z);
+    let citySc = 1;
+    if (rawDim > 0) {
+      citySc = 400 / rawDim;
+      if (citySc < 0.5) citySc = 1;
+      if (citySc > 50) citySc = 50;
+    }
+    cityObj.scale.setScalar(citySc);
+    window.STATUS(`City ${rawDim.toFixed(0)}→${(rawDim*citySc).toFixed(0)}m (×${citySc.toFixed(2)})`);
+
+    cityObj.traverse(o => {
+      if (o.isMesh) {
+        o.castShadow = false;
+        o.receiveShadow = SHADOWS_ENABLED;
+        if (o.material) {
+          const mats = Array.isArray(o.material) ? o.material : [o.material];
+          mats.forEach(m => { m.side = THREE.FrontSide; });
+        }
+      }
+    });
+    scene.add(cityObj);
+
+    const cityBox = new THREE.Box3().setFromObject(cityObj);
+    const cityCenter = cityBox.getCenter(new THREE.Vector3());
+    cityObj.position.x -= cityCenter.x;
+    cityObj.position.z -= cityCenter.z;
+    cityObj.position.y -= cityBox.min.y;
+    cityObj.updateMatrixWorld(true);
+
+    // Fallback ground
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(3000, 3000),
+      new THREE.MeshStandardMaterial({ color: 0x3a3a42, roughness: 0.95 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -1;
+    ground.receiveShadow = SHADOWS_ENABLED;
+    scene.add(ground);
+
+    // CHARACTER — always scale to exactly 1.8m
+    setProgress(40, 'LOADING CHARACTER...');
+    window.STATUS('Loading character...');
+    const charGLTF = await loadGLB('./assets/character.glb');
+    player = charGLTF.scene;
+
+    // CRITICAL: Mixamo SkinnedMesh Box3 is UNRELIABLE. We must measure from actual bones.
+    // Find the skeleton, then measure from lowest bone to highest bone.
+    let skeleton = null;
+    player.traverse(o => {
+      if (o.isSkinnedMesh && !skeleton) skeleton = o.skeleton;
+    });
+
+    let rawH = 1; // fallback
+    if (skeleton) {
+      // Force update world matrices so bones are in their current (bind) positions
+      player.updateMatrixWorld(true);
+      let minY = Infinity, maxY = -Infinity;
+      skeleton.bones.forEach(b => {
+        const p = new THREE.Vector3();
+        b.getWorldPosition(p);
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      });
+      rawH = maxY - minY;
+      window.STATUS(`Skeleton bones measured: ${rawH.toFixed(3)} (min=${minY.toFixed(2)} max=${maxY.toFixed(2)})`);
+    } else {
+      // Fallback: use Box3
+      const charRawBox = new THREE.Box3().setFromObject(player);
+      rawH = charRawBox.max.y - charRawBox.min.y;
+      window.STATUS(`No skeleton, using Box3: ${rawH.toFixed(3)}`);
+    }
+
+    // Scale to target height of 1.8m
+    const scale = rawH > 0.01 ? (1.8 / rawH) : 1.0;
+    player.scale.setScalar(scale);
+    player.updateMatrixWorld(true);
+
+    // Remeasure final size (for camera use)
+    const finalBox = new THREE.Box3().setFromObject(player);
+    const finalH = finalBox.max.y - finalBox.min.y;
+    const finalMinY = finalBox.min.y;
+
+    window.CHAR_SCALE = 1.8; // the TRUE character height in world (what we scaled to)
+    window.CHAR_MIN_Y = finalMinY;
+
+    player.traverse(o => {
+      if (o.isMesh || o.isSkinnedMesh) {
+        o.castShadow = SHADOWS_ENABLED;
+        o.receiveShadow = false;
+        o.frustumCulled = false;
+      }
+    });
+
+    // Spawn: lift player so feet are at y=0 (finalMinY is negative if origin is above feet)
+    const spawnLift = -finalMinY;
+    player.position.set(0, spawnLift, 0);
+    scene.add(player);
+    mixer = new THREE.AnimationMixer(player);
+
+    // ANIMATIONS
+    setProgress(65, 'LOADING ANIMATIONS...');
+    const [idleG, walkG, runG, punchG] = await Promise.all([
+      loadGLB('./assets/idle.glb'),
+      loadGLB('./assets/walking.glb'),
+      loadGLB('./assets/running.glb'),
+      loadGLB('./assets/punch.glb')
+    ]);
+    if (!idleG.animations[0] || !walkG.animations[0] || !runG.animations[0] || !punchG.animations[0])
+      throw new Error('Missing animation clips');
+
+    actIdle = mixer.clipAction(stripRootMotion(idleG.animations[0]));
+    actWalk = mixer.clipAction(stripRootMotion(walkG.animations[0]));
+    actRun = mixer.clipAction(stripRootMotion(runG.animations[0]));
+    actPunch = mixer.clipAction(stripRootMotion(punchG.animations[0]));
+    actIdle.setLoop(THREE.LoopRepeat, Infinity);
+    actWalk.setLoop(THREE.LoopRepeat, Infinity);
+    actRun.setLoop(THREE.LoopRepeat, Infinity);
+    actPunch.setLoop(THREE.LoopOnce, 1);
+    actPunch.clampWhenFinished = false;
+    actIdle.play();
+    currentAction = actIdle;
+
+    // CARS
+    setProgress(85, 'LOADING VEHICLES...');
+    const carGLTF = await loadGLB('./assets/porsche.glb');
+    const baseCar = carGLTF.scene;
+    // Scale car to ~4.5m long (real Porsche length)
+    const rawCarBox = new THREE.Box3().setFromObject(baseCar);
+    const rawCarLen = rawCarBox.max.z - rawCarBox.min.z;
+    const carTargetLen = 4.5;
+    const carSc = rawCarLen > 0.01 ? (carTargetLen / rawCarLen) : 1;
+    baseCar.scale.setScalar(carSc);
+    baseCar.updateMatrixWorld(true);
+    const cBox2 = new THREE.Box3().setFromObject(baseCar);
+    const carYLocal = -cBox2.min.y;
+    window.STATUS(`Car raw=${rawCarLen.toFixed(2)} × ${carSc.toFixed(2)} = ${(cBox2.max.z-cBox2.min.z).toFixed(2)}m`);
+    baseCar.traverse(o => { if (o.isMesh) { o.castShadow = SHADOWS_ENABLED; o.receiveShadow = false; } });
+
+    // Smart car spawn: search a big radius, keep ONLY spots that are on road (ground y very close to 0)
+    // AND well-spaced from each other AND far from player spawn
+    const carSpots = [];
+    const MIN_DIST_FROM_PLAYER = 12;
+    const MIN_DIST_BETWEEN_CARS = 10;
+    const STREET_MAX_Y = 1.5; // Road ground should be ~0. Higher than 1.5m means rooftop.
+
+    // Build a grid of candidate spots
+    const allCandidates = [];
+    for (let r = 15; r <= 60; r += 5) {
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+        allCandidates.push({ x: Math.cos(a) * r, z: Math.sin(a) * r });
+      }
+    }
+    // Shuffle so cars aren't always in the same places
+    for (let i = allCandidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allCandidates[i], allCandidates[j]] = [allCandidates[j], allCandidates[i]];
+    }
+
+    for (const c of allCandidates) {
+      if (carSpots.length >= 4) break;
+      if (Math.hypot(c.x, c.z) < MIN_DIST_FROM_PLAYER) continue;
+      const gY = findGroundY(c.x, c.z, 500);
+      if (gY > STREET_MAX_Y || gY < -5) continue; // not on a road
+      // Check spacing from other cars
+      let tooClose = false;
+      for (const s of carSpots) {
+        if (Math.hypot(c.x - s.x, c.z - s.z) < MIN_DIST_BETWEEN_CARS) { tooClose = true; break; }
+      }
+      if (tooClose) continue;
+      carSpots.push({ x: c.x, z: c.z, y: gY, rotY: Math.random() * Math.PI * 2 });
+    }
+
+    // Fallback: if we couldn't find enough road spots, put them on the flat fallback ground far from player
+    while (carSpots.length < 3) {
+      const a = Math.random() * Math.PI * 2;
+      const r = 20 + Math.random() * 20;
+      carSpots.push({ x: Math.cos(a) * r, z: Math.sin(a) * r, y: 0, rotY: Math.random() * Math.PI * 2 });
+    }
+
+    window.STATUS(`Spawned ${carSpots.length} cars at ground y=${carSpots.map(s => s.y.toFixed(1)).join(',')}`);
+
+    carSpots.forEach(s => {
+      const clone = baseCar.clone(true);
+      clone.position.set(s.x, s.y + carYLocal, s.z);
+      clone.rotation.y = s.rotY;
+      clone.userData = { isVehicle: true, speed: 0, maxSpeed: 28 };
+      scene.add(clone);
+      vehicles.push(clone);
+    });
+
+    setProgress(100, 'READY!');
+    window.STATUS('Tap ENTER CITY');
+    setTimeout(() => { loadingEl.style.display = 'none'; startEl.style.display = 'flex'; }, 400);
+  } catch (err) {
+    window.ERR(err.message || String(err));
+  }
+}
+
+function setAction(next) {
+  if (currentAction === next || !next) return;
+  next.reset().fadeIn(0.2).play();
+  if (currentAction) currentAction.fadeOut(0.2);
+  currentAction = next;
+}
+
+// === GAME LOOP ===
+function doPunch() {
+  if (punching || !actPunch) return;
+  punching = true;
+  actPunch.reset().fadeIn(0.1).play();
+  setTimeout(() => { punching = false; }, 900);
+}
+
+const camPos = new THREE.Vector3(0, 5, 10);
+const camTarget = new THREE.Vector3();
+const miniCanvas = document.getElementById('miniCanvas');
+const miniCtx = miniCanvas.getContext('2d');
+let miniCounter = 0;
+
+function update(dt) {
+  if (!player) return;
+
+  if (input.enter && state.mode === 'foot') {
+    input.enter = false;
+    let nearest = null, minD = 5;
+    for (const v of vehicles) {
+      const d = v.position.distanceTo(player.position);
+      if (d < minD) { minD = d; nearest = v; }
+    }
+    if (nearest) {
+      playerCar = nearest;
+      player.visible = false;
+      setMode('driving');
+      toast('// ENTERED VEHICLE');
+    }
+  }
+  if (input.exit && state.mode === 'driving') {
+    input.exit = false;
+    if (playerCar) {
+      const offset = new THREE.Vector3(2.5, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerCar.rotation.y);
+      player.position.copy(playerCar.position).add(offset);
+      player.position.y = findGroundY(player.position.x, player.position.z, 500);
+      player.visible = true;
+      playerCar.userData.speed = 0;
+      playerCar = null;
+    }
+    setMode('foot');
+    toast('// EXITED VEHICLE');
+  }
+
+  if (state.mode === 'foot') updateFoot(dt);
+  else updateDriving(dt);
+
+  if (state.mode === 'foot') {
+    let near = false;
+    for (const v of vehicles) if (v.position.distanceTo(player.position) < 5) { near = true; break; }
+    document.getElementById('prompt').classList.toggle('show', near);
+    document.getElementById('btnEnter').classList.toggle('hidden', !near);
+  } else {
+    document.getElementById('prompt').classList.remove('show');
+    document.getElementById('btnExit').classList.remove('hidden');
+  }
+
+  if (mixer) mixer.update(dt);
+  updateCamera(dt);
+  miniCounter++;
+  if (miniCounter % 4 === 0) drawMinimap();
+}
+
+function updateFoot(dt) {
+  let mx = input.mx, my = input.my;
+  if (keys['w']) my = -1;
+  if (keys['s']) my = 1;
+  if (keys['a']) mx = -1;
+  if (keys['d']) mx = 1;
+  const mag = Math.min(1, Math.hypot(mx, my));
+  const speed = (input.sprint && mag > 0.2 ? 5.5 : 2.8) * mag;
+
+  if (mag > 0.1) {
+    // Camera-relative movement
+    // Camera is behind target at cameraYaw. Camera forward = (sin(yaw), cos(yaw))
+    // Camera right = (cos(yaw), -sin(yaw))
+    const camForwardX = Math.sin(cameraYaw);
+    const camForwardZ = Math.cos(cameraYaw);
+    const camRightX = Math.cos(cameraYaw);
+    const camRightZ = -Math.sin(cameraYaw);
+
+    // Joystick up (my < 0) = forward, right (mx > 0) = right
+    const forwardAmt = -my;
+    const rightAmt = -mx; // flipped to fix inverted left/right
+    const dirX = camForwardX * forwardAmt + camRightX * rightAmt;
+    const dirZ = camForwardZ * forwardAmt + camRightZ * rightAmt;
+    const len = Math.hypot(dirX, dirZ) || 1;
+    const ndx = dirX / len;
+    const ndz = dirZ / len;
+
+    const newX = player.position.x + ndx * speed * dt;
+    const newZ = player.position.z + ndz * speed * dt;
+    const next = new THREE.Vector3(newX, player.position.y, newZ);
+    if (canMoveTo(player.position, next, 0.5)) {
+      player.position.x = newX;
+      player.position.z = newZ;
+      // Snap to ground using raycast
+      const gY = findGroundY(newX, newZ, player.position.y + 20);
+      if (gY > player.position.y - 10 && gY < player.position.y + 5) {
+        player.position.y += (gY - player.position.y) * Math.min(1, dt * 15);
+      }
+    }
+
+    // Face movement direction
+    const targetYaw = Math.atan2(ndx, ndz);
+    let diff = targetYaw - playerYaw;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    playerYaw += diff * Math.min(1, dt * 12);
+    player.rotation.y = playerYaw;
+  }
+
+  // Animation state
+  if (!punching) {
+    if (mag > 0.1) setAction(input.sprint && mag > 0.2 ? actRun : actWalk);
+    else setAction(actIdle);
+  }
+
+  if (input.punch) { input.punch = false; doPunch(); }
+}
+
+function updateDriving(dt) {
+  if (!playerCar) return;
+  const car = playerCar;
+  if (input.gas || keys['w']) car.userData.speed += 14 * dt;
+  else if (input.brake || keys['s']) car.userData.speed -= 22 * dt;
+  else {
+    car.userData.speed *= (1 - dt * 0.7);
+    if (Math.abs(car.userData.speed) < 0.05) car.userData.speed = 0;
+  }
+  car.userData.speed = Math.max(-10, Math.min(car.userData.maxSpeed, car.userData.speed));
+
+  const steerRate = 2.0 * Math.min(1, Math.abs(car.userData.speed) / 6);
+  car.rotation.y -= input.mx * steerRate * dt * Math.sign(car.userData.speed || 1);
+
+  const fx = Math.sin(car.rotation.y), fz = Math.cos(car.rotation.y);
+  const moveDist = car.userData.speed * dt;
+  const nx = car.position.x + fx * moveDist;
+  const nz = car.position.z + fz * moveDist;
+
+  // 3-ray car collision against city
+  const carHalfWidth = 1.1;
+  const lookAhead = Math.abs(moveDist) + 1.5;
+  const forwardDir = new THREE.Vector3(fx * Math.sign(moveDist || 1), 0, fz * Math.sign(moveDist || 1));
+  const rightX = Math.cos(car.rotation.y);
+  const rightZ = -Math.sin(car.rotation.y);
+  let blocked = false;
+  for (let i = -1; i <= 1; i++) {
+    const origX = car.position.x + rightX * i * carHalfWidth;
+    const origZ = car.position.z + rightZ * i * carHalfWidth;
+    collisionRay.set(new THREE.Vector3(origX, car.position.y + 0.6, origZ), forwardDir);
+    collisionRay.far = lookAhead;
+    const hits = collisionRay.intersectObject(cityObj, true);
+    if (hits.length > 0 && hits[0].distance < lookAhead) { blocked = true; break; }
+  }
+
+  if (!blocked) {
+    car.position.x = nx;
+    car.position.z = nz;
+    // Snap car to ground
+    const gY = findGroundY(nx, nz, car.position.y + 20);
+    if (gY > car.position.y - 10 && gY < car.position.y + 5) {
+      car.position.y += (gY + 0.1 - car.position.y) * Math.min(1, dt * 10);
+    }
+  } else {
+    car.userData.speed = 0;
+  }
+
+  document.getElementById('speedVal').textContent = Math.abs(Math.round(car.userData.speed * 3.6));
+  player.position.copy(car.position);
+  player.rotation.y = car.rotation.y;
+}
+
+const debugEl = document.getElementById('debug');
+
+function updateCamera(dt) {
+  const target = state.mode === 'driving' && playerCar ? playerCar : player;
+  const h = window.CHAR_SCALE || 1.5;
+  // Camera framing: closer in for a more intimate over-the-shoulder view
+  const dist = state.mode === 'driving' ? h * 3.5 : h * 2.5;
+  const height = state.mode === 'driving' ? h * 1.4 : h * 1.1;
+  const lookUp = state.mode === 'driving' ? h * 0.7 : h * 0.65;
+
+  const hDist = Math.cos(cameraPitch) * dist;
+  const vDist = Math.sin(cameraPitch) * dist;
+  const tx = target.position.x - Math.sin(cameraYaw) * hDist;
+  const tz = target.position.z - Math.cos(cameraYaw) * hDist;
+  const ty = target.position.y + height + vDist;
+
+  const lerp = state.mode === 'driving' ? 6 : 10;
+  camPos.x += (tx - camPos.x) * Math.min(1, dt * lerp);
+  camPos.y += (ty - camPos.y) * Math.min(1, dt * lerp);
+  camPos.z += (tz - camPos.z) * Math.min(1, dt * lerp);
+  camera.position.copy(camPos);
+
+  camTarget.set(target.position.x, target.position.y + lookUp, target.position.z);
+  camera.lookAt(camTarget);
+
+  if (debugEl && running) {
+    debugEl.textContent =
+      `charH=${h.toFixed(2)} playerY=${target.position.y.toFixed(2)}\n` +
+      `cam=(${camPos.x.toFixed(1)},${camPos.y.toFixed(2)},${camPos.z.toFixed(1)})\n` +
+      `dist=${dist.toFixed(1)} ht=${height.toFixed(1)} look=${(target.position.y+lookUp).toFixed(2)}`;
+  }
+}
+
+function drawMinimap() {
+  if (!player) return;
+  const s = 90;
+  miniCtx.clearRect(0, 0, s, s);
+  miniCtx.fillStyle = 'rgba(20,20,30,0.4)';
+  miniCtx.fillRect(0, 0, s, s);
+  const scale = 0.25, cx = s/2, cy = s/2;
+  const px = player.position.x, pz = player.position.z;
+
+  miniCtx.fillStyle = '#4dd4ff';
+  for (const v of vehicles) {
+    const dx = (v.position.x - px) * scale;
+    const dz = (v.position.z - pz) * scale;
+    const rx = Math.cos(-cameraYaw) * dx - Math.sin(-cameraYaw) * dz;
+    const rz = Math.sin(-cameraYaw) * dx + Math.cos(-cameraYaw) * dz;
+    const mx = cx + rx, my = cy + rz;
+    if (mx > 2 && mx < s - 2 && my > 2 && my < s - 2) {
+      miniCtx.beginPath(); miniCtx.arc(mx, my, 2.5, 0, Math.PI * 2); miniCtx.fill();
+    }
+  }
+  miniCtx.fillStyle = '#ffb300';
+  miniCtx.beginPath();
+  miniCtx.moveTo(cx, cy - 5); miniCtx.lineTo(cx - 3, cy + 3); miniCtx.lineTo(cx + 3, cy + 3);
+  miniCtx.closePath(); miniCtx.fill();
+}
+
+let lastTime = performance.now();
+function tick() {
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+  if (running) update(dt);
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+tick();
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch (e) {}
+  try { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {}
+  startEl.style.display = 'none';
+  document.getElementById('hud').style.display = 'block';
+  cameraYaw = playerYaw;
+  setMode('foot');
+  updateHud();
+  running = true;
+  toast('// WELCOME TO LUXCITY');
+});
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener('resize', onResize);
+window.addEventListener('orientationchange', () => setTimeout(onResize, 100));
+document.addEventListener('gesturestart', e => e.preventDefault());
+
+// Load real assets
+loadAll();
+</script>
+</body>
+</html>
