@@ -394,62 +394,897 @@ function stripRootMotion(clip) {
 }
 
 // ============================================================
+// PROCEDURAL CITY BUILDER
+// ============================================================
+// Generates a full GTA-style city with landmarks, districts, and props.
+// All buildings, roads, props are added to a single Group called cityObj
+// so they get treated as the "world" by collision and ground detection.
+
+const buildingsList = []; // for minimap
+
+function makeWindowMat(color = 0x88c4ff, intensity = 0.4) {
+  return new THREE.MeshStandardMaterial({
+    color: 0x1a2535, emissive: color, emissiveIntensity: intensity,
+    roughness: 0.2, metalness: 0.7
+  });
+}
+
+function addWindowsTo(box, w, h, d, x, y, z, mat) {
+  const strips = Math.max(2, Math.floor(h / 3.5));
+  for (let s = 0; s < strips; s++) {
+    const wY = 2 + s * 3.5;
+    if (wY > h - 1.5) break;
+    [
+      { side: 'F', sx: w * 0.85, sz: 0.05, ox: 0, oz: d/2 + 0.02, ry: 0 },
+      { side: 'B', sx: w * 0.85, sz: 0.05, ox: 0, oz: -d/2 - 0.02, ry: Math.PI },
+      { side: 'L', sx: d * 0.85, sz: 0.05, ox: -w/2 - 0.02, oz: 0, ry: Math.PI/2 },
+      { side: 'R', sx: d * 0.85, sz: 0.05, ox: w/2 + 0.02, oz: 0, ry: -Math.PI/2 },
+    ].forEach(side => {
+      const win = new THREE.Mesh(new THREE.PlaneGeometry(side.sx, 1.8), mat);
+      win.position.set(x + side.ox, wY, z + side.oz);
+      win.rotation.y = side.ry;
+      cityObj.add(win);
+    });
+  }
+}
+
+function buildSkyscraper(x, z, w, d, h, color, parent) {
+  const matBody = new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.3 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'building' });
+
+  const winMat = makeWindowMat(0x88c4ff, 0.25 + Math.random() * 0.3);
+  addWindowsTo(body, w, h, d, x, 0, z, winMat);
+
+  // Rooftop element (AC unit / antenna)
+  if (h > 30) {
+    const acMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.8 });
+    const ac = new THREE.Mesh(new THREE.BoxGeometry(w * 0.4, 2, d * 0.4), acMat);
+    ac.position.set(x, h + 1, z);
+    ac.castShadow = SHADOWS_ENABLED;
+    parent.add(ac);
+    if (h > 50) {
+      const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 6, 6), acMat);
+      antenna.position.set(x, h + 5, z);
+      parent.add(antenna);
+    }
+  }
+}
+
+function buildHouse(x, z, w, d, color, parent, hasGarage = false) {
+  const matWall = new THREE.MeshStandardMaterial({ color, roughness: 0.85 });
+  const matRoof = new THREE.MeshStandardMaterial({ color: 0x6b3a2a, roughness: 0.9 });
+  const matDoor = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.7 });
+
+  const h = 4 + Math.random() * 2;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matWall);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'house' });
+
+  // Pitched roof
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(w, d) * 0.7, 2.5, 4), matRoof);
+  roof.position.set(x, h + 1.25, z);
+  roof.rotation.y = Math.PI / 4;
+  roof.castShadow = SHADOWS_ENABLED;
+  parent.add(roof);
+
+  // Front door
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 2), matDoor);
+  door.position.set(x, 1, z + d/2 + 0.01);
+  parent.add(door);
+
+  // Windows
+  const winMat = makeWindowMat(0xfff0a0, 0.3);
+  for (let i = 0; i < 2; i++) {
+    const win = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), winMat);
+    win.position.set(x + (i ? 1.2 : -1.2), 2, z + d/2 + 0.01);
+    parent.add(win);
+  }
+
+  if (hasGarage) {
+    const garage = new THREE.Mesh(new THREE.BoxGeometry(3.5, 2.6, 4), matWall);
+    garage.position.set(x + w/2 + 1.75, 1.3, z);
+    garage.castShadow = SHADOWS_ENABLED;
+    parent.add(garage);
+    const door2 = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 2.2), new THREE.MeshStandardMaterial({ color: 0x666666, roughness: 0.6 }));
+    door2.position.set(x + w/2 + 1.75, 1.1, z + 2.01);
+    parent.add(door2);
+  }
+}
+
+function buildHospital(x, z, parent) {
+  const w = 30, d = 22, h = 18;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.6 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'hospital' });
+
+  // Glass entrance
+  const ent = new THREE.Mesh(new THREE.BoxGeometry(8, 6, 1), new THREE.MeshStandardMaterial({ color: 0x4488aa, roughness: 0.2, metalness: 0.8 }));
+  ent.position.set(x, 3, z + d/2 + 0.5);
+  parent.add(ent);
+
+  // Big red cross sign
+  const crossMat = new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff2222, emissiveIntensity: 0.6 });
+  const crossH = new THREE.Mesh(new THREE.BoxGeometry(4, 0.8, 0.3), crossMat);
+  crossH.position.set(x, h - 3, z + d/2 + 0.2);
+  parent.add(crossH);
+  const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.8, 4, 0.3), crossMat);
+  crossV.position.set(x, h - 3, z + d/2 + 0.2);
+  parent.add(crossV);
+
+  addWindowsTo(body, w, h, d, x, 0, z, makeWindowMat(0xffffff, 0.4));
+
+  // "HOSPITAL" sign
+  addSign(x, h + 1.5, z + d/2 + 0.3, 'HOSPITAL', 0xff2222, parent);
+
+  // Helipad on roof
+  const heli = new THREE.Mesh(new THREE.CircleGeometry(5, 16), new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 }));
+  heli.rotation.x = -Math.PI / 2;
+  heli.position.set(x, h + 0.05, z);
+  parent.add(heli);
+  const heliH = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.5), new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.4 }));
+  heliH.rotation.x = -Math.PI / 2;
+  heliH.position.set(x, h + 0.06, z);
+  parent.add(heliH);
+}
+
+function buildPoliceStation(x, z, parent) {
+  const w = 22, d = 16, h = 8;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0x3a4a6a, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'police' });
+
+  // Entrance pillars
+  const pillarMat = new THREE.MeshStandardMaterial({ color: 0xddddd0, roughness: 0.6 });
+  for (let i = -1; i <= 1; i += 2) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 6, 8), pillarMat);
+    p.position.set(x + i * 3, 3, z + d/2 + 0.5);
+    p.castShadow = SHADOWS_ENABLED;
+    parent.add(p);
+  }
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 2), pillarMat);
+  canopy.position.set(x, 6.25, z + d/2 + 0.5);
+  parent.add(canopy);
+
+  // Police badge sign
+  addSign(x, h + 1, z + d/2 + 0.3, 'POLICE', 0x4488ff, parent);
+
+  // Flashing lights on the roof
+  const lightMat = new THREE.MeshStandardMaterial({ color: 0x4488ff, emissive: 0x4488ff, emissiveIntensity: 1 });
+  const light = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 6), lightMat);
+  light.position.set(x, h + 0.5, z);
+  light.userData.flashColor = true;
+  parent.add(light);
+
+  addWindowsTo(body, w, h, d, x, 0, z, makeWindowMat(0xffffff, 0.3));
+}
+
+function buildFireStation(x, z, parent) {
+  const w = 24, d = 18, h = 9;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0xc83a2a, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'fire' });
+
+  // Big garage doors for the fire trucks
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 });
+  for (let i = -1; i <= 1; i += 2) {
+    const door = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), doorMat);
+    door.position.set(x + i * 6, 2.5, z + d/2 + 0.02);
+    parent.add(door);
+    // Red stripes
+    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(5, 0.4), new THREE.MeshStandardMaterial({ color: 0xc83a2a }));
+    stripe.position.set(x + i * 6, 4.7, z + d/2 + 0.03);
+    parent.add(stripe);
+  }
+
+  // Tower with bell
+  const tower = new THREE.Mesh(new THREE.BoxGeometry(3, 5, 3), matBody);
+  tower.position.set(x - w/2 + 1.5, h + 2.5, z);
+  tower.castShadow = SHADOWS_ENABLED;
+  parent.add(tower);
+
+  addSign(x, h + 1, z + d/2 + 0.3, 'FIRE DEPT', 0xffff00, parent);
+}
+
+function buildMechanicShop(x, z, parent) {
+  const w = 18, d = 14, h = 6;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0x6a6a6a, roughness: 0.9 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'mechanic' });
+
+  // Large garage opening
+  const opening = new THREE.Mesh(new THREE.PlaneGeometry(10, 4.5), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.95 }));
+  opening.position.set(x, 2.25, z + d/2 + 0.02);
+  parent.add(opening);
+
+  // Tire stack outside
+  const tireMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.95 });
+  for (let i = 0; i < 3; i++) {
+    const t = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.2, 6, 12), tireMat);
+    t.rotation.x = Math.PI / 2;
+    t.position.set(x + w/2 - 1, 0.2 + i * 0.45, z + d/2 + 1.5);
+    t.castShadow = SHADOWS_ENABLED;
+    parent.add(t);
+  }
+
+  addSign(x, h + 0.8, z + d/2 + 0.3, 'AUTO REPAIR', 0xffcc00, parent);
+}
+
+function buildCityHall(x, z, parent) {
+  const w = 28, d = 20, h = 14;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0xddccaa, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'cityhall' });
+
+  // Big pillars (Greek style)
+  const pillarMat = new THREE.MeshStandardMaterial({ color: 0xf0e8d0, roughness: 0.5 });
+  for (let i = -2; i <= 2; i++) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, h, 12), pillarMat);
+    p.position.set(x + i * 4.5, h/2, z + d/2 + 1);
+    p.castShadow = SHADOWS_ENABLED;
+    parent.add(p);
+  }
+
+  // Triangular pediment
+  const ped = new THREE.Mesh(new THREE.ConeGeometry(15, 4, 3), pillarMat);
+  ped.rotation.y = Math.PI / 6;
+  ped.position.set(x, h + 2, z + d/2 + 1);
+  ped.scale.z = 0.3;
+  parent.add(ped);
+
+  // Dome on top
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x88aa66, roughness: 0.6, metalness: 0.4 }));
+  dome.position.set(x, h, z);
+  dome.castShadow = SHADOWS_ENABLED;
+  parent.add(dome);
+
+  // Flag pole
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 6), new THREE.MeshStandardMaterial({ color: 0x888888 }));
+  pole.position.set(x, h + 7, z);
+  parent.add(pole);
+
+  addSign(x, h + 0.5, z + d/2 + 1.2, 'CITY HALL', 0xffd700, parent);
+}
+
+function buildHotel(x, z, parent) {
+  const w = 18, d = 18, h = 38;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0xb89a7a, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'hotel' });
+
+  // Glass entrance
+  const ent = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 1.2), new THREE.MeshStandardMaterial({ color: 0xfff0c8, emissive: 0xffaa44, emissiveIntensity: 0.5, roughness: 0.2, metalness: 0.7 }));
+  ent.position.set(x, 2, z + d/2 + 0.6);
+  parent.add(ent);
+
+  // Awning over entrance
+  const awn = new THREE.Mesh(new THREE.BoxGeometry(8, 0.3, 3), new THREE.MeshStandardMaterial({ color: 0x882222 }));
+  awn.position.set(x, 4.5, z + d/2 + 1.5);
+  parent.add(awn);
+
+  addWindowsTo(body, w, h, d, x, 0, z, makeWindowMat(0xfff0a0, 0.4));
+
+  // Big neon sign on top
+  addSign(x, h - 4, z + d/2 + 0.3, 'GRAND HOTEL', 0xff44aa, parent);
+}
+
+function buildApartment(x, z, parent) {
+  const w = 14, d = 14, h = 22 + Math.random() * 8;
+  const colors = [0x9c8866, 0x8a7d6c, 0xa89d8a, 0x756b5d];
+  const matBody = new THREE.MeshStandardMaterial({ color: colors[Math.floor(Math.random()*colors.length)], roughness: 0.8 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'apartment' });
+
+  // Balconies on front side
+  const balMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.6 });
+  const floors = Math.floor(h / 3.5);
+  for (let f = 1; f < floors; f++) {
+    const bal = new THREE.Mesh(new THREE.BoxGeometry(w * 0.8, 0.2, 1.2), balMat);
+    bal.position.set(x, f * 3.5, z + d/2 + 0.6);
+    parent.add(bal);
+    const railing = new THREE.Mesh(new THREE.BoxGeometry(w * 0.8, 1, 0.05), balMat);
+    railing.position.set(x, f * 3.5 + 0.5, z + d/2 + 1.18);
+    parent.add(railing);
+  }
+  addWindowsTo(body, w, h, d, x, 0, z, makeWindowMat(0xffe8a0, 0.25));
+}
+
+function buildMansion(x, z, parent) {
+  const w = 22, d = 16, h = 8;
+  const matBody = new THREE.MeshStandardMaterial({ color: 0xf0e8d8, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBody);
+  body.position.set(x, h/2, z);
+  body.castShadow = SHADOWS_ENABLED;
+  body.receiveShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  buildingsList.push({ x, z, w, d, h, type: 'mansion' });
+
+  // Second floor (smaller)
+  const upper = new THREE.Mesh(new THREE.BoxGeometry(w * 0.65, 4, d * 0.65), matBody);
+  upper.position.set(x, h + 2, z);
+  upper.castShadow = SHADOWS_ENABLED;
+  parent.add(upper);
+
+  // Tile roof
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0xc8693a, roughness: 0.8 });
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(11, 3, 4), roofMat);
+  roof.position.set(x, h + 5.5, z);
+  roof.rotation.y = Math.PI / 4;
+  roof.scale.x = 1.3;
+  parent.add(roof);
+
+  // Pillars at entrance
+  const pillarMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+  for (let i = -1; i <= 1; i += 2) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 6, 10), pillarMat);
+    p.position.set(x + i * 3, 3, z + d/2 + 1);
+    p.castShadow = SHADOWS_ENABLED;
+    parent.add(p);
+  }
+
+  // Pool out back
+  const pool = new THREE.Mesh(new THREE.BoxGeometry(8, 0.3, 4), new THREE.MeshStandardMaterial({ color: 0x4dc4ff, emissive: 0x2288cc, emissiveIntensity: 0.2, roughness: 0.1, metalness: 0.5 }));
+  pool.position.set(x, 0.15, z - d/2 - 4);
+  parent.add(pool);
+
+  // Driveway gate
+  const gateMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7, metalness: 0.6 });
+  const gate = new THREE.Mesh(new THREE.BoxGeometry(8, 2.5, 0.2), gateMat);
+  gate.position.set(x, 1.25, z + d/2 + 8);
+  parent.add(gate);
+}
+
+function buildMilitaryBase(x, z, parent) {
+  // Main barracks
+  const matBunker = new THREE.MeshStandardMaterial({ color: 0x4a5a3a, roughness: 0.9 });
+  const matRoof = new THREE.MeshStandardMaterial({ color: 0x3a4a2a, roughness: 0.95 });
+
+  for (let i = 0; i < 3; i++) {
+    const w = 14, d = 8, h = 4;
+    const bx = x + (i - 1) * 18;
+    const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matBunker);
+    body.position.set(bx, h/2, z);
+    body.castShadow = SHADOWS_ENABLED;
+    parent.add(body);
+    buildingsList.push({ x: bx, z, w, d, h, type: 'military' });
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(w + 0.4, 0.4, d + 0.4), matRoof);
+    roof.position.set(bx, h + 0.2, z);
+    parent.add(roof);
+  }
+
+  // Watch tower
+  const towerLeg = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.9 });
+  for (let dx of [-3, 3]) for (let dz of [-3, 3]) {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.4, 12, 0.4), towerLeg);
+    leg.position.set(x + 30 + dx, 6, z - 15 + dz);
+    parent.add(leg);
+  }
+  const towerTop = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 8), matBunker);
+  towerTop.position.set(x + 30, 13.5, z - 15);
+  towerTop.castShadow = SHADOWS_ENABLED;
+  parent.add(towerTop);
+  buildingsList.push({ x: x + 30, z: z - 15, w: 8, d: 8, h: 15, type: 'military' });
+
+  // Helipad
+  const heli = new THREE.Mesh(new THREE.CircleGeometry(8, 16), new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.95 }));
+  heli.rotation.x = -Math.PI / 2;
+  heli.position.set(x - 25, 0.05, z + 5);
+  parent.add(heli);
+  const heliH = new THREE.Mesh(new THREE.PlaneGeometry(5, 0.7), new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.4 }));
+  heliH.rotation.x = -Math.PI / 2;
+  heliH.position.set(x - 25, 0.06, z + 5);
+  parent.add(heliH);
+
+  // Concrete walls / fence around the perimeter
+  const fenceMat = new THREE.MeshStandardMaterial({ color: 0x666666, roughness: 0.95 });
+  const seg = 6;
+  for (let i = -5; i <= 5; i++) {
+    if (i === 0) continue; // gap for entrance
+    const f1 = new THREE.Mesh(new THREE.BoxGeometry(seg, 2.5, 0.3), fenceMat);
+    f1.position.set(x + i * seg, 1.25, z - 25);
+    parent.add(f1);
+    const f2 = new THREE.Mesh(new THREE.BoxGeometry(seg, 2.5, 0.3), fenceMat);
+    f2.position.set(x + i * seg, 1.25, z + 25);
+    parent.add(f2);
+  }
+  for (let i = -4; i <= 4; i++) {
+    const f1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.5, seg), fenceMat);
+    f1.position.set(x - 30, 1.25, z + i * seg);
+    parent.add(f1);
+    const f2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.5, seg), fenceMat);
+    f2.position.set(x + 30, 1.25, z + i * seg);
+    parent.add(f2);
+  }
+
+  addSign(x, 4, z - 24.5, 'MILITARY BASE - RESTRICTED', 0xff4444, parent, 0.6);
+}
+
+function buildGasStation(x, z, parent) {
+  // Canopy
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(12, 0.5, 8), canopyMat);
+  canopy.position.set(x, 5, z);
+  canopy.castShadow = SHADOWS_ENABLED;
+  parent.add(canopy);
+  // Canopy posts
+  const postMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.7, metalness: 0.5 });
+  for (let dx of [-5, 5]) for (let dz of [-3, 3]) {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 5, 8), postMat);
+    post.position.set(x + dx, 2.5, z + dz);
+    parent.add(post);
+  }
+  // Pumps
+  const pumpMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.6 });
+  for (let dx of [-2, 2]) {
+    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.6, 0.6), pumpMat);
+    pump.position.set(x + dx, 0.8, z);
+    pump.castShadow = SHADOWS_ENABLED;
+    parent.add(pump);
+  }
+  // Shop building behind
+  const shop = new THREE.Mesh(new THREE.BoxGeometry(10, 4, 6), new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.7 }));
+  shop.position.set(x, 2, z - 8);
+  shop.castShadow = SHADOWS_ENABLED;
+  parent.add(shop);
+  buildingsList.push({ x, z: z - 8, w: 10, d: 6, h: 4, type: 'shop' });
+  addSign(x, 5.5, z + 4, 'GAS', 0xffd55a, parent);
+}
+
+function buildTaxiStand(x, z, parent) {
+  // Sign post
+  const postMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 6), postMat);
+  post.position.set(x, 2, z);
+  parent.add(post);
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 0.1), new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffd700, emissiveIntensity: 0.5 }));
+  sign.position.set(x, 4, z);
+  parent.add(sign);
+  addSign(x, 4, z + 0.06, 'TAXI', 0x000000, parent, 0.4);
+  // Bench
+  const benchMat = new THREE.MeshStandardMaterial({ color: 0x6b3a1a, roughness: 0.9 });
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.5), benchMat);
+  seat.position.set(x + 1.5, 0.5, z);
+  seat.castShadow = SHADOWS_ENABLED;
+  parent.add(seat);
+  for (let dx of [0.5, 2.5]) {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.5, 0.5), benchMat);
+    leg.position.set(x + dx, 0.25, z);
+    parent.add(leg);
+  }
+}
+
+// Simple text-as-billboard sign — uses canvas texture
+function addSign(x, y, z, text, color, parent, scale = 1) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 96;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(0,0,0,0.8)';
+  ctx.fillRect(0, 0, 512, 96);
+  ctx.font = 'bold 64px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#' + color.toString(16).padStart(6, '0');
+  ctx.fillText(text, 256, 48);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+  const w = (text.length * 0.5 + 1) * scale;
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(w, w * 0.18), mat);
+  sign.position.set(x, y, z);
+  parent.add(sign);
+}
+
+function addStreetLamp(x, z, parent) {
+  const matMetal = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 5, 8), matMetal);
+  post.position.set(x, 2.5, z);
+  post.castShadow = SHADOWS_ENABLED;
+  parent.add(post);
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.1, 0.1), matMetal);
+  arm.position.set(x + 0.75, 5, z);
+  parent.add(arm);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), new THREE.MeshStandardMaterial({ color: 0xffeeaa, emissive: 0xffeeaa, emissiveIntensity: 0.8 }));
+  lamp.position.set(x + 1.5, 5, z);
+  parent.add(lamp);
+}
+
+function addTrafficLight(x, z, ry, parent) {
+  const matMetal = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 5, 8), matMetal);
+  post.position.set(x, 2.5, z);
+  parent.add(post);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2, 0.8), matMetal);
+  head.position.set(x, 5.5, z);
+  parent.add(head);
+  // Lights
+  ['ff2222', 'ffff22', '22ff22'].forEach((col, i) => {
+    const c = parseInt(col, 16);
+    const light = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 6), new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: i === 2 ? 0.8 : 0.1 }));
+    light.position.set(x, 6.3 - i * 0.7, z + 0.45);
+    parent.add(light);
+  });
+}
+
+function addTree(x, z, parent) {
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a2a1a, roughness: 0.9 });
+  const leafMat = new THREE.MeshStandardMaterial({ color: 0x2a6a2a, roughness: 0.85 });
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 3, 8), trunkMat);
+  trunk.position.set(x, 1.5, z);
+  trunk.castShadow = SHADOWS_ENABLED;
+  parent.add(trunk);
+  const leaves = new THREE.Mesh(new THREE.SphereGeometry(2, 10, 8), leafMat);
+  leaves.position.set(x, 4, z);
+  leaves.scale.y = 1.2;
+  leaves.castShadow = SHADOWS_ENABLED;
+  parent.add(leaves);
+}
+
+function addPalm(x, z, parent) {
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6a4a2a, roughness: 0.9 });
+  const leafMat = new THREE.MeshStandardMaterial({ color: 0x4a8a3a, roughness: 0.7 });
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 7, 8), trunkMat);
+  trunk.position.set(x, 3.5, z);
+  trunk.castShadow = SHADOWS_ENABLED;
+  parent.add(trunk);
+  for (let i = 0; i < 6; i++) {
+    const leaf = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.5), leafMat);
+    leaf.position.set(x, 6.8, z);
+    leaf.rotation.y = (i / 6) * Math.PI * 2;
+    leaf.rotation.z = -0.3;
+    leaf.position.x += Math.cos(leaf.rotation.y) * 1.3;
+    leaf.position.z += Math.sin(leaf.rotation.y) * 1.3;
+    parent.add(leaf);
+  }
+}
+
+function addBush(x, z, parent) {
+  const m = new THREE.MeshStandardMaterial({ color: 0x3a7a2a, roughness: 0.9 });
+  const b = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 6), m);
+  b.position.set(x, 0.6, z);
+  b.scale.y = 0.8;
+  b.castShadow = SHADOWS_ENABLED;
+  parent.add(b);
+}
+
+function addBench(x, z, ry, parent) {
+  const wood = new THREE.MeshStandardMaterial({ color: 0x6b3a1a, roughness: 0.9 });
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.1, 0.6), wood);
+  seat.position.set(x, 0.5, z);
+  seat.rotation.y = ry;
+  seat.castShadow = SHADOWS_ENABLED;
+  parent.add(seat);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.8, 0.1), wood);
+  back.position.set(x, 0.9, z);
+  back.rotation.y = ry;
+  back.position.z += Math.cos(ry) * (-0.3);
+  back.position.x += Math.sin(ry) * (-0.3);
+  parent.add(back);
+}
+
+function addTrashCan(x, z, parent) {
+  const m = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.85 });
+  const can = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.3, 1, 10), m);
+  can.position.set(x, 0.5, z);
+  can.castShadow = SHADOWS_ENABLED;
+  parent.add(can);
+}
+
+function addFireHydrant(x, z, parent) {
+  const m = new THREE.MeshStandardMaterial({ color: 0xc83a2a, roughness: 0.7 });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.9, 8), m);
+  body.position.set(x, 0.45, z);
+  body.castShadow = SHADOWS_ENABLED;
+  parent.add(body);
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), m);
+  cap.position.set(x, 1.0, z);
+  parent.add(cap);
+}
+
+function buildProceduralCity() {
+  cityObj = new THREE.Group();
+  scene.add(cityObj);
+
+  setProgress(8, 'BUILDING ROADS...');
+
+  // === GROUND (asphalt outside city, grass in suburbs) ===
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x4a6a3a, roughness: 0.95 });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = SHADOWS_ENABLED;
+  cityObj.add(ground);
+
+  // === ROAD GRID ===
+  const ROAD_COLOR = 0x1c1c20;
+  const roadMat = new THREE.MeshStandardMaterial({ color: ROAD_COLOR, roughness: 1.0 });
+  const lineMat = new THREE.MeshStandardMaterial({ color: 0xffd55a, emissive: 0xffd55a, emissiveIntensity: 0.15 });
+  const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xa0a0a0, roughness: 0.95 });
+
+  const GRID = 5;
+  const BLOCK = 60;
+  const ROAD_W = 14;
+  const TOTAL = GRID * (BLOCK + ROAD_W);
+  const HALF = TOTAL / 2;
+
+  // Horizontal roads
+  for (let i = 0; i <= GRID; i++) {
+    const z = -HALF + i * (BLOCK + ROAD_W);
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(TOTAL, ROAD_W), roadMat);
+    road.rotation.x = -Math.PI / 2;
+    road.position.set(0, 0.02, z);
+    road.receiveShadow = SHADOWS_ENABLED;
+    cityObj.add(road);
+    // Dashed center line
+    for (let j = 0; j < 30; j++) {
+      const dash = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.25), lineMat);
+      dash.rotation.x = -Math.PI / 2;
+      dash.position.set(-HALF + j * (TOTAL / 30) + 1.5, 0.04, z);
+      cityObj.add(dash);
+    }
+  }
+  // Vertical roads
+  for (let i = 0; i <= GRID; i++) {
+    const x = -HALF + i * (BLOCK + ROAD_W);
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(ROAD_W, TOTAL), roadMat);
+    road.rotation.x = -Math.PI / 2;
+    road.position.set(x, 0.02, 0);
+    road.receiveShadow = SHADOWS_ENABLED;
+    cityObj.add(road);
+    for (let j = 0; j < 30; j++) {
+      const dash = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 2.5), lineMat);
+      dash.rotation.x = -Math.PI / 2;
+      dash.position.set(x, 0.04, -HALF + j * (TOTAL / 30) + 1.5);
+      cityObj.add(dash);
+    }
+  }
+
+  // Sidewalks around each block
+  for (let bx = 0; bx < GRID; bx++) {
+    for (let bz = 0; bz < GRID; bz++) {
+      const cx = -HALF + ROAD_W/2 + bx * (BLOCK + ROAD_W) + BLOCK/2;
+      const cz = -HALF + ROAD_W/2 + bz * (BLOCK + ROAD_W) + BLOCK/2;
+      const sw = new THREE.Mesh(new THREE.PlaneGeometry(BLOCK, BLOCK), sidewalkMat);
+      sw.rotation.x = -Math.PI / 2;
+      sw.position.set(cx, 0.01, cz);
+      sw.receiveShadow = SHADOWS_ENABLED;
+      cityObj.add(sw);
+    }
+  }
+
+  setProgress(18, 'PLACING LANDMARKS...');
+
+  // ============================================================
+  // DISTRICT LAYOUT — assign each block to a category
+  // GRID is 5x5 = 25 blocks. Distribute landmarks intentionally.
+  // ============================================================
+  function blockCenter(bx, bz) {
+    return {
+      x: -HALF + ROAD_W/2 + bx * (BLOCK + ROAD_W) + BLOCK/2,
+      z: -HALF + ROAD_W/2 + bz * (BLOCK + ROAD_W) + BLOCK/2
+    };
+  }
+
+  // === DOWNTOWN (center) — Skyscrapers ===
+  for (let bx = 1; bx <= 3; bx++) {
+    for (let bz = 1; bz <= 3; bz++) {
+      if (bx === 2 && bz === 2) continue; // reserved for city hall
+      const c = blockCenter(bx, bz);
+      const numBldgs = 1 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < numBldgs; i++) {
+        const w = 12 + Math.random() * 14;
+        const d = 12 + Math.random() * 14;
+        const h = 25 + Math.random() * 50;
+        const ox = (Math.random() - 0.5) * (BLOCK - w - 4);
+        const oz = (Math.random() - 0.5) * (BLOCK - d - 4);
+        const colors = [0x6b7f8f, 0x8a7d6c, 0x5a6878, 0x9a8a7b, 0x4a5868, 0x88807a, 0x7a8a9a];
+        buildSkyscraper(c.x + ox, c.z + oz, w, d, h, colors[Math.floor(Math.random() * colors.length)], cityObj);
+      }
+    }
+  }
+
+  // === CITY HALL at center block ===
+  {
+    const c = blockCenter(2, 2);
+    buildCityHall(c.x, c.z, cityObj);
+  }
+
+  // === PUBLIC SERVICES — place around downtown ===
+  {
+    const c = blockCenter(0, 2);
+    buildHospital(c.x, c.z, cityObj);
+  }
+  {
+    const c = blockCenter(4, 2);
+    buildPoliceStation(c.x, c.z, cityObj);
+  }
+  {
+    const c = blockCenter(2, 0);
+    buildFireStation(c.x, c.z, cityObj);
+  }
+  {
+    const c = blockCenter(2, 4);
+    buildMechanicShop(c.x - 10, c.z, cityObj);
+    buildGasStation(c.x + 12, c.z + 5, cityObj);
+  }
+
+  // === HOTELS in good spots ===
+  {
+    const c = blockCenter(0, 1);
+    buildHotel(c.x, c.z, cityObj);
+  }
+  {
+    const c = blockCenter(4, 3);
+    buildHotel(c.x, c.z, cityObj);
+  }
+
+  // === APARTMENTS — corners and edges ===
+  const aptBlocks = [[0, 0], [4, 0], [0, 4], [4, 4], [1, 0], [3, 0], [0, 3], [3, 4]];
+  aptBlocks.forEach(([bx, bz]) => {
+    const c = blockCenter(bx, bz);
+    const cnt = 2 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < cnt; i++) {
+      const ox = (i - (cnt-1)/2) * 18;
+      buildApartment(c.x + ox, c.z + (Math.random() - 0.5) * 10, cityObj);
+    }
+  });
+
+  // === SUBURBS — Houses and Mansions on the outskirts ===
+  // Outside the main grid, lay out a suburb area
+  setProgress(40, 'BUILDING SUBURBS...');
+  const suburbStart = HALF + 50;
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 6; col++) {
+      const x = suburbStart + col * 22;
+      const z = -HALF + 30 + row * 30;
+      if (row === 0 && col % 2 === 0) {
+        buildMansion(x, z, cityObj);
+      } else {
+        buildHouse(x, z, 8 + Math.random() * 4, 8 + Math.random() * 3,
+          [0xddccaa, 0xc8b8a0, 0xb8a890, 0xeed8b8, 0xa8b8c8][Math.floor(Math.random() * 5)],
+          cityObj, Math.random() > 0.5);
+      }
+    }
+  }
+
+  // === MILITARY BASE — far from city, in "the bush" ===
+  setProgress(55, 'BUILDING MILITARY BASE...');
+  const militaryX = -HALF - 200;
+  const militaryZ = 0;
+  // Add some forest around it
+  for (let i = 0; i < 80; i++) {
+    const tx = militaryX + (Math.random() - 0.5) * 250;
+    const tz = militaryZ + (Math.random() - 0.5) * 250;
+    if (Math.abs(tx - militaryX) < 40 && Math.abs(tz - militaryZ) < 35) continue; // keep base clear
+    addTree(tx, tz, cityObj);
+  }
+  // Dirt road from city to base
+  const dirtMat = new THREE.MeshStandardMaterial({ color: 0x8a7050, roughness: 1 });
+  const dirtRoad = new THREE.Mesh(new THREE.PlaneGeometry(220, 10), dirtMat);
+  dirtRoad.rotation.x = -Math.PI / 2;
+  dirtRoad.position.set(militaryX + 110, 0.03, militaryZ);
+  cityObj.add(dirtRoad);
+  buildMilitaryBase(militaryX, militaryZ, cityObj);
+
+  // === TAXI STAND, TRAFFIC LIGHTS, STREET LAMPS ===
+  setProgress(70, 'PLACING PROPS...');
+
+  // Taxi stand near hotel
+  {
+    const c = blockCenter(0, 1);
+    buildTaxiStand(c.x + 14, c.z - 14, cityObj);
+  }
+  {
+    const c = blockCenter(4, 3);
+    buildTaxiStand(c.x - 14, c.z + 14, cityObj);
+  }
+
+  // Street lamps along all roads
+  for (let i = 0; i <= GRID; i++) {
+    const z = -HALF + i * (BLOCK + ROAD_W);
+    for (let j = -HALF + 10; j <= HALF; j += 18) {
+      addStreetLamp(j, z + ROAD_W/2 + 1.5, cityObj);
+      addStreetLamp(j, z - ROAD_W/2 - 1.5, cityObj);
+    }
+  }
+
+  // Traffic lights at major intersections
+  for (let i = 1; i < GRID; i++) {
+    for (let j = 1; j < GRID; j++) {
+      const x = -HALF + i * (BLOCK + ROAD_W);
+      const z = -HALF + j * (BLOCK + ROAD_W);
+      addTrafficLight(x + ROAD_W/2 + 1, z + ROAD_W/2 + 1, 0, cityObj);
+    }
+  }
+
+  // Trees, bushes, benches scattered around blocks
+  for (let bx = 0; bx < GRID; bx++) {
+    for (let bz = 0; bz < GRID; bz++) {
+      const c = blockCenter(bx, bz);
+      // Skip downtown (too dense)
+      const isDowntown = bx >= 1 && bx <= 3 && bz >= 1 && bz <= 3;
+      const numTrees = isDowntown ? 1 : 4;
+      for (let i = 0; i < numTrees; i++) {
+        const tx = c.x + (Math.random() - 0.5) * BLOCK * 0.9;
+        const tz = c.z + (Math.random() - 0.5) * BLOCK * 0.9;
+        if (Math.random() > 0.4) addTree(tx, tz, cityObj);
+        else addPalm(tx, tz, cityObj);
+      }
+    }
+  }
+
+  // Benches and trash cans on sidewalks near road edges
+  for (let i = 0; i < 30; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const r = 30 + Math.random() * (HALF - 30);
+    const x = Math.cos(angle) * r;
+    const z = Math.sin(angle) * r;
+    if (Math.random() > 0.5) addBench(x, z, Math.random() * Math.PI * 2, cityObj);
+    else addTrashCan(x, z, cityObj);
+  }
+
+  // Fire hydrants near intersections
+  for (let i = 1; i < GRID; i++) {
+    for (let j = 1; j < GRID; j++) {
+      const x = -HALF + i * (BLOCK + ROAD_W);
+      const z = -HALF + j * (BLOCK + ROAD_W);
+      addFireHydrant(x + ROAD_W/2 + 2, z - ROAD_W/2 - 2, cityObj);
+    }
+  }
+
+  // Bushes for decoration
+  for (let i = 0; i < 60; i++) {
+    const x = (Math.random() - 0.5) * TOTAL * 1.2;
+    const z = (Math.random() - 0.5) * TOTAL * 1.2;
+    addBush(x, z, cityObj);
+  }
+
+  setProgress(80, 'CITY READY!');
+  window.STATUS(`City built: ${buildingsList.length} buildings, ${TOTAL.toFixed(0)}m wide`);
+}
+
+// ============================================================
 // LOAD REAL ASSETS
 // ============================================================
 async function loadAll() {
   try {
-    // CITY — scale up to 400m so a 1.8m character looks right
-    setProgress(5, 'LOADING CITY...');
-    window.STATUS('Downloading city...');
-    const cityGLTF = await loadGLB('./assets/city.glb', e => {
-      if (e.lengthComputable) {
-        const pct = 5 + (e.loaded / e.total) * 30;
-        setProgress(pct, 'LOADING CITY...');
-        window.STATUS(`City: ${(e.loaded/1024/1024).toFixed(1)} / ${(e.total/1024/1024).toFixed(1)}MB`);
-      }
-    });
-    cityObj = cityGLTF.scene;
-
-    const rawBox = new THREE.Box3().setFromObject(cityObj);
-    const rawSize = rawBox.getSize(new THREE.Vector3());
-    const rawDim = Math.max(rawSize.x, rawSize.z);
-    let citySc = 1;
-    if (rawDim > 0) {
-      citySc = 400 / rawDim;
-      if (citySc < 0.5) citySc = 1;
-      if (citySc > 50) citySc = 50;
-    }
-    cityObj.scale.setScalar(citySc);
-    window.STATUS(`City ${rawDim.toFixed(0)}→${(rawDim*citySc).toFixed(0)}m (×${citySc.toFixed(2)})`);
-
-    cityObj.traverse(o => {
-      if (o.isMesh) {
-        o.castShadow = false;
-        o.receiveShadow = SHADOWS_ENABLED;
-        if (o.material) {
-          const mats = Array.isArray(o.material) ? o.material : [o.material];
-          mats.forEach(m => { m.side = THREE.FrontSide; });
-        }
-      }
-    });
-    scene.add(cityObj);
-
-    const cityBox = new THREE.Box3().setFromObject(cityObj);
-    const cityCenter = cityBox.getCenter(new THREE.Vector3());
-    cityObj.position.x -= cityCenter.x;
-    cityObj.position.z -= cityCenter.z;
-    cityObj.position.y -= cityBox.min.y;
-    cityObj.updateMatrixWorld(true);
-
-    // Fallback ground
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(3000, 3000),
-      new THREE.MeshStandardMaterial({ color: 0x3a3a42, roughness: 0.95 })
-    );
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -1;
-    ground.receiveShadow = SHADOWS_ENABLED;
-    scene.add(ground);
+    // Build the procedural city instead of loading GLB
+    setProgress(5, 'BUILDING LUXCITY...');
+    window.STATUS('Generating city...');
+    buildProceduralCity();
 
     // CHARACTER — always scale to exactly 1.8m
     setProgress(40, 'LOADING CHARACTER...');
@@ -505,9 +1340,10 @@ async function loadAll() {
       }
     });
 
-    // Spawn: lift player so feet are at y=0 (finalMinY is negative if origin is above feet)
+    // Spawn on a road just south of City Hall (which is at center)
+    // The road south of the center block is at z = -BLOCK/2 - ROAD_W/2 = -37
     const spawnLift = -finalMinY;
-    player.position.set(0, spawnLift, 0);
+    player.position.set(0, spawnLift, 37);
     scene.add(player);
     mixer = new THREE.AnimationMixer(player);
 
@@ -550,32 +1386,40 @@ async function loadAll() {
     window.STATUS(`Car raw=${rawCarLen.toFixed(2)} × ${carSc.toFixed(2)} = ${(cBox2.max.z-cBox2.min.z).toFixed(2)}m`);
     baseCar.traverse(o => { if (o.isMesh) { o.castShadow = SHADOWS_ENABLED; o.receiveShadow = false; } });
 
-    // Smart car spawn: search a big radius, keep ONLY spots that are on road (ground y very close to 0)
-    // AND well-spaced from each other AND far from player spawn
+    // Cars spawn on roads around player, on the street network
     const carSpots = [];
     const MIN_DIST_FROM_PLAYER = 12;
-    const MIN_DIST_BETWEEN_CARS = 10;
-    const STREET_MAX_Y = 1.5; // Road ground should be ~0. Higher than 1.5m means rooftop.
+    const MIN_DIST_BETWEEN_CARS = 12;
+    const STREET_MAX_Y = 1.5;
+    const playerX = 0, playerZ = 37; // matches our spawn
 
-    // Build a grid of candidate spots
-    const allCandidates = [];
-    for (let r = 15; r <= 60; r += 5) {
-      for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
-        allCandidates.push({ x: Math.cos(a) * r, z: Math.sin(a) * r });
+    // Place cars on the road grid (roads run every 74m)
+    const ROAD_SPACING = 74; // BLOCK + ROAD_W
+    const ROAD_HALF = 5 * ROAD_SPACING / 2;
+    const candidates = [];
+    // Sample positions along all roads
+    for (let i = 0; i <= 5; i++) {
+      const roadZ = -ROAD_HALF + i * ROAD_SPACING;
+      for (let x = -ROAD_HALF + 20; x <= ROAD_HALF; x += 18) {
+        candidates.push({ x: x, z: roadZ + (Math.random() - 0.5) * 4 });
+      }
+      const roadX = -ROAD_HALF + i * ROAD_SPACING;
+      for (let z = -ROAD_HALF + 20; z <= ROAD_HALF; z += 18) {
+        candidates.push({ x: roadX + (Math.random() - 0.5) * 4, z: z });
       }
     }
-    // Shuffle so cars aren't always in the same places
-    for (let i = allCandidates.length - 1; i > 0; i--) {
+    // Shuffle
+    for (let i = candidates.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [allCandidates[i], allCandidates[j]] = [allCandidates[j], allCandidates[i]];
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
     }
 
-    for (const c of allCandidates) {
-      if (carSpots.length >= 4) break;
-      if (Math.hypot(c.x, c.z) < MIN_DIST_FROM_PLAYER) continue;
+    const TARGET_CARS = 10;
+    for (const c of candidates) {
+      if (carSpots.length >= TARGET_CARS) break;
+      if (Math.hypot(c.x - playerX, c.z - playerZ) < MIN_DIST_FROM_PLAYER) continue;
       const gY = findGroundY(c.x, c.z, 500);
-      if (gY > STREET_MAX_Y || gY < -5) continue; // not on a road
-      // Check spacing from other cars
+      if (gY > STREET_MAX_Y || gY < -5) continue;
       let tooClose = false;
       for (const s of carSpots) {
         if (Math.hypot(c.x - s.x, c.z - s.z) < MIN_DIST_BETWEEN_CARS) { tooClose = true; break; }
@@ -584,14 +1428,13 @@ async function loadAll() {
       carSpots.push({ x: c.x, z: c.z, y: gY, rotY: Math.random() * Math.PI * 2 });
     }
 
-    // Fallback: if we couldn't find enough road spots, put them on the flat fallback ground far from player
-    while (carSpots.length < 3) {
+    while (carSpots.length < 4) {
       const a = Math.random() * Math.PI * 2;
-      const r = 20 + Math.random() * 20;
-      carSpots.push({ x: Math.cos(a) * r, z: Math.sin(a) * r, y: 0, rotY: Math.random() * Math.PI * 2 });
+      const r = 25 + Math.random() * 30;
+      carSpots.push({ x: playerX + Math.cos(a) * r, z: playerZ + Math.sin(a) * r, y: 0, rotY: Math.random() * Math.PI * 2 });
     }
 
-    window.STATUS(`Spawned ${carSpots.length} cars at ground y=${carSpots.map(s => s.y.toFixed(1)).join(',')}`);
+    window.STATUS(`Spawned ${carSpots.length} cars`);
 
     carSpots.forEach(s => {
       const clone = baseCar.clone(true);
@@ -828,11 +1671,40 @@ function drawMinimap() {
   if (!player) return;
   const s = 90;
   miniCtx.clearRect(0, 0, s, s);
-  miniCtx.fillStyle = 'rgba(20,20,30,0.4)';
+  miniCtx.fillStyle = 'rgba(20,20,30,0.5)';
   miniCtx.fillRect(0, 0, s, s);
-  const scale = 0.25, cx = s/2, cy = s/2;
+  const scale = 0.06, cx = s/2, cy = s/2; // smaller scale so we see more
   const px = player.position.x, pz = player.position.z;
 
+  // Buildings (color-coded by type)
+  const colors = {
+    'building': 'rgba(120,130,145,0.7)',
+    'house': 'rgba(150,130,100,0.8)',
+    'apartment': 'rgba(130,120,100,0.8)',
+    'mansion': 'rgba(220,200,180,0.9)',
+    'hotel': 'rgba(220,150,200,0.9)',
+    'hospital': '#ff4444',
+    'police': '#4488ff',
+    'fire': '#ff8822',
+    'mechanic': '#aaaaaa',
+    'cityhall': '#ffd700',
+    'military': '#88aa66',
+    'shop': 'rgba(180,180,180,0.7)',
+  };
+  for (const b of buildingsList) {
+    const dx = (b.x - px) * scale;
+    const dz = (b.z - pz) * scale;
+    const rx = Math.cos(-cameraYaw) * dx - Math.sin(-cameraYaw) * dz;
+    const rz = Math.sin(-cameraYaw) * dx + Math.cos(-cameraYaw) * dz;
+    const mx = cx + rx, my = cy + rz;
+    if (mx > 0 && mx < s && my > 0 && my < s) {
+      miniCtx.fillStyle = colors[b.type] || colors.building;
+      const size = (b.type === 'hospital' || b.type === 'police' || b.type === 'fire' || b.type === 'cityhall') ? 3 : 1.8;
+      miniCtx.fillRect(mx - size/2, my - size/2, size, size);
+    }
+  }
+
+  // Cars
   miniCtx.fillStyle = '#4dd4ff';
   for (const v of vehicles) {
     const dx = (v.position.x - px) * scale;
@@ -841,9 +1713,11 @@ function drawMinimap() {
     const rz = Math.sin(-cameraYaw) * dx + Math.cos(-cameraYaw) * dz;
     const mx = cx + rx, my = cy + rz;
     if (mx > 2 && mx < s - 2 && my > 2 && my < s - 2) {
-      miniCtx.beginPath(); miniCtx.arc(mx, my, 2.5, 0, Math.PI * 2); miniCtx.fill();
+      miniCtx.beginPath(); miniCtx.arc(mx, my, 2, 0, Math.PI * 2); miniCtx.fill();
     }
   }
+
+  // Player arrow
   miniCtx.fillStyle = '#ffb300';
   miniCtx.beginPath();
   miniCtx.moveTo(cx, cy - 5); miniCtx.lineTo(cx - 3, cy + 3); miniCtx.lineTo(cx + 3, cy + 3);
