@@ -245,6 +245,190 @@
   .admin-tp-loc{font-size:9px;color:rgba(255,255,255,.3);margin-top:2px}
 
   .admin-hint{font-family:'VT323',monospace;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-align:center;padding:8px}
+
+  /* === CHARACTER CREATION === */
+  .char-create{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a12 0%,#1a1025 100%);z-index:150;display:none;flex-direction:column;align-items:center;overflow-y:auto;padding:16px}
+  .char-create.open{display:flex}
+  .cc-title{font-family:'VT323',monospace;font-size:24px;color:#ffb300;letter-spacing:6px;margin-bottom:12px;text-shadow:0 0 15px rgba(255,179,0,.4)}
+  .cc-section{width:100%;max-width:400px;margin-bottom:10px}
+  .cc-label{font-family:'VT323',monospace;font-size:12px;color:rgba(255,179,0,.7);letter-spacing:3px;margin-bottom:6px}
+  .cc-name{width:100%;padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,179,0,.3);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;outline:none}
+  .cc-name:focus{border-color:#ffb300}
+  .cc-row{display:flex;gap:6px;flex-wrap:wrap}
+  .cc-swatch{width:36px;height:36px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:border-color .15s,transform .1s}
+  .cc-swatch.selected{border-color:#fff;transform:scale(1.15);box-shadow:0 0 8px rgba(255,255,255,.4)}
+  .cc-gender-btn{flex:1;padding:10px;font-family:'VT323',monospace;font-size:14px;letter-spacing:3px;border:1px solid rgba(255,179,0,.3);border-radius:3px;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;text-align:center}
+  .cc-gender-btn.selected{background:rgba(255,179,0,.15);color:#ffb300;border-color:#ffb300}
+  .cc-hair{width:48px;height:48px;border-radius:6px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:border-color .15s}
+  .cc-hair.selected{border-color:#ffb300;background:rgba(255,179,0,.1)}
+  .cc-backstory{flex:1;min-width:100px;padding:10px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:rgba(255,255,255,.03);cursor:pointer;text-align:center;transition:border-color .15s}
+  .cc-backstory.selected{border-color:#ffb300;background:rgba(255,179,0,.08)}
+  .cc-backstory-name{font-family:'VT323',monospace;font-size:14px;color:#fff;letter-spacing:2px}
+  .cc-backstory-cash{font-family:'VT323',monospace;font-size:11px;color:#ffb300;margin-top:2px}
+  .cc-backstory-desc{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px}
+  .cc-enter{margin-top:16px;background:linear-gradient(135deg,#ffb300,#ff6a00);border:none;color:#0a0a12;padding:12px 40px;font-family:'VT323',monospace;font-size:20px;letter-spacing:4px;cursor:pointer;box-shadow:0 4px 20px rgba(255,179,0,.5);border-radius:2px;font-weight:700}
+  .cc-enter:active{transform:scale(.96)}
+  .cc-err{font-family:'VT323',monospace;font-size:11px;color:#ff3c5f;letter-spacing:1px;margin-top:4px;min-height:16px}
+
+  /* === WASTED SCREEN === */
+  .wasted{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(100,0,0,.7);backdrop-filter:blur(4px)}
+  .wasted.open{display:flex}
+  .wasted-text{font-family:'VT323',monospace;font-size:64px;color:#ff2222;letter-spacing:12px;text-shadow:0 0 30px rgba(255,0,0,.8),0 0 60px rgba(255,0,0,.4)}
+  .wasted-sub{font-family:'VT323',monospace;font-size:14px;color:rgba(255,255,255,.6);letter-spacing:3px;margin-top:12px}
+  .fade-overlay{position:fixed;inset:0;background:#000;z-index:79;pointer-events:none;opacity:0;transition:opacity .5s}
+
+  /* === WANTED STARS === */
+  .wanted-stars{display:flex;gap:3px;margin-top:4px}
+  .wanted-star{font-size:14px;color:rgba(255,255,255,.15);text-shadow:none;transition:color .3s,text-shadow .3s}
+  .wanted-star.active{color:#ffb300;text-shadow:0 0 6px rgba(255,179,0,.8)}
+
+  /* === STAMINA BAR === */
+  .stamina-bar .bar-fill{background:linear-gradient(90deg,#22cc66,#44ff88)}
+
+  /* === GAME CLOCK === */
+  .game-clock{font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:2px;text-align:right;margin-top:4px}
+
+  /* === MAIN MENU === */
+  .main-menu{position:fixed;inset:0;z-index:65;display:none;background:rgba(5,5,12,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .main-menu.open{display:flex;flex-direction:column}
+  .mm-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,179,0,.2);flex-shrink:0}
+  .mm-title{font-family:'VT323',monospace;font-size:18px;letter-spacing:4px;color:#ffb300;text-shadow:0 0 10px rgba(255,179,0,.3)}
+  .mm-close{width:30px;height:30px;border:1px solid rgba(255,179,0,.4);border-radius:50%;background:transparent;color:#ffb300;font-family:'VT323',monospace;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .mm-body{flex:1;overflow-y:auto;padding:12px}
+  .mm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:400px;margin:0 auto}
+  .mm-tile{padding:16px 8px;border:1px solid rgba(255,179,0,.2);border-radius:6px;background:rgba(255,179,0,.03);cursor:pointer;text-align:center;transition:background .15s,border-color .15s}
+  .mm-tile:active{background:rgba(255,179,0,.1);border-color:rgba(255,179,0,.5)}
+  .mm-tile-icon{font-size:28px;margin-bottom:6px}
+  .mm-tile-label{font-family:'VT323',monospace;font-size:12px;color:#ffb300;letter-spacing:2px}
+  .mm-sub{position:fixed;inset:0;z-index:66;display:none;background:rgba(5,5,12,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .mm-sub.open{display:flex;flex-direction:column}
+  .mm-sub-header{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,179,0,.15);flex-shrink:0}
+  .mm-back{width:28px;height:28px;border:1px solid rgba(255,179,0,.3);border-radius:50%;background:transparent;color:#ffb300;font-family:'VT323',monospace;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .mm-sub-title{font-family:'VT323',monospace;font-size:15px;letter-spacing:3px;color:#ffb300}
+  .mm-sub-body{flex:1;overflow-y:auto;padding:12px}
+
+  /* === SETTINGS === */
+  .setting-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+  .setting-label{font-family:'VT323',monospace;font-size:12px;color:rgba(255,255,255,.6);letter-spacing:2px}
+  .setting-slider{width:120px;accent-color:#ffb300}
+
+  /* === PHONE === */
+  .phone-ui{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:260px;height:420px;background:rgba(10,10,18,.97);border:2px solid rgba(255,179,0,.3);border-radius:16px;z-index:68;display:none;flex-direction:column;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.8)}
+  .phone-ui.open{display:flex}
+  .phone-status{display:flex;justify-content:space-between;padding:6px 12px;font-family:'VT323',monospace;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .phone-screen{flex:1;overflow-y:auto;padding:10px}
+  .phone-home{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .phone-app{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 4px;border-radius:8px}
+  .phone-app:active{background:rgba(255,179,0,.1)}
+  .phone-app-icon{font-size:28px}
+  .phone-app-label{font-family:'VT323',monospace;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px}
+  .phone-back{padding:6px 12px;border-top:1px solid rgba(255,255,255,.06);text-align:center}
+  .phone-back-btn{font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2px;background:none;border:none;cursor:pointer;padding:4px 16px}
+  .phone-input{width:100%;padding:6px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,179,0,.2);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:13px;outline:none;margin:4px 0}
+  .phone-btn{padding:6px 12px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;border:1px solid rgba(255,179,0,.3);border-radius:3px;background:rgba(255,179,0,.08);color:#ffb300;cursor:pointer}
+
+  /* === EMOTE WHEEL === */
+  .emote-wheel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;z-index:67;display:none}
+  .emote-wheel.open{display:block}
+  .emote-item{position:absolute;width:48px;height:48px;border-radius:50%;background:rgba(10,10,18,.85);border:1px solid rgba(255,179,0,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;font-size:20px;transition:transform .15s,background .15s}
+  .emote-item:active,.emote-item.hover{transform:scale(1.2);background:rgba(255,179,0,.15);border-color:#ffb300}
+  .emote-item-label{font-family:'VT323',monospace;font-size:7px;color:rgba(255,255,255,.5);letter-spacing:1px;margin-top:1px}
+
+  /* === INVENTORY === */
+  .inv-panel{position:fixed;inset:0;z-index:66;display:none;background:rgba(5,5,12,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .inv-panel.open{display:flex;flex-direction:column}
+  .inv-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,179,0,.2)}
+  .inv-title{font-family:'VT323',monospace;font-size:16px;letter-spacing:3px;color:#ffb300}
+  .inv-close{width:28px;height:28px;border:1px solid rgba(255,179,0,.3);border-radius:50%;background:transparent;color:#ffb300;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace}
+  .inv-tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .inv-tab{flex:1;padding:8px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.4);text-align:center;cursor:pointer;border-bottom:2px solid transparent}
+  .inv-tab.active{color:#ffb300;border-bottom-color:#ffb300}
+  .inv-grid{flex:1;overflow-y:auto;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-content:start}
+  .inv-item{padding:10px 4px;border:1px solid rgba(255,255,255,.08);border-radius:4px;background:rgba(255,255,255,.02);text-align:center;cursor:pointer;transition:border-color .15s}
+  .inv-item:active{border-color:rgba(255,179,0,.4);background:rgba(255,179,0,.05)}
+  .inv-item-icon{font-size:24px}
+  .inv-item-name{font-family:'VT323',monospace;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;margin-top:2px}
+  .inv-item-qty{font-family:'VT323',monospace;font-size:9px;color:#ffb300}
+  .inv-item.equipped{border-color:rgba(255,179,0,.5);background:rgba(255,179,0,.06)}
+
+  /* === SHOP === */
+  .shop-panel{position:fixed;inset:0;z-index:66;display:none;background:rgba(5,5,12,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .shop-panel.open{display:flex;flex-direction:column}
+  .shop-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,179,0,.2)}
+  .shop-title{font-family:'VT323',monospace;font-size:16px;letter-spacing:3px;color:#ffb300}
+  .shop-close{width:28px;height:28px;border:1px solid rgba(255,179,0,.3);border-radius:50%;background:transparent;color:#ffb300;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace}
+  .shop-list{flex:1;overflow-y:auto;padding:10px}
+  .shop-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:4px;margin-bottom:6px}
+  .shop-item-info{display:flex;align-items:center;gap:10px}
+  .shop-item-icon{font-size:24px}
+  .shop-item-name{font-family:'VT323',monospace;font-size:13px;color:#fff;letter-spacing:1px}
+  .shop-item-desc{font-size:10px;color:rgba(255,255,255,.4)}
+  .shop-item-price{font-family:'VT323',monospace;font-size:13px;color:#ffb300;letter-spacing:1px}
+  .shop-buy{padding:5px 12px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;border:1px solid rgba(255,179,0,.3);border-radius:3px;background:rgba(255,179,0,.08);color:#ffb300;cursor:pointer}
+  .shop-buy:active{background:rgba(255,179,0,.2)}
+  .shop-buy.cant{opacity:.4;pointer-events:none}
+
+  /* === ATM === */
+  .atm-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(300px,85vw);background:rgba(10,10,18,.97);border:1px solid rgba(77,212,255,.3);border-radius:6px;z-index:66;display:none;flex-direction:column;padding:16px}
+  .atm-panel.open{display:flex}
+  .atm-title{font-family:'VT323',monospace;font-size:16px;color:#4dd4ff;letter-spacing:3px;text-align:center;margin-bottom:10px}
+  .atm-bal{font-family:'VT323',monospace;font-size:12px;color:rgba(255,255,255,.5);letter-spacing:1px;text-align:center;margin-bottom:10px}
+  .atm-row{display:flex;gap:6px;margin-bottom:8px}
+  .atm-input{flex:1;padding:6px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(77,212,255,.2);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:14px;outline:none}
+  .atm-btn{padding:6px 14px;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;border:1px solid rgba(77,212,255,.3);border-radius:3px;background:rgba(77,212,255,.08);color:#4dd4ff;cursor:pointer}
+  .atm-close-btn{margin-top:6px;padding:6px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;border:1px solid rgba(255,255,255,.15);border-radius:3px;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;text-align:center}
+
+  /* === DAILY REWARD === */
+  .daily-reward{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.8)}
+  .daily-reward.open{display:flex}
+  .dr-box{width:min(340px,90vw);background:rgba(10,10,18,.97);border:1px solid rgba(255,179,0,.3);border-radius:8px;padding:16px;text-align:center}
+  .dr-title{font-family:'VT323',monospace;font-size:18px;color:#ffb300;letter-spacing:4px;margin-bottom:12px}
+  .dr-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+  .dr-day{padding:8px 2px;border:1px solid rgba(255,255,255,.08);border-radius:4px;text-align:center}
+  .dr-day.today{border-color:#ffb300;background:rgba(255,179,0,.1)}
+  .dr-day.claimed{opacity:.4}
+  .dr-day-num{font-family:'VT323',monospace;font-size:9px;color:rgba(255,255,255,.4)}
+  .dr-day-amt{font-family:'VT323',monospace;font-size:12px;color:#ffb300}
+  .dr-claim{padding:10px 30px;background:linear-gradient(135deg,#ffb300,#ff6a00);border:none;color:#0a0a12;font-family:'VT323',monospace;font-size:16px;letter-spacing:3px;cursor:pointer;border-radius:3px}
+  .dr-claim:active{transform:scale(.96)}
+  .dr-claim.done{opacity:.4;pointer-events:none}
+
+  /* === MISSION SYSTEM === */
+  .mission-tracker{display:none;background:rgba(10,10,18,.65);border:1px solid rgba(255,215,0,.3);border-radius:3px;padding:4px 8px;margin-top:4px;max-width:160px}
+  .mission-tracker.active{display:block}
+  .mission-tracker-title{font-family:'VT323',monospace;font-size:10px;color:#ffd700;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mission-tracker-obj{font-family:'VT323',monospace;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px}
+  .mission-briefing{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);width:min(320px,85vw);background:rgba(10,10,18,.95);border:1px solid rgba(255,215,0,.4);border-radius:6px;padding:14px;z-index:66;display:none;text-align:center}
+  .mission-briefing.open{display:block}
+  .mb-title{font-family:'VT323',monospace;font-size:16px;color:#ffd700;letter-spacing:3px;margin-bottom:6px}
+  .mb-desc{font-family:'Rajdhani',sans-serif;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px}
+  .mb-reward{font-family:'VT323',monospace;font-size:11px;color:#ffb300;margin-bottom:10px}
+  .mb-btns{display:flex;gap:8px;justify-content:center}
+  .mb-btn{padding:6px 18px;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;border:1px solid;border-radius:3px;background:transparent;cursor:pointer}
+  .mb-btn.accept{color:#ffd700;border-color:rgba(255,215,0,.4)}
+  .mb-btn.decline{color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.15)}
+  .reward-screen{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7)}
+  .reward-screen.open{display:flex}
+  .reward-box{width:min(280px,80vw);background:rgba(10,10,18,.97);border:2px solid #ffd700;border-radius:8px;padding:20px;text-align:center}
+  .reward-title{font-family:'VT323',monospace;font-size:20px;color:#ffd700;letter-spacing:4px;margin-bottom:10px}
+  .reward-details{font-family:'VT323',monospace;font-size:14px;color:#ffb300;letter-spacing:2px;line-height:2}
+
+  /* === LEVEL UP === */
+  .levelup-banner{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:85;font-family:'VT323',monospace;font-size:40px;color:#ffb300;letter-spacing:8px;text-shadow:0 0 20px rgba(255,179,0,.8),0 0 40px rgba(255,179,0,.4);pointer-events:none;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);white-space:nowrap}
+  .levelup-banner.show{transform:translate(-50%,-50%) scale(1)}
+
+  /* === HUD QUICK BUTTONS === */
+  .hud-quick{position:absolute;bottom:80px;right:16px;display:flex;gap:6px;z-index:5}
+  .hud-qbtn{width:36px;height:36px;border-radius:50%;background:rgba(10,10,18,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,179,0,.3);color:#ffb300;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .hud-qbtn:active{background:rgba(255,179,0,.15)}
+
+  /* === NOTIFICATION QUEUE === */
+  .notif-queue{position:absolute;top:50px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px;align-items:center;z-index:7;pointer-events:none}
+  .notif-item{background:rgba(10,10,18,.88);border:1px solid #ffb300;color:#ffb300;padding:5px 12px;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;border-radius:2px;opacity:1;transition:opacity .3s,transform .3s;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+  .notif-item.out{opacity:0;transform:translateY(-10px)}
+
+  /* === LOADING TIPS === */
+  .loading-tip{font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.35);letter-spacing:1px;margin-top:16px;max-width:280px;text-align:center;min-height:30px}
 </style>
 </head>
 <body>
@@ -260,6 +444,7 @@
   <div class="loading-text" id="loadingText">STARTING...</div>
   <div class="loading-text" id="loadingStatus" style="color:#4dd4ff;font-size:11px;margin-top:10px"></div>
   <div class="loading-text" id="loadingErr" style="color:#ff3c5f;font-size:11px;margin-top:15px;border:1px solid #ff3c5f;padding:8px;border-radius:3px;display:none"></div>
+  <div class="loading-tip" id="loadingTip"></div>
 </div>
 
 <div class="start" id="start" style="display:none">
@@ -268,8 +453,23 @@
     <div class="title">LUXCITY</div>
     <div class="tagline">LIVE FREE · DRIVE HARD · ROLEPLAY</div>
     <button class="start-btn" id="startBtn">ENTER CITY</button>
+    <button class="start-btn" id="newCharBtn" style="background:transparent;border:1px solid rgba(255,179,0,.3);color:#ffb300;box-shadow:none;font-size:13px;padding:8px 24px;margin-top:8px">NEW CHARACTER</button>
     <div class="start-hint">JOYSTICK = MOVE · SWIPE SCREEN = ROTATE CAMERA</div>
   </div>
+</div>
+
+<!-- Character Creation -->
+<div class="char-create" id="charCreate">
+  <div class="cc-title">CREATE CHARACTER</div>
+  <div class="cc-section"><div class="cc-label">NAME</div><input class="cc-name" id="ccName" maxlength="16" placeholder="Enter name..."><div class="cc-err" id="ccErr"></div></div>
+  <div class="cc-section"><div class="cc-label">GENDER</div><div class="cc-row" id="ccGender"><button class="cc-gender-btn selected" data-g="male">MALE</button><button class="cc-gender-btn" data-g="female">FEMALE</button></div></div>
+  <div class="cc-section"><div class="cc-label">SKIN TONE</div><div class="cc-row" id="ccSkin"></div></div>
+  <div class="cc-section"><div class="cc-label">HAIR STYLE</div><div class="cc-row" id="ccHair"></div></div>
+  <div class="cc-section"><div class="cc-label">HAIR COLOR</div><div class="cc-row" id="ccHairColor"></div></div>
+  <div class="cc-section"><div class="cc-label">TOP COLOR</div><div class="cc-row" id="ccTop"></div></div>
+  <div class="cc-section"><div class="cc-label">BOTTOM COLOR</div><div class="cc-row" id="ccBottom"></div></div>
+  <div class="cc-section"><div class="cc-label">BACKSTORY</div><div class="cc-row" id="ccBackstory"></div></div>
+  <button class="cc-enter" id="ccEnter">ENTER LUXCITY</button>
 </div>
 
 <div class="hud" id="hud" style="display:none">
@@ -280,7 +480,10 @@
       <div class="stat">
         <div class="stat-lbl">HEALTH</div>
         <div class="bar"><div class="bar-fill" id="hpBar" style="width:100%"></div></div>
+        <div class="stat-lbl stamina-bar" style="margin-top:3px">STAMINA</div>
+        <div class="bar stamina-bar"><div class="bar-fill" id="staminaBar" style="width:100%"></div></div>
         <div style="color:#fff;font-size:12px;margin-top:2px">¢ <span id="cashVal">500</span></div>
+        <div class="wanted-stars" id="wantedStars"><span class="wanted-star">★</span><span class="wanted-star">★</span><span class="wanted-star">★</span><span class="wanted-star">★</span><span class="wanted-star">★</span></div>
       </div>
       <div class="stat">
         <div class="stat-lbl">LVL <span style="color:#fff" id="lvlVal">1</span></div>
@@ -298,7 +501,21 @@
         <div class="speed-val" id="speedVal">0</div>
         <div class="speed-unit">KM/H</div>
       </div>
+      <div class="game-clock" id="gameClock">12:00</div>
+      <div class="mission-tracker" id="missionTracker">
+        <div class="mission-tracker-title" id="mtTitle"></div>
+        <div class="mission-tracker-obj" id="mtObj"></div>
+      </div>
     </div>
+  </div>
+
+  <div class="notif-queue" id="notifQueue"></div>
+
+  <div class="hud-quick">
+    <button class="hud-qbtn" id="btnMenu">☰</button>
+    <button class="hud-qbtn" id="btnEmote">😀</button>
+    <button class="hud-qbtn" id="btnPhone">📱</button>
+    <button class="hud-qbtn" id="btnInv">🎒</button>
   </div>
 
   <div class="joy" id="joy"><div class="joy-base"></div><div class="joy-knob" id="knob"></div></div>
@@ -393,6 +610,74 @@
   <div class="gps-cancel">TAP TO CANCEL</div>
 </div>
 
+<!-- Wasted Screen -->
+<div class="wasted" id="wastedScreen"><div class="wasted-text">WASTED</div><div class="wasted-sub" id="wastedSub">RESPAWNING IN 5...</div></div>
+<div class="fade-overlay" id="fadeOverlay"></div>
+
+<!-- Main Menu -->
+<div class="main-menu" id="mainMenu">
+  <div class="mm-header"><div class="mm-title">// MENU</div><button class="mm-close" id="mmClose">X</button></div>
+  <div class="mm-body"><div class="mm-grid" id="mmGrid"></div></div>
+</div>
+<div class="mm-sub" id="mmSub">
+  <div class="mm-sub-header"><button class="mm-back" id="mmBack">←</button><div class="mm-sub-title" id="mmSubTitle"></div></div>
+  <div class="mm-sub-body" id="mmSubBody"></div>
+</div>
+
+<!-- Phone -->
+<div class="phone-ui" id="phoneUI">
+  <div class="phone-status"><span>LUXCITY</span><span id="phoneTime">12:00</span></div>
+  <div class="phone-screen" id="phoneScreen"></div>
+  <div class="phone-back"><button class="phone-back-btn" id="phoneBackBtn">HOME</button></div>
+</div>
+
+<!-- Emote Wheel -->
+<div class="emote-wheel" id="emoteWheel"></div>
+
+<!-- Inventory -->
+<div class="inv-panel" id="invPanel">
+  <div class="inv-header"><div class="inv-title">// INVENTORY</div><button class="inv-close" id="invClose">X</button></div>
+  <div class="inv-tabs" id="invTabs"></div>
+  <div class="inv-grid" id="invGrid"></div>
+</div>
+
+<!-- Shop -->
+<div class="shop-panel" id="shopPanel">
+  <div class="shop-header"><div class="shop-title">// 24/7 MART</div><button class="shop-close" id="shopClose">X</button></div>
+  <div class="shop-list" id="shopList"></div>
+</div>
+
+<!-- ATM -->
+<div class="atm-panel" id="atmPanel">
+  <div class="atm-title">// ATM</div>
+  <div class="atm-bal" id="atmBal"></div>
+  <div class="atm-row"><input class="atm-input" id="atmAmount" type="number" placeholder="Amount"><button class="atm-btn" id="atmDeposit">DEPOSIT</button><button class="atm-btn" id="atmWithdraw">WITHDRAW</button></div>
+  <button class="atm-close-btn" id="atmClose">CLOSE</button>
+</div>
+
+<!-- Daily Reward -->
+<div class="daily-reward" id="dailyReward">
+  <div class="dr-box">
+    <div class="dr-title">// DAILY REWARD</div>
+    <div class="dr-grid" id="drGrid"></div>
+    <button class="dr-claim" id="drClaim">CLAIM</button>
+  </div>
+</div>
+
+<!-- Mission Briefing -->
+<div class="mission-briefing" id="missionBriefing">
+  <div class="mb-title" id="mbTitle"></div>
+  <div class="mb-desc" id="mbDesc"></div>
+  <div class="mb-reward" id="mbReward"></div>
+  <div class="mb-btns"><button class="mb-btn accept" id="mbAccept">ACCEPT</button><button class="mb-btn decline" id="mbDecline">DECLINE</button></div>
+</div>
+
+<!-- Reward Screen -->
+<div class="reward-screen" id="rewardScreen"><div class="reward-box"><div class="reward-title">MISSION COMPLETE</div><div class="reward-details" id="rewardDetails"></div></div></div>
+
+<!-- Level Up Banner -->
+<div class="levelup-banner" id="levelUpBanner">LEVEL UP!</div>
+
 <!-- Admin Panel -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-top">
@@ -452,9 +737,147 @@ let cityObj = null;
 let cameraYaw = 0, cameraPitch = 0.15;
 let playerYaw = 0;
 
-const state = { mode: 'foot', hp: 100, maxHp: 100, cash: 500, xp: 0, xpNeeded: 100, lvl: 1 };
+const state = {
+  mode: 'foot', hp: 100, maxHp: 100, cash: 500, xp: 0, xpNeeded: 100, lvl: 1,
+  stamina: 100, maxStamina: 100, wanted: 0, wantedTimer: 0, dead: false,
+  gameTime: 720, bankBalance: 0, equippedWeapon: 'fists',
+  inventory: { weapons: ['fists'], consumables: [{ id: 'burger', qty: 2 }, { id: 'energydrink', qty: 1 }] },
+  skills: { stamina: { level: 1, xp: 0, xpNeeded: 100 }, driving: { level: 1, xp: 0, xpNeeded: 100 }, strength: { level: 1, xp: 0, xpNeeded: 100 } },
+  activeMission: null, completedMissions: [], missionProgress: {}
+};
 const input = { mx: 0, my: 0, sprint: false, punch: false, gas: false, brake: false, enter: false, exit: false };
 const keys = {};
+
+// ============================================================
+// CHARACTER DATA & PERSISTENCE
+// ============================================================
+const SKIN_TONES = ['#f5d0a9','#e8b88a','#d4976a','#c07b4a','#a0613a','#7a4a2a','#5a3520','#3a2515'];
+const HAIR_COLORS = ['#1a1008','#3b2613','#6b3a1f','#8b4513','#c8a050','#d4a030','#e0e0e0','#cc2222'];
+const OUTFIT_COLORS = ['#2a2a3a','#3a2020','#1a3020','#20203a','#4a3a1a','#3a1a3a','#2a3a3a','#1a1a1a'];
+const HAIR_STYLES = [{name:'Buzz',icon:'💇'},{name:'Spiky',icon:'🦔'},{name:'Slick',icon:'💈'},{name:'Mohawk',icon:'🎸'},{name:'Afro',icon:'🌀'},{name:'Long',icon:'🎵'},{name:'Messy',icon:'🌪'},{name:'Bald',icon:'🌕'}];
+const BACKSTORIES = [{id:'street',name:'STREET KID',cash:300,desc:'Born on the streets'},{id:'corporate',name:'CORPORATE',cash:500,desc:'Left the office life'},{id:'nomad',name:'NOMAD',cash:800,desc:'Wanderer with savings'}];
+
+let charData = { name: 'Player', gender: 'male', skinColor: '#d4976a', hairStyle: 0, hairColor: '#1a1008', topColor: '#2a2a3a', bottomColor: '#1a1a2a', backstory: 'street' };
+
+const PROFANITY = ['fuck','shit','ass','bitch','dick','damn','cunt','nigger','nigga','fag','retard','whore','slut'];
+function isCleanName(n) {
+  if (!n || n.length < 3 || n.length > 16) return false;
+  if (!/^[a-zA-Z0-9 ]+$/.test(n)) return false;
+  const low = n.toLowerCase();
+  return !PROFANITY.some(w => low.includes(w));
+}
+
+// ============================================================
+// ITEM DEFINITIONS
+// ============================================================
+const ITEMS = {
+  burger: { name: 'Burger', icon: '🍔', type: 'consumable', effect: 'hp', value: 25, price: 50, desc: 'Restores 25 HP' },
+  energydrink: { name: 'Energy Drink', icon: '⚡', type: 'consumable', effect: 'stamina', value: 50, price: 30, desc: 'Restores 50 Stamina' },
+  bat: { name: 'Baseball Bat', icon: '🏏', type: 'weapon', price: 200, desc: 'Melee weapon' },
+  knife: { name: 'Knife', icon: '🔪', type: 'weapon', price: 350, desc: 'Sharp melee weapon' },
+  medkit: { name: 'Med Kit', icon: '💊', type: 'consumable', effect: 'hp', value: 75, price: 150, desc: 'Restores 75 HP' },
+  armor: { name: 'Body Armor', icon: '🛡', type: 'consumable', effect: 'maxhp', value: 50, price: 300, desc: '+50 Max HP' }
+};
+
+// ============================================================
+// SETTINGS
+// ============================================================
+const settings = { sensitivity: 0.005, hudScale: 1, minimapZoom: 1, sfxVol: 0.7, musicVol: 0.5 };
+function loadSettings() { try { Object.assign(settings, JSON.parse(localStorage.getItem('luxcity_settings') || '{}')); } catch(e) {} }
+function saveSettings() { localStorage.setItem('luxcity_settings', JSON.stringify(settings)); }
+loadSettings();
+
+// ============================================================
+// LOADING TIPS
+// ============================================================
+const TIPS = [
+  'Tap the minimap to open the full city map',
+  'Visit a faction HQ to join a faction',
+  'Sprint to build your stamina skill',
+  'Deposit cash at an ATM to protect it from death',
+  'Open the menu (☰) to access all game features',
+  'Use the emote wheel to express yourself',
+  'Complete missions for cash and XP rewards',
+  'Check the shop for weapons and food',
+  'Your bank balance is safe when you die',
+  'Set GPS from the map to navigate to locations',
+  'Wanted stars decay over time if you stay clean',
+  'Eat a burger to restore health in a pinch',
+  'Energy drinks restore your stamina instantly',
+  'Drive vehicles to level up your driving skill',
+  'Punch to build your strength skill',
+  'Claim your daily reward every day for bonuses',
+  'The military base is far west - follow the dirt road',
+  'Use the phone to access your bank account',
+  'Higher ranks in factions unlock more permissions',
+  'Create your own gang at the Gas Station'
+];
+let tipInterval = null;
+function startTips() {
+  const el = document.getElementById('loadingTip');
+  if (!el) return;
+  let i = Math.floor(Math.random() * TIPS.length);
+  el.textContent = '💡 ' + TIPS[i];
+  tipInterval = setInterval(() => { i = (i + 1) % TIPS.length; el.textContent = '💡 ' + TIPS[i]; }, 3000);
+}
+function stopTips() { if (tipInterval) { clearInterval(tipInterval); tipInterval = null; } }
+
+// ============================================================
+// NOTIFICATION QUEUE (replaces toast)
+// ============================================================
+const notifQueue = [];
+let notifCount = 0;
+function toast(msg, duration = 2500) {
+  const container = document.getElementById('notifQueue');
+  if (!container) return;
+  const el = document.createElement('div');
+  el.className = 'notif-item';
+  el.textContent = msg;
+  container.appendChild(el);
+  notifQueue.push(el);
+  // Max 4 visible
+  while (notifQueue.length > 4) {
+    const old = notifQueue.shift();
+    old.classList.add('out');
+    setTimeout(() => old.remove(), 300);
+  }
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => { el.remove(); const idx = notifQueue.indexOf(el); if (idx > -1) notifQueue.splice(idx, 1); }, 300);
+  }, duration);
+}
+
+// ============================================================
+// SAVE / LOAD SYSTEM
+// ============================================================
+function saveGame() {
+  try {
+    const save = {
+      v: 2, cash: state.cash, bankBalance: state.bankBalance, xp: state.xp, xpNeeded: state.xpNeeded, lvl: state.lvl,
+      hp: state.hp, maxHp: state.maxHp, maxStamina: state.maxStamina, equippedWeapon: state.equippedWeapon,
+      inventory: state.inventory, skills: state.skills, completedMissions: state.completedMissions,
+      charData, gameTime: state.gameTime
+    };
+    localStorage.setItem('luxcity_save', JSON.stringify(save));
+  } catch(e) {}
+}
+function loadGame() {
+  try {
+    const s = JSON.parse(localStorage.getItem('luxcity_save') || 'null');
+    if (!s || !s.v) return false;
+    state.cash = s.cash || 500; state.bankBalance = s.bankBalance || 0;
+    state.xp = s.xp || 0; state.xpNeeded = s.xpNeeded || 100; state.lvl = s.lvl || 1;
+    state.hp = s.hp || 100; state.maxHp = s.maxHp || 100; state.maxStamina = s.maxStamina || 100;
+    state.equippedWeapon = s.equippedWeapon || 'fists';
+    if (s.inventory) state.inventory = s.inventory;
+    if (s.skills) state.skills = s.skills;
+    if (s.completedMissions) state.completedMissions = s.completedMissions;
+    if (s.charData) Object.assign(charData, s.charData);
+    if (s.gameTime) state.gameTime = s.gameTime;
+    return true;
+  } catch(e) { return false; }
+}
+let saveCounter = 0;
 
 // ============================================================
 // === FACTION MANAGEMENT SYSTEM ===
@@ -1636,8 +2059,11 @@ scene.fog = new THREE.Fog(0x87b8e0, VIEW_DISTANCE * 0.55, VIEW_DISTANCE);
 
 const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.3, VIEW_DISTANCE);
 
-scene.add(new THREE.HemisphereLight(0xfff4dc, 0x5a4a3a, 1.1));
-const sun = new THREE.DirectionalLight(0xfff1d0, 1.6);
+hemiLight = new THREE.HemisphereLight(0xfff4dc, 0x5a4a3a, 1.1);
+scene.add(hemiLight);
+ambLight = hemiLight;
+sunLight = new THREE.DirectionalLight(0xfff1d0, 1.6);
+const sun = sunLight;
 sun.position.set(60, 90, 40);
 if (SHADOWS_ENABLED) {
   sun.castShadow = true;
@@ -1652,17 +2078,23 @@ scene.add(sun);
 // === UI ===
 const loadingEl = document.getElementById('loading');
 const startEl = document.getElementById('start');
-const toastEl = document.getElementById('toast');
 const loadingFill = document.getElementById('loadingFill');
 const loadingText = document.getElementById('loadingText');
-let toastTimer = null;
-function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000); }
 function setProgress(pct, label) { loadingFill.style.width = pct + '%'; loadingText.textContent = label; }
 function updateHud() {
   document.getElementById('hpBar').style.width = (state.hp / state.maxHp * 100) + '%';
+  document.getElementById('staminaBar').style.width = (state.stamina / state.maxStamina * 100) + '%';
   document.getElementById('cashVal').textContent = state.cash;
   document.getElementById('lvlVal').textContent = state.lvl;
   document.getElementById('xpBar').style.width = (state.xp / state.xpNeeded * 100) + '%';
+  // Wanted stars
+  const stars = document.querySelectorAll('.wanted-star');
+  stars.forEach((s, i) => s.classList.toggle('active', i < state.wanted));
+  // Game clock
+  const h = Math.floor(state.gameTime / 60) % 24;
+  const m = Math.floor(state.gameTime % 60);
+  document.getElementById('gameClock').textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  if (document.getElementById('phoneTime')) document.getElementById('phoneTime').textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
 }
 function setMode(mode) {
   state.mode = mode;
@@ -1827,6 +2259,854 @@ function stripRootMotion(clip) {
     return !isRootPos;
   });
   return clip;
+}
+
+// ============================================================
+// CHARACTER CREATION SYSTEM
+// ============================================================
+function initCharCreate() {
+  const skinRow = document.getElementById('ccSkin');
+  const hairRow = document.getElementById('ccHair');
+  const hairColorRow = document.getElementById('ccHairColor');
+  const topRow = document.getElementById('ccTop');
+  const bottomRow = document.getElementById('ccBottom');
+  const bsRow = document.getElementById('ccBackstory');
+
+  function makeSwatches(container, colors, key) {
+    colors.forEach((c, i) => {
+      const d = document.createElement('div');
+      d.className = 'cc-swatch' + (charData[key] === c ? ' selected' : '');
+      d.style.background = c;
+      d.addEventListener('click', () => {
+        charData[key] = c;
+        container.querySelectorAll('.cc-swatch').forEach(s => s.classList.remove('selected'));
+        d.classList.add('selected');
+      });
+      container.appendChild(d);
+    });
+  }
+  makeSwatches(skinRow, SKIN_TONES, 'skinColor');
+  makeSwatches(hairColorRow, HAIR_COLORS, 'hairColor');
+  makeSwatches(topRow, OUTFIT_COLORS, 'topColor');
+  makeSwatches(bottomRow, OUTFIT_COLORS, 'bottomColor');
+
+  HAIR_STYLES.forEach((h, i) => {
+    const d = document.createElement('div');
+    d.className = 'cc-hair' + (i === charData.hairStyle ? ' selected' : '');
+    d.innerHTML = `<div>${h.icon}</div><div style="font-family:'VT323',monospace;font-size:8px;color:rgba(255,255,255,.4)">${h.name}</div>`;
+    d.addEventListener('click', () => {
+      charData.hairStyle = i;
+      hairRow.querySelectorAll('.cc-hair').forEach(s => s.classList.remove('selected'));
+      d.classList.add('selected');
+    });
+    hairRow.appendChild(d);
+  });
+
+  BACKSTORIES.forEach(b => {
+    const d = document.createElement('div');
+    d.className = 'cc-backstory' + (charData.backstory === b.id ? ' selected' : '');
+    d.innerHTML = `<div class="cc-backstory-name">${b.name}</div><div class="cc-backstory-cash">¢${b.cash}</div><div class="cc-backstory-desc">${b.desc}</div>`;
+    d.addEventListener('click', () => {
+      charData.backstory = b.id;
+      bsRow.querySelectorAll('.cc-backstory').forEach(s => s.classList.remove('selected'));
+      d.classList.add('selected');
+    });
+    bsRow.appendChild(d);
+  });
+
+  document.querySelectorAll('#ccGender .cc-gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      charData.gender = btn.dataset.g;
+      document.querySelectorAll('#ccGender .cc-gender-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  document.getElementById('ccEnter').addEventListener('click', () => {
+    const name = document.getElementById('ccName').value.trim();
+    if (!isCleanName(name)) { document.getElementById('ccErr').textContent = 'Name must be 3-16 chars, letters/numbers only'; return; }
+    charData.name = name;
+    const bs = BACKSTORIES.find(b => b.id === charData.backstory);
+    state.cash = bs ? bs.cash : 500;
+    localStorage.setItem('luxcity_character', JSON.stringify(charData));
+    document.getElementById('charCreate').classList.remove('open');
+    startEl.style.display = 'flex';
+    saveGame();
+  });
+
+  document.getElementById('newCharBtn').addEventListener('click', () => {
+    startEl.style.display = 'none';
+    document.getElementById('charCreate').classList.add('open');
+  });
+}
+
+function applyCharAppearance() {
+  if (!player) return;
+  player.traverse(o => {
+    if (o.isSkinnedMesh || o.isMesh) {
+      if (o.material) {
+        const m = o.material.clone();
+        // Basic skin/outfit color application based on mesh position
+        m.color = new THREE.Color(charData.skinColor);
+        o.material = m;
+      }
+    }
+  });
+}
+
+// ============================================================
+// DEATH / RESPAWN SYSTEM
+// ============================================================
+let deathTimer = 0;
+function triggerDeath() {
+  if (state.dead || godMode) return;
+  state.dead = true;
+  state.hp = 0;
+  deathTimer = 5;
+  const cashLost = Math.floor(state.cash * 0.1);
+  state.cash -= cashLost;
+  // Fall forward
+  if (player) player.rotation.x = Math.PI / 4;
+  // Flash red
+  const fade = document.getElementById('fadeOverlay');
+  fade.style.background = 'rgba(200,0,0,0.5)';
+  fade.style.opacity = '1';
+  setTimeout(() => { fade.style.opacity = '0'; }, 300);
+  // Show wasted
+  document.getElementById('wastedScreen').classList.add('open');
+  updateHud();
+}
+function updateDeath(dt) {
+  if (!state.dead) return;
+  deathTimer -= dt;
+  document.getElementById('wastedSub').textContent = 'RESPAWNING IN ' + Math.max(1, Math.ceil(deathTimer)) + '...';
+  if (deathTimer <= 0) respawn();
+}
+function respawn() {
+  state.dead = false;
+  state.hp = Math.floor(state.maxHp * 0.5);
+  state.stamina = state.maxStamina;
+  state.wanted = 0; state.wantedTimer = 0;
+  if (player) {
+    player.rotation.x = 0;
+    // Teleport to nearest hospital
+    const hosp = factionBuildings.find(f => f.id === 'hospital');
+    if (hosp) player.position.set(hosp.x + 10, player.position.y, hosp.z + 10);
+  }
+  document.getElementById('wastedScreen').classList.remove('open');
+  // Fade from black
+  const fade = document.getElementById('fadeOverlay');
+  fade.style.background = '#000';
+  fade.style.opacity = '1';
+  setTimeout(() => { fade.style.opacity = '0'; }, 100);
+  updateHud();
+  toast('// RESPAWNED AT HOSPITAL');
+}
+
+// ============================================================
+// WANTED LEVEL SYSTEM
+// ============================================================
+function addWanted(amount) {
+  if (godMode) return;
+  const prev = state.wanted;
+  state.wanted = Math.min(5, state.wanted + amount);
+  state.wantedTimer = 30;
+  if (state.wanted > prev) toast('// WANTED LEVEL: ' + '★'.repeat(state.wanted));
+  updateHud();
+}
+function updateWanted(dt) {
+  if (state.wanted <= 0) return;
+  if (state.wantedTimer > 0) { state.wantedTimer -= dt; return; }
+  state.wanted = Math.max(0, state.wanted - 1);
+  state.wantedTimer = state.wanted > 0 ? 30 : 0;
+  updateHud();
+  if (state.wanted === 0) toast('// WANTED LEVEL CLEARED');
+}
+
+// ============================================================
+// DAY / NIGHT CYCLE
+// ============================================================
+let streetLamps = []; // filled during city build
+let sunLight = null, ambLight = null, hemiLight = null;
+function updateDayNight(dt) {
+  state.gameTime += dt * 30; // 1 real min = 30 game min
+  if (state.gameTime >= 1440) state.gameTime -= 1440;
+  const hour = state.gameTime / 60;
+  // Sun angle
+  const sunAngle = ((hour - 6) / 24) * Math.PI * 2;
+  if (sunLight) {
+    sunLight.position.set(60 * Math.cos(sunAngle), 90 * Math.abs(Math.sin(sunAngle)) + 5, 40);
+    // Intensity: bright during day, dim at night
+    const dayFactor = Math.max(0, Math.sin(sunAngle));
+    sunLight.intensity = 0.2 + dayFactor * 1.0;
+  }
+  if (ambLight) {
+    const nightFactor = hour >= 6 && hour <= 20 ? 1 : 0.3;
+    ambLight.intensity = 0.15 + nightFactor * 0.35;
+  }
+  // Sky color
+  let skyColor;
+  if (hour >= 6 && hour < 8) { // dawn
+    const t = (hour - 6) / 2;
+    skyColor = new THREE.Color(0x1a1025).lerp(new THREE.Color(0x87b8e0), t);
+  } else if (hour >= 8 && hour < 17) { // day
+    skyColor = new THREE.Color(0x87b8e0);
+  } else if (hour >= 17 && hour < 19) { // sunset
+    const t = (hour - 17) / 2;
+    skyColor = new THREE.Color(0x87b8e0).lerp(new THREE.Color(0xff8844), t);
+  } else if (hour >= 19 && hour < 20) { // dusk
+    const t = (hour - 19);
+    skyColor = new THREE.Color(0xff8844).lerp(new THREE.Color(0x0a0a1a), t);
+  } else { // night
+    skyColor = new THREE.Color(0x0a0a1a);
+  }
+  if (scene.background) scene.background.copy(skyColor);
+  if (scene.fog) scene.fog.color.copy(skyColor);
+  // Streetlamps
+  const isNight = hour < 6 || hour > 19.5;
+  for (const lamp of streetLamps) {
+    if (lamp.material && lamp.material.emissive) {
+      lamp.material.emissiveIntensity = isNight ? 0.8 : 0;
+    }
+  }
+}
+
+// ============================================================
+// STAMINA SYSTEM
+// ============================================================
+function updateStamina(dt, isSprinting) {
+  if (isSprinting) {
+    state.stamina -= 20 * dt;
+    // Skill XP
+    state.skills.stamina.xp += dt * 5;
+    checkSkillUp('stamina');
+    if (state.stamina <= 0) { state.stamina = 0; input.sprint = false; }
+  } else {
+    state.stamina = Math.min(state.maxStamina, state.stamina + 12 * dt);
+  }
+}
+
+// ============================================================
+// XP & LEVELING
+// ============================================================
+function grantXP(amount) {
+  state.xp += amount;
+  while (state.xp >= state.xpNeeded) {
+    state.xp -= state.xpNeeded;
+    state.lvl++;
+    state.xpNeeded = Math.floor(state.xpNeeded * 1.15);
+    showLevelUp();
+    toast('// LEVEL ' + state.lvl + ' REACHED!');
+  }
+  updateHud();
+}
+function showLevelUp() {
+  const banner = document.getElementById('levelUpBanner');
+  banner.textContent = 'LEVEL ' + state.lvl + '!';
+  banner.classList.add('show');
+  setTimeout(() => banner.classList.remove('show'), 2500);
+}
+function checkSkillUp(skillId) {
+  const sk = state.skills[skillId];
+  if (sk.xp >= sk.xpNeeded) {
+    sk.xp -= sk.xpNeeded;
+    sk.level++;
+    sk.xpNeeded = Math.floor(sk.xpNeeded * 1.5);
+    if (skillId === 'stamina') state.maxStamina += 5;
+    toast('// ' + skillId.toUpperCase() + ' SKILL LVL ' + sk.level);
+  }
+}
+
+// ============================================================
+// MAIN MENU SYSTEM
+// ============================================================
+const MENU_ITEMS = [
+  { id: 'profile', icon: '👤', label: 'PROFILE' },
+  { id: 'factions', icon: '⚑', label: 'FACTIONS' },
+  { id: 'inventory', icon: '🎒', label: 'INVENTORY' },
+  { id: 'phone', icon: '📱', label: 'PHONE' },
+  { id: 'missions', icon: '📋', label: 'MISSIONS' },
+  { id: 'map', icon: '🗺', label: 'MAP' },
+  { id: 'shop', icon: '🛒', label: 'SHOP' },
+  { id: 'settings', icon: '⚙', label: 'SETTINGS' },
+  { id: 'daily', icon: '🎁', label: 'DAILY' }
+];
+function openMainMenu() { document.getElementById('mainMenu').classList.add('open'); }
+function closeMainMenu() { document.getElementById('mainMenu').classList.remove('open'); closeMenuSub(); }
+function closeMenuSub() { document.getElementById('mmSub').classList.remove('open'); }
+function openMenuSub(title, renderFn) {
+  const sub = document.getElementById('mmSub');
+  document.getElementById('mmSubTitle').textContent = title;
+  const body = document.getElementById('mmSubBody');
+  body.innerHTML = '';
+  renderFn(body);
+  sub.classList.add('open');
+}
+
+function initMainMenu() {
+  const grid = document.getElementById('mmGrid');
+  MENU_ITEMS.forEach(item => {
+    const tile = document.createElement('div');
+    tile.className = 'mm-tile';
+    tile.innerHTML = `<div class="mm-tile-icon">${item.icon}</div><div class="mm-tile-label">${item.label}</div>`;
+    tile.addEventListener('click', () => handleMenuTap(item.id));
+    grid.appendChild(tile);
+  });
+  document.getElementById('mmClose').addEventListener('click', closeMainMenu);
+  document.getElementById('mmBack').addEventListener('click', closeMenuSub);
+  document.getElementById('btnMenu').addEventListener('click', openMainMenu);
+}
+
+function handleMenuTap(id) {
+  switch (id) {
+    case 'profile': openMenuSub('// PROFILE', renderProfile); break;
+    case 'factions': openMenuSub('// FACTIONS', renderFactionBrowser); break;
+    case 'inventory': closeMainMenu(); openInventory(); break;
+    case 'phone': closeMainMenu(); openPhone(); break;
+    case 'missions': openMenuSub('// MISSIONS', renderMissionList); break;
+    case 'map': closeMainMenu(); openFullMap(); break;
+    case 'shop': closeMainMenu(); openShop(); break;
+    case 'settings': openMenuSub('// SETTINGS', renderSettings); break;
+    case 'daily': closeMainMenu(); showDailyReward(); break;
+  }
+}
+
+function renderProfile(body) {
+  const sk = state.skills;
+  body.innerHTML = `
+    <div style="text-align:center;padding:10px">
+      <div style="font-family:'VT323',monospace;font-size:20px;color:#ffb300;letter-spacing:3px">${charData.name}</div>
+      <div style="font-family:'VT323',monospace;font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">${charData.backstory.toUpperCase()} · ${charData.gender.toUpperCase()}</div>
+      <div style="font-family:'VT323',monospace;font-size:14px;color:#fff;margin-top:10px">LEVEL ${state.lvl} · ¢${state.cash} · BANK ¢${state.bankBalance}</div>
+      <div style="margin-top:14px;text-align:left">
+        <div class="setting-row"><span class="setting-label">STAMINA SKILL</span><span style="color:#22cc66;font-family:'VT323',monospace;font-size:12px">LVL ${sk.stamina.level}</span></div>
+        <div class="setting-row"><span class="setting-label">DRIVING SKILL</span><span style="color:#4dd4ff;font-family:'VT323',monospace;font-size:12px">LVL ${sk.driving.level}</span></div>
+        <div class="setting-row"><span class="setting-label">STRENGTH SKILL</span><span style="color:#ff3c5f;font-family:'VT323',monospace;font-size:12px">LVL ${sk.strength.level}</span></div>
+        <div class="setting-row"><span class="setting-label">MAX HP</span><span style="color:#fff;font-family:'VT323',monospace;font-size:12px">${state.maxHp}</span></div>
+        <div class="setting-row"><span class="setting-label">MAX STAMINA</span><span style="color:#fff;font-family:'VT323',monospace;font-size:12px">${state.maxStamina}</span></div>
+        <div class="setting-row"><span class="setting-label">WEAPON</span><span style="color:#fff;font-family:'VT323',monospace;font-size:12px">${state.equippedWeapon.toUpperCase()}</span></div>
+        <div class="setting-row"><span class="setting-label">MISSIONS DONE</span><span style="color:#fff;font-family:'VT323',monospace;font-size:12px">${state.completedMissions.length}</span></div>
+      </div>
+    </div>`;
+}
+
+function renderFactionBrowser(body) {
+  const allFactions = Object.entries(FACTION_DEFS);
+  let html = '';
+  allFactions.forEach(([id, def]) => {
+    const store = factions[id];
+    const memberCount = store ? store.members.length : 0;
+    const isCurrent = playerFaction.factionId === id && !playerFaction.isGang;
+    html += `<div style="padding:10px;border:1px solid ${def.color}33;border-radius:4px;margin-bottom:8px;background:${def.color}08">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'VT323',monospace;font-size:14px;color:${def.color};letter-spacing:2px">${def.icon} ${def.name}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">${memberCount}/${def.maxMembers} members</div>
+        </div>
+        <div style="display:flex;gap:4px">
+          ${isCurrent ? '<span style="font-family:\'VT323\',monospace;font-size:11px;color:#22cc66;letter-spacing:1px">JOINED</span>' :
+            `<button class="phone-btn" onclick="joinFaction('${id}');renderFactionBrowser(this.closest('.mm-sub-body'))">JOIN</button>`}
+        </div>
+      </div>
+      ${isCurrent ? `<div style="margin-top:8px"><select id="rankSelect_${id}" style="width:100%;padding:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'VT323',monospace;font-size:11px;border-radius:3px" onchange="setPlayerRank('${id}',this.value)">
+        ${def.ranks.map((r, i) => `<option value="${i}" ${getPlayerRankIndex() === i ? 'selected' : ''}>${r.name}</option>`).join('')}
+      </select></div>` : ''}
+    </div>`;
+  });
+  // Gangs
+  Object.entries(gangs).forEach(([id, g]) => {
+    const isCurrent = playerFaction.factionId === id && playerFaction.isGang;
+    html += `<div style="padding:10px;border:1px solid ${g.color}55;border-radius:4px;margin-bottom:8px;background:${g.color}08">
+      <div style="font-family:'VT323',monospace;font-size:14px;color:${g.color};letter-spacing:2px">☠ ${g.name}</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">${g.members.length}/${g.maxMembers} members</div>
+      ${isCurrent ? '<span style="font-family:\'VT323\',monospace;font-size:11px;color:#22cc66">JOINED</span>' : ''}
+    </div>`;
+  });
+  body.innerHTML = html;
+}
+// Allow setting rank from menu
+function setPlayerRank(factionId, rankIndex) {
+  const store = factions[factionId];
+  if (!store || playerFaction.factionId !== factionId) return;
+  const ri = parseInt(rankIndex);
+  const pm = store.members.find(m => m.name === charData.name && !m.isNpc);
+  if (pm) pm.rankIndex = ri;
+  updateFactionBadge();
+  toast('// RANK SET: ' + store.def.ranks[ri].name);
+}
+
+function renderSettings(body) {
+  body.innerHTML = `
+    <div style="padding:8px">
+      <div class="setting-row"><span class="setting-label">LOOK SENSITIVITY</span><input type="range" class="setting-slider" min="1" max="20" value="${settings.sensitivity * 1000}" id="setSens"></div>
+      <div class="setting-row"><span class="setting-label">HUD SCALE</span><input type="range" class="setting-slider" min="50" max="150" value="${settings.hudScale * 100}" id="setHud"></div>
+      <div class="setting-row"><span class="setting-label">SFX VOLUME</span><input type="range" class="setting-slider" min="0" max="100" value="${settings.sfxVol * 100}" id="setSfx"></div>
+      <div class="setting-row"><span class="setting-label">MUSIC VOLUME</span><input type="range" class="setting-slider" min="0" max="100" value="${settings.musicVol * 100}" id="setMusic"></div>
+    </div>`;
+  document.getElementById('setSens').oninput = function() { settings.sensitivity = this.value / 1000; saveSettings(); };
+  document.getElementById('setHud').oninput = function() { settings.hudScale = this.value / 100; document.getElementById('hud').style.transform = `scale(${settings.hudScale})`; saveSettings(); };
+  document.getElementById('setSfx').oninput = function() { settings.sfxVol = this.value / 100; saveSettings(); };
+  document.getElementById('setMusic').oninput = function() { settings.musicVol = this.value / 100; saveSettings(); };
+}
+
+// ============================================================
+// PHONE UI
+// ============================================================
+const PHONE_APPS = [
+  { id: 'contacts', icon: '📞', label: 'Contacts' },
+  { id: 'messages', icon: '💬', label: 'Messages' },
+  { id: 'bank', icon: '🏦', label: 'Bank' },
+  { id: 'gps', icon: '📍', label: 'GPS' },
+  { id: 'settings', icon: '⚙', label: 'Settings' },
+  { id: 'camera', icon: '📷', label: 'Camera' }
+];
+function openPhone() { document.getElementById('phoneUI').classList.add('open'); renderPhoneHome(); }
+function closePhone() { document.getElementById('phoneUI').classList.remove('open'); }
+function renderPhoneHome() {
+  const scr = document.getElementById('phoneScreen');
+  scr.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'phone-home';
+  PHONE_APPS.forEach(app => {
+    const d = document.createElement('div');
+    d.className = 'phone-app';
+    d.innerHTML = `<div class="phone-app-icon">${app.icon}</div><div class="phone-app-label">${app.label}</div>`;
+    d.addEventListener('click', () => openPhoneApp(app.id));
+    grid.appendChild(d);
+  });
+  scr.appendChild(grid);
+}
+function openPhoneApp(id) {
+  const scr = document.getElementById('phoneScreen');
+  switch (id) {
+    case 'contacts':
+      let html = '<div style="font-family:\'VT323\',monospace;font-size:13px;color:#ffb300;letter-spacing:2px;margin-bottom:8px">CONTACTS</div>';
+      if (playerFaction.factionId) {
+        const members = getMembers();
+        members.slice(0, 20).forEach(m => {
+          html += `<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.6)">${m.name} — ${getRanks()[m.rankIndex].name}</div>`;
+        });
+      } else { html += '<div style="color:rgba(255,255,255,.4);font-size:11px">Join a faction to see contacts</div>'; }
+      scr.innerHTML = html;
+      break;
+    case 'messages':
+      scr.innerHTML = `<div style="font-family:'VT323',monospace;font-size:13px;color:#ffb300;letter-spacing:2px;margin-bottom:8px">MESSAGES</div>
+        <div style="padding:8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;margin-bottom:6px">
+          <div style="font-family:'VT323',monospace;font-size:11px;color:#4dd4ff">LUXCITY ADMIN</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">Welcome to LuxCity! Open the menu to explore all features. Visit faction HQs or use the menu to join.</div>
+        </div>
+        <div style="padding:8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;margin-bottom:6px">
+          <div style="font-family:'VT323',monospace;font-size:11px;color:#ffd700">MISSION BOARD</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">New missions available! Check the Missions menu for details.</div>
+        </div>`;
+      break;
+    case 'bank':
+      scr.innerHTML = `<div style="font-family:'VT323',monospace;font-size:13px;color:#ffb300;letter-spacing:2px;margin-bottom:8px">BANK</div>
+        <div style="text-align:center;padding:10px">
+          <div style="font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.4)">CASH ON HAND</div>
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#ffb300">¢${state.cash}</div>
+          <div style="font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">BANK BALANCE</div>
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#4dd4ff">¢${state.bankBalance}</div>
+          <input class="phone-input" id="phoneBankAmt" type="number" placeholder="Amount">
+          <div style="display:flex;gap:6px;margin-top:4px">
+            <button class="phone-btn" style="flex:1" onclick="bankDeposit()">DEPOSIT</button>
+            <button class="phone-btn" style="flex:1" onclick="bankWithdraw()">WITHDRAW</button>
+          </div>
+        </div>`;
+      break;
+    case 'gps': closePhone(); openFullMap(); break;
+    case 'settings': closePhone(); openMainMenu(); handleMenuTap('settings'); break;
+    case 'camera':
+      closePhone();
+      document.getElementById('hud').style.display = 'none';
+      toast('// TAP ANYWHERE TO EXIT CAMERA');
+      const handler = () => { document.getElementById('hud').style.display = 'block'; document.removeEventListener('click', handler); };
+      setTimeout(() => document.addEventListener('click', handler), 500);
+      break;
+  }
+}
+function bankDeposit() {
+  const amt = parseInt(document.getElementById('phoneBankAmt')?.value || document.getElementById('atmAmount')?.value || 0);
+  if (!amt || amt <= 0 || amt > state.cash) { toast('// INSUFFICIENT CASH'); return; }
+  state.cash -= amt; state.bankBalance += amt; updateHud(); toast('// DEPOSITED ¢' + amt);
+  openPhoneApp('bank'); saveGame();
+}
+function bankWithdraw() {
+  const amt = parseInt(document.getElementById('phoneBankAmt')?.value || document.getElementById('atmAmount')?.value || 0);
+  if (!amt || amt <= 0 || amt > state.bankBalance) { toast('// INSUFFICIENT FUNDS'); return; }
+  state.bankBalance -= amt; state.cash += amt; updateHud(); toast('// WITHDREW ¢' + amt);
+  openPhoneApp('bank'); saveGame();
+}
+
+// ============================================================
+// EMOTE WHEEL
+// ============================================================
+const EMOTES = [{name:'WAVE',icon:'👋'},{name:'SIT',icon:'🪑'},{name:'DANCE',icon:'💃'},{name:'POINT',icon:'👉'},{name:'THUMBS UP',icon:'👍'},{name:'SURRENDER',icon:'🙌'},{name:'LEAN',icon:'🧍'},{name:'CLAP',icon:'👏'}];
+function initEmoteWheel() {
+  const wheel = document.getElementById('emoteWheel');
+  EMOTES.forEach((e, i) => {
+    const angle = (i / EMOTES.length) * Math.PI * 2 - Math.PI / 2;
+    const r = 72;
+    const x = 100 + Math.cos(angle) * r - 24;
+    const y = 100 + Math.sin(angle) * r - 24;
+    const item = document.createElement('div');
+    item.className = 'emote-item';
+    item.style.left = x + 'px'; item.style.top = y + 'px';
+    item.innerHTML = `${e.icon}<div class="emote-item-label">${e.name}</div>`;
+    item.addEventListener('click', () => { toast('// EMOTE: ' + e.name); closeEmoteWheel(); });
+    wheel.appendChild(item);
+  });
+  document.getElementById('btnEmote').addEventListener('click', toggleEmoteWheel);
+}
+function toggleEmoteWheel() {
+  const w = document.getElementById('emoteWheel');
+  w.classList.toggle('open');
+}
+function closeEmoteWheel() { document.getElementById('emoteWheel').classList.remove('open'); }
+
+// ============================================================
+// INVENTORY SYSTEM
+// ============================================================
+let invTab = 'all';
+function openInventory() { document.getElementById('invPanel').classList.add('open'); renderInventory(); }
+function closeInventory() { document.getElementById('invPanel').classList.remove('open'); }
+function renderInventory() {
+  const tabs = document.getElementById('invTabs');
+  const grid = document.getElementById('invGrid');
+  tabs.innerHTML = '';
+  ['all', 'weapons', 'consumables'].forEach(t => {
+    const tab = document.createElement('div');
+    tab.className = 'inv-tab' + (invTab === t ? ' active' : '');
+    tab.textContent = t.toUpperCase();
+    tab.addEventListener('click', () => { invTab = t; renderInventory(); });
+    tabs.appendChild(tab);
+  });
+  grid.innerHTML = '';
+  // Weapons
+  if (invTab === 'all' || invTab === 'weapons') {
+    state.inventory.weapons.forEach(wId => {
+      const def = ITEMS[wId] || { name: wId, icon: '✊', desc: 'Fists' };
+      const item = document.createElement('div');
+      item.className = 'inv-item' + (state.equippedWeapon === wId ? ' equipped' : '');
+      item.innerHTML = `<div class="inv-item-icon">${def.icon || '✊'}</div><div class="inv-item-name">${def.name || wId}</div>`;
+      item.addEventListener('click', () => { state.equippedWeapon = wId; toast('// EQUIPPED: ' + (def.name || wId).toUpperCase()); renderInventory(); });
+      grid.appendChild(item);
+    });
+  }
+  // Consumables
+  if (invTab === 'all' || invTab === 'consumables') {
+    state.inventory.consumables.forEach((c, idx) => {
+      const def = ITEMS[c.id];
+      if (!def) return;
+      const item = document.createElement('div');
+      item.className = 'inv-item';
+      item.innerHTML = `<div class="inv-item-icon">${def.icon}</div><div class="inv-item-name">${def.name}</div><div class="inv-item-qty">x${c.qty}</div>`;
+      item.addEventListener('click', () => useConsumable(idx));
+      grid.appendChild(item);
+    });
+  }
+}
+function useConsumable(idx) {
+  const c = state.inventory.consumables[idx];
+  if (!c || c.qty <= 0) return;
+  const def = ITEMS[c.id];
+  if (!def) return;
+  if (def.effect === 'hp') { state.hp = Math.min(state.maxHp, state.hp + def.value); }
+  else if (def.effect === 'stamina') { state.stamina = Math.min(state.maxStamina, state.stamina + def.value); }
+  else if (def.effect === 'maxhp') { state.maxHp += def.value; state.hp = Math.min(state.maxHp, state.hp + def.value); }
+  c.qty--;
+  if (c.qty <= 0) state.inventory.consumables.splice(idx, 1);
+  toast('// USED ' + def.name.toUpperCase());
+  updateHud(); renderInventory(); saveGame();
+}
+
+// ============================================================
+// SHOP SYSTEM
+// ============================================================
+let shopLocations = []; // filled after city build
+const SHOP_ITEMS = ['burger', 'energydrink', 'medkit', 'bat', 'knife', 'armor'];
+function openShop() { document.getElementById('shopPanel').classList.add('open'); renderShop(); }
+function closeShop() { document.getElementById('shopPanel').classList.remove('open'); }
+function renderShop() {
+  const list = document.getElementById('shopList');
+  list.innerHTML = '';
+  SHOP_ITEMS.forEach(id => {
+    const def = ITEMS[id];
+    if (!def) return;
+    const canBuy = state.cash >= def.price;
+    const owned = def.type === 'weapon' && state.inventory.weapons.includes(id);
+    const row = document.createElement('div');
+    row.className = 'shop-item';
+    row.innerHTML = `<div class="shop-item-info"><div class="shop-item-icon">${def.icon}</div><div><div class="shop-item-name">${def.name}</div><div class="shop-item-desc">${def.desc}</div></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><div class="shop-item-price">¢${def.price}</div>
+      <button class="shop-buy ${!canBuy || owned ? 'cant' : ''}" data-id="${id}">${owned ? 'OWNED' : 'BUY'}</button></div>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('.shop-buy:not(.cant)').forEach(btn => {
+    btn.addEventListener('click', () => buyItem(btn.dataset.id));
+  });
+}
+function buyItem(id) {
+  const def = ITEMS[id];
+  if (!def || state.cash < def.price) { toast('// NOT ENOUGH CASH'); return; }
+  state.cash -= def.price;
+  if (def.type === 'weapon') {
+    if (!state.inventory.weapons.includes(id)) state.inventory.weapons.push(id);
+  } else {
+    const existing = state.inventory.consumables.find(c => c.id === id);
+    if (existing) existing.qty++;
+    else state.inventory.consumables.push({ id, qty: 1 });
+  }
+  toast('// BOUGHT ' + def.name.toUpperCase());
+  updateHud(); renderShop(); saveGame();
+}
+
+// ============================================================
+// ATM SYSTEM
+// ============================================================
+let atmLocations = []; // filled after city build
+function openATM() {
+  const p = document.getElementById('atmPanel');
+  document.getElementById('atmBal').textContent = `CASH: ¢${state.cash}  |  BANK: ¢${state.bankBalance}`;
+  p.classList.add('open');
+}
+function closeATM() { document.getElementById('atmPanel').classList.remove('open'); }
+
+// ============================================================
+// DAILY REWARD SYSTEM
+// ============================================================
+const DAILY_REWARDS = [100, 200, 300, 400, 500, 750, 1000];
+function showDailyReward() {
+  const data = JSON.parse(localStorage.getItem('luxcity_daily') || '{"lastClaim":"","streak":0}');
+  const today = new Date().toDateString();
+  const alreadyClaimed = data.lastClaim === today;
+  const streak = alreadyClaimed ? data.streak : (isYesterday(data.lastClaim) ? data.streak : 0);
+  const dayIndex = streak % 7;
+
+  const grid = document.getElementById('drGrid');
+  grid.innerHTML = '';
+  DAILY_REWARDS.forEach((amt, i) => {
+    const d = document.createElement('div');
+    d.className = 'dr-day' + (i === dayIndex ? ' today' : '') + (i < dayIndex || alreadyClaimed && i <= dayIndex ? ' claimed' : '');
+    d.innerHTML = `<div class="dr-day-num">DAY ${i + 1}</div><div class="dr-day-amt">¢${amt}</div>`;
+    grid.appendChild(d);
+  });
+
+  const claimBtn = document.getElementById('drClaim');
+  claimBtn.className = 'dr-claim' + (alreadyClaimed ? ' done' : '');
+  claimBtn.textContent = alreadyClaimed ? 'CLAIMED' : 'CLAIM ¢' + DAILY_REWARDS[dayIndex];
+  claimBtn.onclick = alreadyClaimed ? null : () => {
+    state.cash += DAILY_REWARDS[dayIndex];
+    localStorage.setItem('luxcity_daily', JSON.stringify({ lastClaim: today, streak: streak + 1 }));
+    toast('// CLAIMED ¢' + DAILY_REWARDS[dayIndex]);
+    updateHud(); saveGame();
+    claimBtn.className = 'dr-claim done';
+    claimBtn.textContent = 'CLAIMED';
+  };
+  document.getElementById('dailyReward').classList.add('open');
+}
+function closeDailyReward() { document.getElementById('dailyReward').classList.remove('open'); }
+function isYesterday(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const y = new Date(); y.setDate(y.getDate() - 1);
+  return d.toDateString() === y.toDateString();
+}
+
+// ============================================================
+// MISSION SYSTEM
+// ============================================================
+const MISSIONS = [
+  { id: 'm1', title: 'Drive to Military Base', desc: 'Deliver a package to the military base.', type: 'goto', reward: { cash: 500, xp: 200 } },
+  { id: 'm2', title: 'Visit All Faction HQs', desc: 'Tour every faction HQ in LuxCity.', type: 'visit_all', reward: { cash: 800, xp: 350 } },
+  { id: 'm3', title: 'Sprint 500m', desc: 'Build your endurance by sprinting.', type: 'distance_sprint', goal: 500, reward: { cash: 200, xp: 150 } },
+  { id: 'm4', title: 'Earn ¢2,000', desc: 'Accumulate wealth by any means.', type: 'earn_cash', goal: 2000, reward: { cash: 0, xp: 300 } },
+  { id: 'm5', title: 'Join a Faction', desc: 'Find a faction HQ and join up.', type: 'join_faction', reward: { cash: 300, xp: 250 } }
+];
+let missionMarkers = []; // 3D objects
+
+function renderMissionList(body) {
+  let html = '';
+  MISSIONS.forEach(m => {
+    const done = state.completedMissions.includes(m.id);
+    const active = state.activeMission && state.activeMission.id === m.id;
+    html += `<div style="padding:10px;border:1px solid ${done ? 'rgba(34,204,102,.3)' : active ? 'rgba(255,215,0,.4)' : 'rgba(255,255,255,.08)'};border-radius:4px;margin-bottom:6px;background:${done ? 'rgba(34,204,102,.05)' : 'transparent'}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'VT323',monospace;font-size:13px;color:${done ? '#22cc66' : '#ffd700'};letter-spacing:2px">${done ? '✓ ' : ''}${m.title}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">${m.desc}</div>
+          <div style="font-family:'VT323',monospace;font-size:10px;color:#ffb300;margin-top:2px">¢${m.reward.cash} + ${m.reward.xp} XP</div>
+        </div>
+        ${done ? '' : active ? '<span style="font-family:\'VT323\',monospace;font-size:11px;color:#ffd700">ACTIVE</span>' :
+          `<button class="phone-btn" onclick="startMission('${m.id}');closeMenuSub()">START</button>`}
+      </div>
+    </div>`;
+  });
+  body.innerHTML = html || '<div style="color:rgba(255,255,255,.4);font-size:12px;text-align:center">No missions available</div>';
+}
+
+function startMission(missionId) {
+  const m = MISSIONS.find(x => x.id === missionId);
+  if (!m || state.completedMissions.includes(m.id)) return;
+  state.activeMission = { ...m, progress: 0, visited: [] };
+  state.missionProgress = { distanceSprinted: 0, startCash: state.cash + state.bankBalance };
+  // Set GPS target for goto missions
+  if (m.type === 'goto' && factionBuildings.length > 0) {
+    const mil = factionBuildings.find(f => f.id === 'military');
+    if (mil) setGPS(mil);
+  }
+  updateMissionTracker();
+  toast('// MISSION STARTED: ' + m.title);
+  closeMainMenu();
+}
+
+function updateMissions(dt) {
+  const m = state.activeMission;
+  if (!m || !player) return;
+
+  switch (m.type) {
+    case 'goto': {
+      const mil = factionBuildings.find(f => f.id === 'military');
+      if (mil) {
+        const d = Math.sqrt((player.position.x - mil.x) ** 2 + (player.position.z - mil.z) ** 2);
+        m.progress = Math.max(0, 100 - d);
+        if (d < 20) completeMission();
+      }
+      break;
+    }
+    case 'visit_all': {
+      for (const fb of factionBuildings) {
+        if (fb.id === 'gang_hq') continue;
+        const d = Math.sqrt((player.position.x - fb.x) ** 2 + (player.position.z - fb.z) ** 2);
+        if (d < 20 && !m.visited.includes(fb.id)) {
+          m.visited.push(fb.id);
+          toast('// VISITED ' + (fb.id).toUpperCase());
+        }
+      }
+      const target = factionBuildings.filter(f => f.id !== 'gang_hq').length;
+      m.progress = m.visited.length;
+      if (m.visited.length >= target) completeMission();
+      break;
+    }
+    case 'distance_sprint': {
+      if (input.sprint && state.mode === 'foot') {
+        state.missionProgress.distanceSprinted += dt * 5; // rough speed
+      }
+      m.progress = Math.floor(state.missionProgress.distanceSprinted);
+      if (m.progress >= m.goal) completeMission();
+      break;
+    }
+    case 'earn_cash': {
+      const total = state.cash + state.bankBalance;
+      m.progress = total;
+      if (total >= m.goal) completeMission();
+      break;
+    }
+    case 'join_faction': {
+      if (playerFaction.factionId) completeMission();
+      break;
+    }
+  }
+  updateMissionTracker();
+}
+
+function completeMission() {
+  const m = state.activeMission;
+  if (!m) return;
+  state.cash += m.reward.cash;
+  grantXP(m.reward.xp);
+  state.completedMissions.push(m.id);
+  // Show reward screen
+  document.getElementById('rewardDetails').innerHTML = `<div style="font-family:'VT323',monospace;font-size:16px;color:#ffd700;margin-bottom:6px">${m.title}</div>
+    ${m.reward.cash > 0 ? `<div>+¢${m.reward.cash}</div>` : ''}
+    <div>+${m.reward.xp} XP</div>`;
+  document.getElementById('rewardScreen').classList.add('open');
+  setTimeout(() => document.getElementById('rewardScreen').classList.remove('open'), 3000);
+  state.activeMission = null;
+  document.getElementById('missionTracker').classList.remove('active');
+  updateHud(); saveGame();
+  toast('// MISSION COMPLETE!');
+}
+
+function updateMissionTracker() {
+  const m = state.activeMission;
+  const tracker = document.getElementById('missionTracker');
+  if (!m) { tracker.classList.remove('active'); return; }
+  tracker.classList.add('active');
+  document.getElementById('mtTitle').textContent = m.title;
+  switch (m.type) {
+    case 'goto': document.getElementById('mtObj').textContent = 'Go to target'; break;
+    case 'visit_all': document.getElementById('mtObj').textContent = `Visited ${m.visited?.length || 0}/${factionBuildings.filter(f => f.id !== 'gang_hq').length}`; break;
+    case 'distance_sprint': document.getElementById('mtObj').textContent = `${Math.floor(m.progress || 0)}/${m.goal}m`; break;
+    case 'earn_cash': document.getElementById('mtObj').textContent = `¢${Math.floor(m.progress || 0)}/¢${m.goal}`; break;
+    case 'join_faction': document.getElementById('mtObj').textContent = 'Join any faction'; break;
+  }
+}
+
+// ============================================================
+// INTERACTION SYSTEM (shops, ATMs near player)
+// ============================================================
+let interactionPoints = []; // [{x, z, type, data}] — filled after city build
+let nearInteraction = null;
+function checkInteractions() {
+  if (!player) return;
+  nearInteraction = null;
+  const px = player.position.x, pz = player.position.z;
+  for (const ip of interactionPoints) {
+    const d = Math.sqrt((px - ip.x) ** 2 + (pz - ip.z) ** 2);
+    if (d < 15) { nearInteraction = ip; break; }
+  }
+  const prompt = document.getElementById('prompt');
+  if (nearInteraction && !state.dead) {
+    prompt.textContent = nearInteraction.type === 'shop' ? '// TAP TO SHOP' : nearInteraction.type === 'atm' ? '// TAP TO USE ATM' : '// TAP ENTER';
+    prompt.classList.add('show');
+  }
+}
+
+// ============================================================
+// WIRE UP ALL UI EVENTS
+// ============================================================
+function initAllUI() {
+  initCharCreate();
+  initMainMenu();
+  initEmoteWheel();
+
+  // Phone
+  document.getElementById('btnPhone').addEventListener('click', openPhone);
+  document.getElementById('phoneBackBtn').addEventListener('click', () => { const scr = document.getElementById('phoneScreen'); if (scr.querySelector('.phone-home')) closePhone(); else renderPhoneHome(); });
+
+  // Inventory
+  document.getElementById('btnInv').addEventListener('click', openInventory);
+  document.getElementById('invClose').addEventListener('click', closeInventory);
+
+  // Shop
+  document.getElementById('shopClose').addEventListener('click', closeShop);
+
+  // ATM
+  document.getElementById('atmDeposit').addEventListener('click', () => {
+    const amt = parseInt(document.getElementById('atmAmount').value || 0);
+    if (amt > 0 && amt <= state.cash) { state.cash -= amt; state.bankBalance += amt; updateHud(); toast('// DEPOSITED ¢' + amt); document.getElementById('atmBal').textContent = `CASH: ¢${state.cash}  |  BANK: ¢${state.bankBalance}`; saveGame(); }
+    else toast('// INVALID AMOUNT');
+  });
+  document.getElementById('atmWithdraw').addEventListener('click', () => {
+    const amt = parseInt(document.getElementById('atmAmount').value || 0);
+    if (amt > 0 && amt <= state.bankBalance) { state.bankBalance -= amt; state.cash += amt; updateHud(); toast('// WITHDREW ¢' + amt); document.getElementById('atmBal').textContent = `CASH: ¢${state.cash}  |  BANK: ¢${state.bankBalance}`; saveGame(); }
+    else toast('// INVALID AMOUNT');
+  });
+  document.getElementById('atmClose').addEventListener('click', closeATM);
+
+  // Daily reward close on outside click
+  document.getElementById('dailyReward').addEventListener('click', (e) => { if (e.target === document.getElementById('dailyReward')) closeDailyReward(); });
+  // Reward screen close
+  document.getElementById('rewardScreen').addEventListener('click', () => document.getElementById('rewardScreen').classList.remove('open'));
+
+  // Prompt interaction
+  document.getElementById('prompt').addEventListener('click', () => {
+    if (nearInteraction) {
+      if (nearInteraction.type === 'shop') openShop();
+      else if (nearInteraction.type === 'atm') openATM();
+    }
+  });
 }
 
 // ============================================================
@@ -2719,6 +3999,7 @@ function addStreetLamp(x, z, parent) {
   const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), new THREE.MeshStandardMaterial({ color: 0xffeeaa, emissive: 0xffeeaa, emissiveIntensity: 0.8 }));
   lamp.position.set(x + 1.5, 5, z);
   parent.add(lamp);
+  streetLamps.push(lamp);
 }
 
 function addTrafficLight(x, z, ry, parent) {
@@ -3380,6 +4661,48 @@ function buildProceduralCity() {
     { id: 'gang_hq', x: bc(2,4).x + 12, z: bc(2,4).z + 5 }    // Gas Station = Gang HQ
   ];
 
+  // === SHOPS & ATMs ===
+  const shop1 = bc(1,1), shop2 = bc(3,3);
+  shopLocations = [
+    { x: shop1.x, z: shop1.z },
+    { x: shop2.x, z: shop2.z }
+  ];
+  // Build shop buildings
+  shopLocations.forEach(s => {
+    const shopC = document.createElement('canvas'); shopC.width = 128; shopC.height = 64;
+    const sCtx = shopC.getContext('2d');
+    sCtx.fillStyle = '#334'; sCtx.fillRect(0, 0, 128, 64);
+    sCtx.fillStyle = '#ffb300'; sCtx.font = 'bold 16px sans-serif'; sCtx.fillText('24/7 MART', 10, 25);
+    sCtx.fillStyle = '#4dd4ff'; sCtx.font = '10px sans-serif'; sCtx.fillText('OPEN', 10, 45);
+    const shopTex = new THREE.CanvasTexture(shopC);
+    const shopMat = new THREE.MeshStandardMaterial({ map: shopTex });
+    const shopMesh = new THREE.Mesh(new THREE.BoxGeometry(8, 5, 6), [shopMat, shopMat, shopMat, shopMat, shopMat, shopMat]);
+    shopMesh.position.set(s.x, 2.5, s.z);
+    cityObj.add(shopMesh);
+    buildingsList.push({ x: s.x, z: s.z, w: 8, type: 'shop' });
+  });
+
+  // ATM locations (near shops and factions)
+  atmLocations = [
+    { x: shop1.x + 5, z: shop1.z },
+    { x: shop2.x + 5, z: shop2.z },
+    { x: bc(0,2).x + 16, z: bc(0,2).z }, // near hospital
+    { x: bc(4,2).x - 16, z: bc(4,2).z }  // near police
+  ];
+  // ATM box props
+  atmLocations.forEach(a => {
+    const atmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.5, 0.5),
+      new THREE.MeshStandardMaterial({ color: 0x4488ff, emissive: 0x224488, emissiveIntensity: 0.3 }));
+    atmMesh.position.set(a.x, 0.75, a.z);
+    cityObj.add(atmMesh);
+  });
+
+  // Build interaction points array
+  interactionPoints = [
+    ...shopLocations.map(s => ({ x: s.x, z: s.z, type: 'shop' })),
+    ...atmLocations.map(a => ({ x: a.x, z: a.z, type: 'atm' }))
+  ];
+
   setProgress(80, 'CITY READY!');
   window.STATUS(`City built: ${buildingsList.length} buildings, ${TOTAL.toFixed(0)}m wide`);
 }
@@ -3389,6 +4712,7 @@ function buildProceduralCity() {
 // ============================================================
 async function loadAll() {
   try {
+    startTips();
     // Build the procedural city instead of loading GLB
     setProgress(5, 'BUILDING LUXCITY...');
     window.STATUS('Generating city...');
@@ -3554,9 +4878,28 @@ async function loadAll() {
     });
 
     setProgress(100, 'READY!');
+    stopTips();
     window.STATUS('Tap ENTER CITY');
-    setTimeout(() => { loadingEl.style.display = 'none'; startEl.style.display = 'flex'; }, 400);
+    initAllUI();
+
+    // Check for saved character
+    const hasChar = localStorage.getItem('luxcity_character');
+    const hasSave = loadGame();
+    if (hasSave) updateHud();
+
+    setTimeout(() => {
+      loadingEl.style.display = 'none';
+      if (hasChar) {
+        // Returning player — show start screen
+        try { Object.assign(charData, JSON.parse(hasChar)); } catch(e) {}
+        startEl.style.display = 'flex';
+      } else {
+        // New player — show character creation
+        document.getElementById('charCreate').classList.add('open');
+      }
+    }, 400);
   } catch (err) {
+    stopTips();
     window.ERR(err.message || String(err));
   }
 }
@@ -3570,9 +4913,12 @@ function setAction(next) {
 
 // === GAME LOOP ===
 function doPunch() {
-  if (punching || !actPunch) return;
+  if (punching || !actPunch || state.dead) return;
   punching = true;
   actPunch.reset().fadeIn(0.1).play();
+  grantXP(5);
+  state.skills.strength.xp += 10; checkSkillUp('strength');
+  if (Math.random() < 0.3) addWanted(1); // 30% chance to trigger wanted
   setTimeout(() => { punching = false; }, 900);
 }
 
@@ -3584,6 +4930,23 @@ let miniCounter = 0;
 
 function update(dt) {
   if (!player) return;
+  if (state.dead) { updateDeath(dt); if (mixer) mixer.update(dt); updateCamera(dt); return; }
+
+  // Core systems
+  updateDayNight(dt);
+  updateWanted(dt);
+  updateMissions(dt);
+  // XP from movement
+  if (state.mode === 'foot' && (input.mx !== 0 || input.my !== 0)) grantXP(dt * (input.sprint ? 2 : 0.5));
+  else if (state.mode === 'driving' && playerCar && Math.abs(playerCar.userData.speed) > 1) {
+    grantXP(dt * 1.5);
+    state.skills.driving.xp += dt * 3; checkSkillUp('driving');
+  }
+  // Auto-save
+  saveCounter += dt;
+  if (saveCounter > 30) { saveCounter = 0; saveGame(); }
+  // HP check
+  if (state.hp <= 0) { triggerDeath(); return; }
 
   if (input.enter && state.mode === 'foot') {
     input.enter = false;
@@ -3619,8 +4982,14 @@ function update(dt) {
   if (state.mode === 'foot') {
     let near = false;
     for (const v of vehicles) if (v.position.distanceTo(player.position) < 5) { near = true; break; }
-    document.getElementById('prompt').classList.toggle('show', near);
+    // Check interaction points (shops, ATMs)
+    if (miniCounter % 8 === 0) checkInteractions();
+    if (!nearInteraction) {
+      document.getElementById('prompt').classList.toggle('show', near);
+    }
     document.getElementById('btnEnter').classList.toggle('hidden', !near);
+    // Stamina
+    updateStamina(dt, input.sprint && (input.mx !== 0 || input.my !== 0));
   } else {
     document.getElementById('prompt').classList.remove('show');
     document.getElementById('btnExit').classList.remove('hidden');
@@ -3632,7 +5001,7 @@ function update(dt) {
   if (miniCounter % 4 === 0) drawMinimap();
   if (miniCounter % 8 === 0) checkFactionProximity();
   if (gpsTarget) { updateGPSLine(); if (miniCounter % 8 === 0) updateGPSDist(); }
-  if (godMode && state.hp < state.maxHp) { state.hp = state.maxHp; updateHud(); }
+  if (godMode && state.hp < state.maxHp) { state.hp = state.maxHp; state.stamina = state.maxStamina; updateHud(); }
 }
 
 function updateFoot(dt) {
@@ -4291,10 +5660,18 @@ document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('hud').style.display = 'block';
   cameraYaw = playerYaw;
   setMode('foot');
+  applyCharAppearance();
   updateHud();
   running = true;
-  toast('// WELCOME TO LUXCITY');
+  toast('// WELCOME TO LUXCITY, ' + charData.name.toUpperCase());
+  // Show daily reward check
+  const dailyData = JSON.parse(localStorage.getItem('luxcity_daily') || '{"lastClaim":""}');
+  if (dailyData.lastClaim !== new Date().toDateString()) {
+    setTimeout(() => showDailyReward(), 1500);
+  }
 });
+// Save on page close
+window.addEventListener('beforeunload', saveGame);
 
 function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
