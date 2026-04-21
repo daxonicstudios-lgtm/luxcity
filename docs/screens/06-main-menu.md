@@ -1,0 +1,38 @@
+# Main Menu
+
+**Element ID:** `#mainMenu`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│  ┌────────────────────────────────────────────────┐  │
+│  │ // MENU                                    [X] │  │
+│  │ ┌──────────┐ ┌──────────┐ ┌──────────┐        │  │
+│  │ │   MAP    │ │  STATS   │ │ MISSIONS │        │  │
+│  │ └──────────┘ └──────────┘ └──────────┘        │  │
+│  │ ┌──────────┐ ┌──────────┐ ┌──────────┐        │  │
+│  │ │ FACTIONS │ │ SETTINGS │ │  ADMIN   │        │  │
+│  │ └──────────┘ └──────────┘ └──────────┘        │  │
+│  └────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Header:** "// MENU" title
+- **Close Button:** `#mmClose` — returns to gameplay
+- **Grid:** `#mmGrid` — grid of menu option tiles
+- **Sub-panel:** `#mmSub` — opens when a menu tile is selected
+  - **Back Button:** `#mmBack` (←)
+  - **Sub Title:** `#mmSubTitle`
+  - **Sub Body:** `#mmSubBody` — dynamic content area
+
+## Menu Items
+
+- MAP — opens full map view
+- STATS — player statistics
+- MISSIONS — available/active missions
+- FACTIONS — faction panel
+- SETTINGS — game settings (sensitivity, volume, HUD scale)
+- ADMIN — admin/debug panel (if enabled)

@@ -1,0 +1,27 @@
+# Start Screen
+
+**Element ID:** `#start`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│                                                      │
+│                    L U X C I T Y                     │
+│                  ── OPEN WORLD ──                    │
+│                                                      │
+│                ┌──────────────────┐                  │
+│                │    ENTER CITY    │                  │
+│                └──────────────────┘                  │
+│                ┌──────────────────┐                  │
+│                │  NEW CHARACTER   │                  │
+│                └──────────────────┘                  │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Title:** "LUXCITY" heading with subtitle
+- **Enter City Button:** `#startBtn` — loads saved character and enters game
+- **New Character Button:** `#newCharBtn` — opens character creation screen

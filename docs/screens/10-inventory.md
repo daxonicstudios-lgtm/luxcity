@@ -1,0 +1,28 @@
+# Inventory Panel
+
+**Element ID:** `#invPanel`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│  ┌────────────────────────────────────────────────┐  │
+│  │ // INVENTORY                               [X] │  │
+│  │ [WEAPONS] [FOOD] [ITEMS] [CLOTHES]              │  │
+│  │ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐           │  │
+│  │ │Pistol│ │Bat   │ │      │ │      │           │  │
+│  │ │ x1   │ │ x1   │ │      │ │      │           │  │
+│  │ └──────┘ └──────┘ └──────┘ └──────┘           │  │
+│  │ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐           │  │
+│  │ │      │ │      │ │      │ │      │           │  │
+│  │ └──────┘ └──────┘ └──────┘ └──────┘           │  │
+│  └────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Header:** "// INVENTORY" title
+- **Close Button:** `#invClose`
+- **Category Tabs:** `#invTabs` — filter by item type (Weapons, Food, Items, Clothes)
+- **Item Grid:** `#invGrid` — grid of owned items with quantity

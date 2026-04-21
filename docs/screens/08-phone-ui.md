@@ -1,0 +1,36 @@
+# Phone UI
+
+**Element ID:** `#phoneUI`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│              ┌──────────────────────┐                │
+│              │ LUXCITY        12:00 │                │
+│              │ ┌────┐ ┌────┐ ┌────┐│                │
+│              │ │BANK│ │CONT│ │MSSG││                │
+│              │ └────┘ └────┘ └────┘│                │
+│              │ ┌────┐ ┌────┐ ┌────┐│                │
+│              │ │TAXI│ │NEWS│ │SETT││                │
+│              │ └────┘ └────┘ └────┘│                │
+│              │                      │                │
+│              │      [ HOME ]        │                │
+│              └──────────────────────┘                │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Status Bar:** "LUXCITY" label + `#phoneTime` clock
+- **App Screen:** `#phoneScreen` — grid of phone app icons
+- **Home Button:** `#phoneBackBtn` — returns to phone home screen or closes phone
+
+## Phone Apps
+
+- **BANK** — check balance, deposit/withdraw (includes `#phoneBankAmt` input)
+- **CONTACTS** — NPC contact list
+- **MESSAGES** — in-game messages
+- **TAXI** — fast travel service
+- **NEWS** — city news/events
+- **SETTINGS** — phone settings

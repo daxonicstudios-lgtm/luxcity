@@ -1,0 +1,29 @@
+# ATM Panel
+
+**Element ID:** `#atmPanel`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│                                                      │
+│              ┌──────────────────────┐                │
+│              │    // LUXCITY ATM    │                │
+│              │   Balance: ¢ 5,000   │                │
+│              │                      │                │
+│              │  [___Amount___]      │                │
+│              │  [DEPOSIT] [WITHDRAW]│                │
+│              │                      │                │
+│              │      [ CLOSE ]       │                │
+│              └──────────────────────┘                │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Balance Display:** `#atmBal` — current bank balance
+- **Amount Input:** `#atmAmount` — number input for transaction amount
+- **Deposit Button:** `#atmDeposit` — transfer cash to bank
+- **Withdraw Button:** `#atmWithdraw` — transfer bank to cash
+- **Close Button:** `#atmClose`

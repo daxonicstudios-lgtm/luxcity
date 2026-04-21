@@ -1,0 +1,28 @@
+# Daily Reward
+
+**Element ID:** `#dailyReward`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│              ┌──────────────────────┐                │
+│              │   // DAILY REWARD    │                │
+│              │                      │                │
+│              │ ┌──┐┌──┐┌──┐┌──┐┌──┐│                │
+│              │ │D1││D2││D3││D4││D5││                │
+│              │ │✓ ││✓ ││⬤ ││  ││  ││                │
+│              │ └──┘└──┘└──┘└──┘└──┘│                │
+│              │ ┌──┐┌──┐            │                │
+│              │ │D6││D7│            │                │
+│              │ └──┘└──┘            │                │
+│              │      [ CLAIM ]      │                │
+│              └──────────────────────┘                │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Day Grid:** `#drGrid` — 7 day slots showing claimed (✓), current (⬤), and locked
+- **Claim Button:** `#drClaim` — claims today's reward
+- Rewards escalate each consecutive day

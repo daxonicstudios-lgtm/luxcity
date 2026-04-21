@@ -1,0 +1,28 @@
+# Shop Panel
+
+**Element ID:** `#shopPanel`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│  ┌────────────────────────────────────────────────┐  │
+│  │ // 24/7 MART                               [X] │  │
+│  │ ┌──────────────────────────────────────────┐   │  │
+│  │ │  🍔 Burger      ¢50              [BUY]  │   │  │
+│  │ │  🍕 Pizza       ¢75              [BUY]  │   │  │
+│  │ │  💊 Medkit      ¢200             [BUY]  │   │  │
+│  │ │  🥤 Energy      ¢30              [BUY]  │   │  │
+│  │ └──────────────────────────────────────────┘   │  │
+│  └────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Header:** "// 24/7 MART" title
+- **Close Button:** `#shopClose`
+- **Item List:** `#shopList` — scrollable list of purchasable items
+  - Each item shows: icon, name, price, and BUY button
+  - Owned items show "OWNED" (greyed out)
+  - Unaffordable items have disabled BUY button

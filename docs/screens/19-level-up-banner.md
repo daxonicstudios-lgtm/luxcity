@@ -1,0 +1,22 @@
+# Level Up Banner
+
+**Element ID:** `#levelUpBanner`
+
+## Layout (Mobile Landscape)
+
+```
+┌──────────────────────────────────────────────────────┐
+│                                                      │
+│    ═══════════════════════════════════════════════    │
+│                   L E V E L  U P !                   │
+│    ═══════════════════════════════════════════════    │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+```
+
+## Components
+
+- **Banner Text:** "LEVEL UP!" — centered, animated banner
+- Appears briefly when player gains a level
+- Gold/yellow color scheme with glow effect
+- Auto-dismisses after animation
