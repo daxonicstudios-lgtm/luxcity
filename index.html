@@ -37,11 +37,11 @@
 
   .hud{position:fixed;inset:0;pointer-events:none;z-index:10}
   .hud>*{pointer-events:auto}
-  .top-row{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
-  .stat{background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,179,0,.3);border-radius:4px;padding:6px 12px;font-family:'VT323',monospace}
+  .top-row{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:3}
+  .stat{background:rgba(10,10,18,.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,179,0,.2);border-radius:6px;padding:8px 14px;font-family:'VT323',monospace;box-shadow:0 2px 12px rgba(0,0,0,.4)}
   .stat-lbl{color:rgba(255,179,0,.9);font-size:10px;letter-spacing:3px}
-  .bar{width:110px;height:4px;background:rgba(0,0,0,.5);margin-top:4px;overflow:hidden;border-radius:2px}
-  .bar-fill{height:100%;transition:width .2s;background:linear-gradient(90deg,#ff3c5f,#ffb300)}
+  .bar{width:120px;height:5px;background:rgba(0,0,0,.5);margin-top:4px;overflow:hidden;border-radius:3px}
+  .bar-fill{height:100%;transition:width .2s;border-radius:3px;background:linear-gradient(90deg,#ff3c5f,#ffb300)}
 
   .speed{background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,179,0,.3);border-radius:4px;padding:6px 12px;font-family:'VT323',monospace;display:none;text-align:right;margin-top:6px}
   .speed.show{display:block}
@@ -50,18 +50,18 @@
 
   .swipe-layer{position:absolute;inset:0;pointer-events:auto;z-index:1}
 
-  .joy{position:absolute;bottom:16px;left:16px;width:110px;height:110px;pointer-events:auto;z-index:5}
-  .joy-base{position:absolute;inset:0;border-radius:50%;background:rgba(10,10,18,.45);border:2px solid rgba(255,179,0,.4)}
-  .joy-knob{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffcf4d,#ffb300);border:2px solid rgba(255,255,255,.9);box-shadow:0 3px 8px rgba(0,0,0,.5),0 0 15px rgba(255,179,0,.5);transition:transform .05s linear}
+  .joy{position:absolute;bottom:20px;left:20px;width:120px;height:120px;pointer-events:auto;z-index:5}
+  .joy-base{position:absolute;inset:0;border-radius:50%;background:rgba(10,10,18,.5);border:2px solid rgba(255,179,0,.3);box-shadow:inset 0 0 20px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.3)}
+  .joy-knob{position:absolute;top:50%;left:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffdf6d,#ffb300,#e69500);border:2px solid rgba(255,255,255,.8);box-shadow:0 3px 10px rgba(0,0,0,.5),0 0 20px rgba(255,179,0,.4);transition:transform .05s linear}
 
-  .btns{position:absolute;bottom:16px;right:16px;display:grid;grid-template-columns:repeat(2,56px);grid-template-rows:repeat(2,56px);gap:8px;z-index:5}
-  .btn{width:56px;height:56px;border-radius:50%;background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:2px solid rgba(255,179,0,.5);color:#ffb300;font-family:'VT323',monospace;font-size:10px;letter-spacing:1.5px;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;transition:transform .08s,background .15s}
-  .btn:active{transform:scale(.9);background:rgba(255,179,0,.2)}
-  .btn.punch{border-color:#ff3c5f;color:#ff3c5f}
-  .btn.enter{border-color:#4dd4ff;color:#4dd4ff}
+  .btns{position:absolute;bottom:20px;right:20px;display:grid;grid-template-columns:repeat(2,62px);grid-template-rows:repeat(2,62px);gap:10px;z-index:5}
+  .btn{width:62px;height:62px;border-radius:50%;background:rgba(10,10,18,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:2px solid rgba(255,179,0,.4);color:#ffb300;font-family:'VT323',monospace;font-size:10px;letter-spacing:1.5px;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;transition:transform .08s,background .15s;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .btn:active{transform:scale(.88);background:rgba(255,179,0,.25)}
+  .btn.punch{border-color:#ff3c5f;color:#ff3c5f;box-shadow:0 0 10px rgba(255,60,95,.2)}
+  .btn.enter{border-color:#4dd4ff;color:#4dd4ff;box-shadow:0 0 10px rgba(77,212,255,.2)}
   .btn.brake{border-color:#ff3c5f;color:#ff3c5f}
-  .btn .ico{font-size:18px;line-height:1}
-  .btn .lbl{font-size:7px;opacity:.8;letter-spacing:1.5px;margin-top:1px}
+  .btn .ico{font-size:20px;line-height:1}
+  .btn .lbl{font-size:8px;opacity:.8;letter-spacing:1.5px;margin-top:2px}
   .btn.hidden{display:none}
 
   .prompt{position:absolute;bottom:94px;left:50%;transform:translateX(-50%);background:rgba(10,10,18,.85);border:1px solid #4dd4ff;padding:6px 14px;font-family:'VT323',monospace;color:#4dd4ff;font-size:13px;letter-spacing:2px;display:none;white-space:nowrap;border-radius:2px;z-index:6}
@@ -69,9 +69,10 @@
   .toast{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(10,10,18,.88);border:1px solid #ffb300;color:#ffb300;padding:6px 14px;font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:2px;z-index:6}
   .toast.show{opacity:1}
 
-  .minimap-right{width:90px;height:90px;background:rgba(10,10,18,.55);border:2px solid rgba(255,179,0,.4);border-radius:50%;overflow:hidden;pointer-events:auto;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer}
+  .minimap-right{width:95px;height:95px;background:rgba(10,10,18,.6);border:2px solid rgba(255,179,0,.35);border-radius:50%;overflow:hidden;pointer-events:auto;position:relative;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.4),0 0 20px rgba(255,179,0,.1);transition:box-shadow .2s}
+  .minimap-right:active{box-shadow:0 2px 12px rgba(0,0,0,.4),0 0 25px rgba(255,179,0,.25)}
   .minimap-right canvas{display:block;width:100%;height:100%}
-  .minimap-right::after{content:'';position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:#ffb300;border-radius:50%;box-shadow:0 0 6px #ffb300}
+  .minimap-right::after{content:'';position:absolute;top:50%;left:50%;width:6px;height:6px;margin:-3px 0 0 -3px;background:#ffb300;border-radius:50%;box-shadow:0 0 8px #ffb300,0 0 3px #fff}
 
   /* === FULLSCREEN MAP === */
   .fullmap{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;background:rgba(5,5,12,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -247,28 +248,42 @@
   .admin-hint{font-family:'VT323',monospace;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-align:center;padding:8px}
 
   /* === CHARACTER CREATION === */
-  .char-create{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a12 0%,#1a1025 100%);z-index:150;display:none;flex-direction:column;align-items:center;overflow-y:auto;padding:16px}
+  .char-create{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a12 0%,#12081e 50%,#1a1025 100%);z-index:150;display:none;flex-direction:row;overflow:hidden}
   .char-create.open{display:flex}
-  .cc-title{font-family:'VT323',monospace;font-size:24px;color:#ffb300;letter-spacing:6px;margin-bottom:12px;text-shadow:0 0 15px rgba(255,179,0,.4)}
-  .cc-section{width:100%;max-width:400px;margin-bottom:10px}
-  .cc-label{font-family:'VT323',monospace;font-size:12px;color:rgba(255,179,0,.7);letter-spacing:3px;margin-bottom:6px}
-  .cc-name{width:100%;padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,179,0,.3);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;outline:none}
-  .cc-name:focus{border-color:#ffb300}
-  .cc-row{display:flex;gap:6px;flex-wrap:wrap}
-  .cc-swatch{width:36px;height:36px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:border-color .15s,transform .1s}
-  .cc-swatch.selected{border-color:#fff;transform:scale(1.15);box-shadow:0 0 8px rgba(255,255,255,.4)}
-  .cc-gender-btn{flex:1;padding:10px;font-family:'VT323',monospace;font-size:14px;letter-spacing:3px;border:1px solid rgba(255,179,0,.3);border-radius:3px;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;text-align:center}
-  .cc-gender-btn.selected{background:rgba(255,179,0,.15);color:#ffb300;border-color:#ffb300}
-  .cc-hair{width:48px;height:48px;border-radius:6px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:border-color .15s}
-  .cc-hair.selected{border-color:#ffb300;background:rgba(255,179,0,.1)}
-  .cc-backstory{flex:1;min-width:100px;padding:10px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:rgba(255,255,255,.03);cursor:pointer;text-align:center;transition:border-color .15s}
-  .cc-backstory.selected{border-color:#ffb300;background:rgba(255,179,0,.08)}
-  .cc-backstory-name{font-family:'VT323',monospace;font-size:14px;color:#fff;letter-spacing:2px}
-  .cc-backstory-cash{font-family:'VT323',monospace;font-size:11px;color:#ffb300;margin-top:2px}
-  .cc-backstory-desc{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px}
-  .cc-enter{margin-top:16px;background:linear-gradient(135deg,#ffb300,#ff6a00);border:none;color:#0a0a12;padding:12px 40px;font-family:'VT323',monospace;font-size:20px;letter-spacing:4px;cursor:pointer;box-shadow:0 4px 20px rgba(255,179,0,.5);border-radius:2px;font-weight:700}
+  .char-create::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 30% 40%,rgba(255,179,0,.06),transparent 50%),radial-gradient(circle at 70% 60%,rgba(255,46,99,.04),transparent 50%);pointer-events:none}
+  .cc-preview{position:relative;flex:0 0 35%;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid rgba(255,179,0,.15);background:rgba(0,0,0,.2)}
+  .cc-preview canvas{width:100%!important;height:100%!important;display:block}
+  .cc-preview-label{position:absolute;bottom:16px;font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:3px}
+  .cc-form{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;align-items:center;-webkit-overflow-scrolling:touch;position:relative;z-index:1}
+  .cc-form::-webkit-scrollbar{width:4px}
+  .cc-form::-webkit-scrollbar-thumb{background:rgba(255,179,0,.3);border-radius:2px}
+  .cc-title{font-family:'VT323',monospace;font-size:28px;color:#ffb300;letter-spacing:8px;margin-bottom:6px;text-shadow:0 0 20px rgba(255,179,0,.5)}
+  .cc-subtitle{font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:4px;margin-bottom:16px}
+  .cc-section{width:100%;max-width:380px;margin-bottom:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:6px;padding:10px 12px}
+  .cc-label{font-family:'VT323',monospace;font-size:11px;color:rgba(255,179,0,.8);letter-spacing:3px;margin-bottom:8px;text-transform:uppercase}
+  .cc-name{width:100%;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,179,0,.25);border-radius:4px;color:#fff;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;outline:none;transition:border-color .2s}
+  .cc-name:focus{border-color:#ffb300;box-shadow:0 0 12px rgba(255,179,0,.15)}
+  .cc-row{display:flex;gap:8px;flex-wrap:wrap}
+  .cc-swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+  .cc-swatch:hover{transform:scale(1.1)}
+  .cc-swatch.selected{border-color:#fff;transform:scale(1.2);box-shadow:0 0 12px rgba(255,255,255,.5)}
+  .cc-gender-btn{flex:1;padding:12px;font-family:'VT323',monospace;font-size:15px;letter-spacing:3px;border:1px solid rgba(255,179,0,.25);border-radius:4px;background:transparent;color:rgba(255,255,255,.4);cursor:pointer;text-align:center;transition:all .15s}
+  .cc-gender-btn:hover{background:rgba(255,179,0,.05);color:rgba(255,255,255,.7)}
+  .cc-gender-btn.selected{background:rgba(255,179,0,.15);color:#ffb300;border-color:#ffb300;box-shadow:0 0 10px rgba(255,179,0,.2)}
+  .cc-hair{width:52px;height:52px;border-radius:8px;border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:22px;transition:all .15s}
+  .cc-hair:hover{border-color:rgba(255,179,0,.3);background:rgba(255,179,0,.05)}
+  .cc-hair.selected{border-color:#ffb300;background:rgba(255,179,0,.12);box-shadow:0 0 10px rgba(255,179,0,.2)}
+  .cc-backstory{flex:1;min-width:100px;padding:12px 10px;border:1px solid rgba(255,255,255,.08);border-radius:6px;background:rgba(255,255,255,.02);cursor:pointer;text-align:center;transition:all .15s}
+  .cc-backstory:hover{border-color:rgba(255,179,0,.3);background:rgba(255,179,0,.04)}
+  .cc-backstory.selected{border-color:#ffb300;background:rgba(255,179,0,.1);box-shadow:0 0 10px rgba(255,179,0,.15)}
+  .cc-backstory-name{font-family:'VT323',monospace;font-size:15px;color:#fff;letter-spacing:2px}
+  .cc-backstory-cash{font-family:'VT323',monospace;font-size:12px;color:#ffb300;margin-top:3px}
+  .cc-backstory-desc{font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;line-height:1.3}
+  .cc-enter{margin-top:18px;margin-bottom:20px;background:linear-gradient(135deg,#ffb300,#ff6a00);border:none;color:#0a0a12;padding:14px 48px;font-family:'VT323',monospace;font-size:22px;letter-spacing:5px;cursor:pointer;box-shadow:0 4px 24px rgba(255,179,0,.5);border-radius:4px;font-weight:700;transition:transform .1s,box-shadow .2s}
+  .cc-enter:hover{box-shadow:0 6px 30px rgba(255,179,0,.7)}
   .cc-enter:active{transform:scale(.96)}
   .cc-err{font-family:'VT323',monospace;font-size:11px;color:#ff3c5f;letter-spacing:1px;margin-top:4px;min-height:16px}
+  @media (max-height:400px),(max-width:600px){.cc-preview{flex:0 0 30%;min-width:120px}.cc-form{padding:12px 16px}.cc-section{padding:8px 10px;margin-bottom:8px}}
 
   /* === WASTED SCREEN === */
   .wasted{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(100,0,0,.7);backdrop-filter:blur(4px)}
@@ -418,9 +433,9 @@
   .levelup-banner.show{transform:translate(-50%,-50%) scale(1)}
 
   /* === HUD QUICK BUTTONS === */
-  .hud-quick{position:absolute;bottom:80px;right:16px;display:flex;gap:6px;z-index:5}
-  .hud-qbtn{width:36px;height:36px;border-radius:50%;background:rgba(10,10,18,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,179,0,.3);color:#ffb300;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .hud-qbtn:active{background:rgba(255,179,0,.15)}
+  .hud-quick{position:absolute;right:16px;bottom:160px;display:flex;flex-direction:row;gap:8px;z-index:5}
+  .hud-qbtn{width:42px;height:42px;border-radius:50%;background:rgba(10,10,18,.65);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:2px solid rgba(255,179,0,.35);color:#ffb300;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .1s,background .15s}
+  .hud-qbtn:active{transform:scale(.9);background:rgba(255,179,0,.2)}
 
   /* === NOTIFICATION QUEUE === */
   .notif-queue{position:absolute;top:50px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px;align-items:center;z-index:7;pointer-events:none}
@@ -460,16 +475,22 @@
 
 <!-- Character Creation -->
 <div class="char-create" id="charCreate">
-  <div class="cc-title">CREATE CHARACTER</div>
-  <div class="cc-section"><div class="cc-label">NAME</div><input class="cc-name" id="ccName" maxlength="16" placeholder="Enter name..."><div class="cc-err" id="ccErr"></div></div>
-  <div class="cc-section"><div class="cc-label">GENDER</div><div class="cc-row" id="ccGender"><button class="cc-gender-btn selected" data-g="male">MALE</button><button class="cc-gender-btn" data-g="female">FEMALE</button></div></div>
-  <div class="cc-section"><div class="cc-label">SKIN TONE</div><div class="cc-row" id="ccSkin"></div></div>
-  <div class="cc-section"><div class="cc-label">HAIR STYLE</div><div class="cc-row" id="ccHair"></div></div>
-  <div class="cc-section"><div class="cc-label">HAIR COLOR</div><div class="cc-row" id="ccHairColor"></div></div>
-  <div class="cc-section"><div class="cc-label">TOP COLOR</div><div class="cc-row" id="ccTop"></div></div>
-  <div class="cc-section"><div class="cc-label">BOTTOM COLOR</div><div class="cc-row" id="ccBottom"></div></div>
-  <div class="cc-section"><div class="cc-label">BACKSTORY</div><div class="cc-row" id="ccBackstory"></div></div>
-  <button class="cc-enter" id="ccEnter">ENTER LUXCITY</button>
+  <div class="cc-preview" id="ccPreview">
+    <div class="cc-preview-label">YOUR CHARACTER</div>
+  </div>
+  <div class="cc-form">
+    <div class="cc-title">CREATE CHARACTER</div>
+    <div class="cc-subtitle">// DESIGN YOUR IDENTITY</div>
+    <div class="cc-section"><div class="cc-label">NAME</div><input class="cc-name" id="ccName" maxlength="16" placeholder="Enter name..."><div class="cc-err" id="ccErr"></div></div>
+    <div class="cc-section"><div class="cc-label">GENDER</div><div class="cc-row" id="ccGender"><button class="cc-gender-btn selected" data-g="male">MALE</button><button class="cc-gender-btn" data-g="female">FEMALE</button></div></div>
+    <div class="cc-section"><div class="cc-label">SKIN TONE</div><div class="cc-row" id="ccSkin"></div></div>
+    <div class="cc-section"><div class="cc-label">HAIR STYLE</div><div class="cc-row" id="ccHair"></div></div>
+    <div class="cc-section"><div class="cc-label">HAIR COLOR</div><div class="cc-row" id="ccHairColor"></div></div>
+    <div class="cc-section"><div class="cc-label">TOP</div><div class="cc-row" id="ccTop"></div></div>
+    <div class="cc-section"><div class="cc-label">BOTTOM</div><div class="cc-row" id="ccBottom"></div></div>
+    <div class="cc-section"><div class="cc-label">BACKSTORY</div><div class="cc-row" id="ccBackstory"></div></div>
+    <button class="cc-enter" id="ccEnter">ENTER LUXCITY</button>
+  </div>
 </div>
 
 <div class="hud" id="hud" style="display:none">
@@ -533,7 +554,7 @@
   <div class="faction-join-prompt" id="factionJoinPrompt"></div>
   <div class="toast" id="toast"></div>
 
-  <div id="debug" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:9px;padding:4px 8px;border-radius:3px;pointer-events:none;white-space:pre;z-index:20;line-height:1.3"></div>
+  <div id="debug" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:9px;padding:4px 8px;border-radius:3px;pointer-events:none;white-space:pre;z-index:20;line-height:1.3;display:none"></div>
 </div>
 
 <!-- Faction Panel -->
@@ -2119,7 +2140,7 @@ function joyStart(x, y, id) {
   joyMoveTo(x, y);
 }
 function joyMoveTo(x, y) {
-  const dx = x - joyCx, dy = y - joyCy, max = 34;
+  const dx = x - joyCx, dy = y - joyCy, max = 36;
   const d = Math.min(Math.hypot(dx, dy), max);
   const a = Math.atan2(dy, dx);
   const kx = Math.cos(a) * d, ky = Math.sin(a) * d;
@@ -2265,6 +2286,151 @@ function stripRootMotion(clip) {
 // ============================================================
 // CHARACTER CREATION SYSTEM
 // ============================================================
+// ============================================================
+// CHARACTER CREATION 3D PREVIEW
+// ============================================================
+let ccScene, ccCamera, ccRenderer, ccPreviewModel, ccMixer, ccPreviewAnimating = false;
+
+function initCharPreview() {
+  const container = document.getElementById('ccPreview');
+  ccScene = new THREE.Scene();
+  ccScene.background = new THREE.Color(0x0a0a12);
+
+  // Lighting
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  ccScene.add(ambient);
+  const key = new THREE.DirectionalLight(0xfff0dd, 1.2);
+  key.position.set(2, 3, 4);
+  ccScene.add(key);
+  const fill = new THREE.DirectionalLight(0x4488ff, 0.3);
+  fill.position.set(-2, 1, -1);
+  ccScene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffb300, 0.4);
+  rim.position.set(0, 2, -3);
+  ccScene.add(rim);
+
+  // Ground circle
+  const groundGeo = new THREE.CircleGeometry(1.2, 32);
+  const groundMat = new THREE.MeshBasicMaterial({ color: 0x1a1a2a, transparent: true, opacity: 0.5 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = 0;
+  ccScene.add(ground);
+
+  // Camera
+  ccCamera = new THREE.PerspectiveCamera(30, container.clientWidth / container.clientHeight, 0.1, 10);
+  ccCamera.position.set(0, 1.0, 3.5);
+  ccCamera.lookAt(0, 0.85, 0);
+
+  // Renderer
+  ccRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  ccRenderer.setSize(container.clientWidth, container.clientHeight);
+  ccRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  ccRenderer.outputColorSpace = THREE.SRGBColorSpace;
+  container.insertBefore(ccRenderer.domElement, container.firstChild);
+
+  // Load character model
+  const loader = new GLTFLoader();
+  loader.load('./assets/character.glb', (gltf) => {
+    ccPreviewModel = gltf.scene.clone(true);
+
+    // Scale to fit view
+    ccPreviewModel.updateMatrixWorld(true);
+    let skeleton = null;
+    ccPreviewModel.traverse(o => { if (o.isSkinnedMesh && !skeleton) skeleton = o.skeleton; });
+    let rawH = 1;
+    if (skeleton) {
+      let minY = Infinity, maxY = -Infinity;
+      skeleton.bones.forEach(b => {
+        const p = new THREE.Vector3();
+        b.getWorldPosition(p);
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      });
+      rawH = maxY - minY;
+    } else {
+      const box = new THREE.Box3().setFromObject(ccPreviewModel);
+      rawH = box.max.y - box.min.y;
+    }
+    const scale = rawH > 0.01 ? (1.8 / rawH) : 1.0;
+    ccPreviewModel.scale.setScalar(scale);
+    ccPreviewModel.updateMatrixWorld(true);
+
+    const finalBox = new THREE.Box3().setFromObject(ccPreviewModel);
+    ccPreviewModel.position.y = -finalBox.min.y;
+    ccPreviewModel.rotation.y = Math.PI * 0.1;
+
+    ccScene.add(ccPreviewModel);
+    updatePreviewColors();
+
+    // Try to load idle animation
+    loader.load('./assets/idle.glb', (idleGltf) => {
+      if (idleGltf.animations.length > 0) {
+        ccMixer = new THREE.AnimationMixer(ccPreviewModel);
+        const action = ccMixer.clipAction(idleGltf.animations[0]);
+        action.play();
+      }
+    }, undefined, () => {});
+
+    ccPreviewAnimating = true;
+    animatePreview();
+  }, undefined, () => {
+    // Fallback: show a colored silhouette
+    const geo = new THREE.CapsuleGeometry(0.3, 1.0, 8, 16);
+    const mat = new THREE.MeshStandardMaterial({ color: charData.skinColor });
+    ccPreviewModel = new THREE.Mesh(geo, mat);
+    ccPreviewModel.position.y = 0.8;
+    ccScene.add(ccPreviewModel);
+    ccPreviewAnimating = true;
+    animatePreview();
+  });
+
+  // Handle resize
+  const ro = new ResizeObserver(() => {
+    if (!ccRenderer) return;
+    const w = container.clientWidth, h = container.clientHeight;
+    ccCamera.aspect = w / h;
+    ccCamera.updateProjectionMatrix();
+    ccRenderer.setSize(w, h);
+  });
+  ro.observe(container);
+}
+
+function updatePreviewColors() {
+  if (!ccPreviewModel) return;
+  ccPreviewModel.traverse(o => {
+    if (o.isMesh || o.isSkinnedMesh) {
+      if (o.material) {
+        const m = o.material.clone();
+        m.color = new THREE.Color(charData.skinColor);
+        o.material = m;
+      }
+    }
+  });
+}
+
+function animatePreview() {
+  if (!ccPreviewAnimating) return;
+  requestAnimationFrame(animatePreview);
+  if (ccMixer) ccMixer.update(0.016);
+  if (ccPreviewModel) ccPreviewModel.rotation.y += 0.003;
+  ccRenderer.render(ccScene, ccCamera);
+}
+
+function stopCharPreview() {
+  ccPreviewAnimating = false;
+  if (ccRenderer) {
+    ccRenderer.dispose();
+    const canvas = ccRenderer.domElement;
+    if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+    ccRenderer = null;
+  }
+  ccPreviewModel = null;
+  ccMixer = null;
+  ccScene = null;
+  ccCamera = null;
+}
+
 function initCharCreate() {
   const skinRow = document.getElementById('ccSkin');
   const hairRow = document.getElementById('ccHair');
@@ -2282,6 +2448,7 @@ function initCharCreate() {
         charData[key] = c;
         container.querySelectorAll('.cc-swatch').forEach(s => s.classList.remove('selected'));
         d.classList.add('selected');
+        updatePreviewColors();
       });
       container.appendChild(d);
     });
@@ -2330,6 +2497,7 @@ function initCharCreate() {
     const bs = BACKSTORIES.find(b => b.id === charData.backstory);
     state.cash = bs ? bs.cash : 500;
     localStorage.setItem('luxcity_character', JSON.stringify(charData));
+    stopCharPreview();
     document.getElementById('charCreate').classList.remove('open');
     startEl.style.display = 'flex';
     saveGame();
@@ -2338,6 +2506,7 @@ function initCharCreate() {
   document.getElementById('newCharBtn').addEventListener('click', () => {
     startEl.style.display = 'none';
     document.getElementById('charCreate').classList.add('open');
+    initCharPreview();
   });
 }
 
@@ -4896,6 +5065,7 @@ async function loadAll() {
       } else {
         // New player — show character creation
         document.getElementById('charCreate').classList.add('open');
+        initCharPreview();
       }
     }, 400);
   } catch (err) {
