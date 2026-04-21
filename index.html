@@ -438,7 +438,7 @@
   .hud-qbtn:active{transform:scale(.9);background:rgba(255,179,0,.2)}
 
   /* === NOTIFICATION QUEUE === */
-  .notif-queue{position:absolute;top:50px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px;align-items:center;z-index:7;pointer-events:none}
+  .notif-queue{position:fixed;top:50px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px;align-items:center;z-index:999;pointer-events:none}
   .notif-item{background:rgba(10,10,18,.88);border:1px solid #ffb300;color:#ffb300;padding:5px 12px;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;border-radius:2px;opacity:1;transition:opacity .3s,transform .3s;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
   .notif-item.out{opacity:0;transform:translateY(-10px)}
 
@@ -874,10 +874,12 @@ function toast(msg, duration = 2500) {
 function saveGame() {
   try {
     const save = {
-      v: 2, cash: state.cash, bankBalance: state.bankBalance, xp: state.xp, xpNeeded: state.xpNeeded, lvl: state.lvl,
+      v: 3, cash: state.cash, bankBalance: state.bankBalance, xp: state.xp, xpNeeded: state.xpNeeded, lvl: state.lvl,
       hp: state.hp, maxHp: state.maxHp, maxStamina: state.maxStamina, equippedWeapon: state.equippedWeapon,
       inventory: state.inventory, skills: state.skills, completedMissions: state.completedMissions,
-      charData, gameTime: state.gameTime
+      charData, gameTime: state.gameTime,
+      playerFaction: { factionId: playerFaction.factionId, isGang: playerFaction.isGang },
+      gangs: JSON.parse(JSON.stringify(gangs))
     };
     localStorage.setItem('luxcity_save', JSON.stringify(save));
   } catch(e) {}
@@ -895,6 +897,11 @@ function loadGame() {
     if (s.completedMissions) state.completedMissions = s.completedMissions;
     if (s.charData) Object.assign(charData, s.charData);
     if (s.gameTime) state.gameTime = s.gameTime;
+    if (s.playerFaction) {
+      playerFaction.factionId = s.playerFaction.factionId;
+      playerFaction.isGang = s.playerFaction.isGang;
+    }
+    if (s.gangs) Object.assign(gangs, s.gangs);
     return true;
   } catch(e) { return false; }
 }
@@ -1128,7 +1135,7 @@ function isTopRank(rankIndex, ranks) {
 function joinFaction(factionId) {
   if (playerFaction.factionId) { toast('// ALREADY IN A FACTION'); return; }
   const f = factions[factionId];
-  if (!f) return;
+  if (!f) { toast('// FACTION NOT FOUND'); return; }
   if (f.members.length >= f.def.maxMembers) { toast('// FACTION FULL'); return; }
   const rank0 = f.def.ranks[0];
   if (countInRank(f.members, 0) >= rank0.maxSlots) { toast('// ENTRY RANK FULL'); return; }
@@ -1136,6 +1143,7 @@ function joinFaction(factionId) {
   playerFaction.factionId = factionId;
   playerFaction.isGang = false;
   updateFactionBadge();
+  saveGame();
   toast('// JOINED ' + f.def.name.toUpperCase());
 }
 
@@ -2774,10 +2782,10 @@ function renderFactionBrowser(body) {
         </div>
         <div style="display:flex;gap:4px">
           ${isCurrent ? '<span style="font-family:\'VT323\',monospace;font-size:11px;color:#22cc66;letter-spacing:1px">JOINED</span>' :
-            `<button class="phone-btn" onclick="joinFaction('${id}');renderFactionBrowser(this.closest('.mm-sub-body'))">JOIN</button>`}
+            `<button class="phone-btn faction-join-btn" data-fid="${id}">JOIN</button>`}
         </div>
       </div>
-      ${isCurrent ? `<div style="margin-top:8px"><select id="rankSelect_${id}" style="width:100%;padding:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'VT323',monospace;font-size:11px;border-radius:3px" onchange="setPlayerRank('${id}',this.value)">
+      ${isCurrent ? `<div style="margin-top:8px"><select id="rankSelect_${id}" style="width:100%;padding:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'VT323',monospace;font-size:11px;border-radius:3px">
         ${def.ranks.map((r, i) => `<option value="${i}" ${getPlayerRankIndex() === i ? 'selected' : ''}>${r.name}</option>`).join('')}
       </select></div>` : ''}
     </div>`;
@@ -2792,6 +2800,23 @@ function renderFactionBrowser(body) {
     </div>`;
   });
   body.innerHTML = html;
+  // Wire join buttons
+  body.querySelectorAll('.faction-join-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const fid = btn.dataset.fid;
+      joinFaction(fid);
+      saveGame();
+      setTimeout(() => renderFactionBrowser(body), 100);
+    });
+  });
+  // Wire rank selects
+  body.querySelectorAll('[id^="rankSelect_"]').forEach(sel => {
+    sel.addEventListener('change', (e) => {
+      const fid = sel.id.replace('rankSelect_', '');
+      setPlayerRank(fid, sel.value);
+    });
+  });
 }
 // Allow setting rank from menu
 function setPlayerRank(factionId, rankIndex) {
