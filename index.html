@@ -72,6 +72,151 @@
   .minimap-right{width:90px;height:90px;background:rgba(10,10,18,.55);border:2px solid rgba(255,179,0,.4);border-radius:50%;overflow:hidden;pointer-events:none;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
   .minimap-right canvas{display:block;width:100%;height:100%}
   .minimap-right::after{content:'';position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:#ffb300;border-radius:50%;box-shadow:0 0 6px #ffb300}
+
+  /* === FACTION SYSTEM === */
+  .faction-badge{display:none;background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,179,0,.3);border-radius:4px;padding:4px 10px;font-family:'VT323',monospace;cursor:pointer;margin-top:6px;transition:background .15s}
+  .faction-badge.active{display:block}
+  .faction-badge:active{background:rgba(255,179,0,.15)}
+  .faction-badge-rank{font-size:12px;letter-spacing:2px;color:#fff}
+  .faction-badge-name{font-size:9px;letter-spacing:2px;opacity:.6}
+
+  .faction-panel{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .faction-panel.open{display:flex}
+  .fp-box{width:min(480px,92vw);max-height:min(400px,80vh);background:rgba(10,10,18,.95);border:1px solid rgba(255,179,0,.4);border-radius:6px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+  .fp-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,179,0,.2)}
+  .fp-title{font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;color:#ffb300}
+  .fp-close{width:28px;height:28px;border:1px solid rgba(255,179,0,.4);border-radius:50%;background:transparent;color:#ffb300;font-family:'VT323',monospace;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .fp-close:active{background:rgba(255,179,0,.2)}
+  .fp-tabs{display:flex;border-bottom:1px solid rgba(255,179,0,.15);padding:0 8px}
+  .fp-tab{flex:1;padding:8px 4px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.5);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;text-align:center}
+  .fp-tab.active{color:#ffb300;border-bottom-color:#ffb300}
+  .fp-tab:active{background:rgba(255,179,0,.1)}
+  .fp-body{flex:1;overflow-y:auto;padding:10px 14px;-webkit-overflow-scrolling:touch}
+  .fp-body::-webkit-scrollbar{width:4px}
+  .fp-body::-webkit-scrollbar-track{background:transparent}
+  .fp-body::-webkit-scrollbar-thumb{background:rgba(255,179,0,.3);border-radius:2px}
+
+  /* Overview tab */
+  .fp-overview-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'VT323',monospace;font-size:13px;letter-spacing:1px}
+  .fp-overview-lbl{color:rgba(255,179,0,.8)}
+  .fp-overview-val{color:#fff}
+  .fp-desc{margin-top:8px;padding:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:3px;font-family:'VT323',monospace;font-size:12px;color:rgba(255,255,255,.6);letter-spacing:1px}
+
+  /* Members tab */
+  .fp-member{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .fp-member-info{display:flex;flex-direction:column;gap:1px}
+  .fp-member-name{font-family:'VT323',monospace;font-size:13px;color:#fff;letter-spacing:1px}
+  .fp-member-rank{font-family:'VT323',monospace;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1px}
+  .fp-member-actions{display:flex;gap:4px}
+  .fp-mbtn{padding:3px 8px;font-family:'VT323',monospace;font-size:10px;letter-spacing:1px;border:1px solid;border-radius:2px;background:transparent;cursor:pointer}
+  .fp-mbtn:active{opacity:.7}
+  .fp-mbtn.promote{color:#4dd4ff;border-color:rgba(77,212,255,.4)}
+  .fp-mbtn.demote{color:#ffb300;border-color:rgba(255,179,0,.4)}
+  .fp-mbtn.dismiss{color:#ff3c5f;border-color:rgba(255,60,95,.4)}
+  .fp-mbtn:disabled{opacity:.3;cursor:default}
+  .fp-member-you{color:#ffb300;font-size:9px;letter-spacing:1px;font-family:'VT323',monospace}
+
+  /* Ranks tab */
+  .fp-rank-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'VT323',monospace;font-size:12px}
+  .fp-rank-row.current{background:rgba(255,179,0,.08);margin:0 -14px;padding:5px 14px;border-radius:2px}
+  .fp-rank-name{color:#fff;letter-spacing:1px}
+  .fp-rank-cap{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:1px}
+  .fp-rank-perms{display:flex;gap:4px}
+  .fp-perm{padding:1px 5px;font-size:8px;letter-spacing:1px;border-radius:2px;border:1px solid}
+  .fp-perm.yes{color:#4dd4ff;border-color:rgba(77,212,255,.3)}
+  .fp-perm.no{color:rgba(255,255,255,.2);border-color:rgba(255,255,255,.08)}
+
+  /* Settings tab */
+  .fp-settings-row{margin-bottom:10px}
+  .fp-settings-lbl{font-family:'VT323',monospace;font-size:11px;color:rgba(255,179,0,.8);letter-spacing:2px;margin-bottom:4px}
+  .fp-settings-input{width:100%;padding:6px 8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,179,0,.2);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:12px;letter-spacing:1px;outline:none}
+  .fp-settings-input:focus{border-color:rgba(255,179,0,.5)}
+  .fp-action-btn{width:100%;padding:8px;font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;border:1px solid;border-radius:3px;background:transparent;cursor:pointer;margin-top:6px}
+  .fp-action-btn:active{opacity:.7}
+  .fp-action-btn.danger{color:#ff3c5f;border-color:rgba(255,60,95,.4)}
+  .fp-action-btn.primary{color:#ffb300;border-color:rgba(255,179,0,.4)}
+  .fp-action-btn.invite{color:#4dd4ff;border-color:rgba(77,212,255,.4)}
+
+  /* Join prompt */
+  .faction-join-prompt{position:absolute;bottom:140px;left:50%;transform:translateX(-50%);background:rgba(10,10,18,.88);border:1px solid #4dd4ff;padding:8px 16px;font-family:'VT323',monospace;color:#4dd4ff;font-size:13px;letter-spacing:2px;display:none;white-space:nowrap;border-radius:2px;z-index:6;cursor:pointer}
+  .faction-join-prompt.show{display:block}
+  .faction-join-prompt:active{background:rgba(77,212,255,.15)}
+
+  /* Create gang modal */
+  .gang-create-modal{position:fixed;inset:0;z-index:55;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75)}
+  .gang-create-modal.open{display:flex}
+  .gc-box{width:min(360px,88vw);background:rgba(10,10,18,.95);border:1px solid rgba(255,179,0,.4);border-radius:6px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+  .gc-title{font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;color:#ffb300;margin-bottom:12px;text-align:center}
+  .gc-field{margin-bottom:10px}
+  .gc-label{font-family:'VT323',monospace;font-size:11px;color:rgba(255,179,0,.8);letter-spacing:2px;margin-bottom:3px}
+  .gc-input{width:100%;padding:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,179,0,.2);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:13px;letter-spacing:1px;outline:none}
+  .gc-input:focus{border-color:rgba(255,179,0,.5)}
+  .gc-color-row{display:flex;gap:6px;flex-wrap:wrap}
+  .gc-color{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+  .gc-color.selected{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,.4)}
+  .gc-cost{font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.4);text-align:center;margin:8px 0}
+  .gc-btns{display:flex;gap:8px}
+  .gc-btn{flex:1;padding:8px;font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;border:1px solid;border-radius:3px;background:transparent;cursor:pointer}
+  .gc-btn.cancel{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)}
+  .gc-btn.create{color:#ffb300;border-color:rgba(255,179,0,.4)}
+  .gc-btn:active{opacity:.7}
+
+  /* Confirm modal */
+  .confirm-modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75)}
+  .confirm-modal.open{display:flex}
+  .cm-box{width:min(320px,85vw);background:rgba(10,10,18,.95);border:1px solid rgba(255,60,95,.4);border-radius:6px;padding:16px;text-align:center}
+  .cm-msg{font-family:'VT323',monospace;font-size:14px;color:#fff;letter-spacing:1px;margin-bottom:14px}
+  .cm-btns{display:flex;gap:8px}
+  .cm-btn{flex:1;padding:8px;font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;border:1px solid;border-radius:3px;background:transparent;cursor:pointer}
+  .cm-btn.no{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)}
+  .cm-btn.yes{color:#ff3c5f;border-color:rgba(255,60,95,.4)}
+  .cm-btn:active{opacity:.7}
+
+  /* === ADMIN PANEL === */
+  .admin-panel{position:fixed;inset:0;z-index:100;display:none;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .admin-panel.open{display:flex;flex-direction:column}
+  .admin-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,60,95,.3);background:rgba(255,60,95,.06)}
+  .admin-title{font-family:'VT323',monospace;font-size:20px;letter-spacing:4px;color:#ff3c5f;text-shadow:0 0 10px rgba(255,60,95,.4)}
+  .admin-god{padding:4px 10px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;border:1px solid rgba(255,60,95,.4);border-radius:3px;background:transparent;color:#ff3c5f;cursor:pointer}
+  .admin-god.active{background:rgba(255,60,95,.2);color:#fff;border-color:#ff3c5f;text-shadow:0 0 6px #ff3c5f}
+  .admin-close{width:30px;height:30px;border:1px solid rgba(255,60,95,.4);border-radius:50%;background:transparent;color:#ff3c5f;font-family:'VT323',monospace;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .admin-close:active{background:rgba(255,60,95,.2)}
+  .admin-sections{display:flex;gap:8px;padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .admin-sec-btn{padding:6px 12px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:3px;cursor:pointer;white-space:nowrap}
+  .admin-sec-btn.active{color:#ff3c5f;border-color:rgba(255,60,95,.4);background:rgba(255,60,95,.08)}
+  .admin-sec-btn:active{opacity:.7}
+  .admin-body{flex:1;overflow-y:auto;padding:12px 16px;-webkit-overflow-scrolling:touch}
+  .admin-body::-webkit-scrollbar{width:4px}
+  .admin-body::-webkit-scrollbar-thumb{background:rgba(255,60,95,.3);border-radius:2px}
+
+  .admin-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:10px;margin-bottom:8px}
+  .admin-card-title{font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;color:#ff3c5f;margin-bottom:8px}
+  .admin-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .admin-lbl{font-family:'VT323',monospace;font-size:11px;color:rgba(255,179,0,.8);letter-spacing:1px;min-width:60px}
+  .admin-input{flex:1;min-width:80px;padding:5px 8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,60,95,.2);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:12px;letter-spacing:1px;outline:none}
+  .admin-input:focus{border-color:rgba(255,60,95,.5)}
+  .admin-select{flex:1;min-width:80px;padding:5px 8px;background:rgba(10,10,18,.9);border:1px solid rgba(255,60,95,.2);border-radius:3px;color:#fff;font-family:'VT323',monospace;font-size:12px;letter-spacing:1px;outline:none;-webkit-appearance:none}
+  .admin-select option{background:#0a0a12;color:#fff}
+  .admin-btn{padding:5px 12px;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;border:1px solid rgba(255,60,95,.4);border-radius:3px;background:transparent;color:#ff3c5f;cursor:pointer;white-space:nowrap}
+  .admin-btn:active{background:rgba(255,60,95,.15)}
+  .admin-btn.green{color:#22cc66;border-color:rgba(34,204,102,.4)}
+  .admin-btn.green:active{background:rgba(34,204,102,.15)}
+  .admin-btn.blue{color:#4dd4ff;border-color:rgba(77,212,255,.4)}
+  .admin-btn.blue:active{background:rgba(77,212,255,.15)}
+  .admin-btn.gold{color:#ffb300;border-color:rgba(255,179,0,.4)}
+  .admin-btn.gold:active{background:rgba(255,179,0,.15)}
+
+  .admin-member-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-family:'VT323',monospace;font-size:12px}
+  .admin-member-name{color:#fff;letter-spacing:1px;flex:1}
+  .admin-member-rank{color:rgba(255,255,255,.5);letter-spacing:1px;margin:0 8px}
+  .admin-member-actions{display:flex;gap:3px}
+
+  .admin-tp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+  .admin-tp-btn{padding:8px;font-family:'VT323',monospace;font-size:11px;letter-spacing:1px;border:1px solid rgba(255,255,255,.1);border-radius:3px;background:rgba(255,255,255,.02);color:#fff;cursor:pointer;text-align:center}
+  .admin-tp-btn:active{background:rgba(255,60,95,.1);border-color:rgba(255,60,95,.3)}
+  .admin-tp-loc{font-size:9px;color:rgba(255,255,255,.3);margin-top:2px}
+
+  .admin-hint{font-family:'VT323',monospace;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-align:center;padding:8px}
 </style>
 </head>
 <body>
@@ -113,6 +258,10 @@
         <div class="stat-lbl">LVL <span style="color:#fff" id="lvlVal">1</span></div>
         <div class="bar"><div class="bar-fill" id="xpBar" style="width:0%"></div></div>
       </div>
+      <div class="faction-badge" id="factionBadge">
+        <div class="faction-badge-rank" id="factionBadgeRank"></div>
+        <div class="faction-badge-name" id="factionBadgeName"></div>
+      </div>
     </div>
 
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -136,9 +285,76 @@
   </div>
 
   <div class="prompt" id="prompt">// TAP ENTER</div>
+  <div class="faction-join-prompt" id="factionJoinPrompt"></div>
   <div class="toast" id="toast"></div>
 
   <div id="debug" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:9px;padding:4px 8px;border-radius:3px;pointer-events:none;white-space:pre;z-index:20;line-height:1.3"></div>
+</div>
+
+<!-- Faction Panel -->
+<div class="faction-panel" id="factionPanel">
+  <div class="fp-box">
+    <div class="fp-header">
+      <div class="fp-title" id="fpTitle">FACTION</div>
+      <button class="fp-close" id="fpClose">X</button>
+    </div>
+    <div class="fp-tabs">
+      <button class="fp-tab active" data-tab="overview">OVERVIEW</button>
+      <button class="fp-tab" data-tab="members">MEMBERS</button>
+      <button class="fp-tab" data-tab="ranks">RANKS</button>
+      <button class="fp-tab" data-tab="settings">SETTINGS</button>
+    </div>
+    <div class="fp-body" id="fpBody"></div>
+  </div>
+</div>
+
+<!-- Gang Create Modal -->
+<div class="gang-create-modal" id="gangCreateModal">
+  <div class="gc-box">
+    <div class="gc-title">// CREATE GANG</div>
+    <div class="gc-field"><div class="gc-label">GANG NAME</div><input class="gc-input" id="gcName" maxlength="20" placeholder="Enter name..."></div>
+    <div class="gc-field"><div class="gc-label">MOTTO</div><input class="gc-input" id="gcMotto" maxlength="40" placeholder="Enter motto..."></div>
+    <div class="gc-field">
+      <div class="gc-label">COLOR</div>
+      <div class="gc-color-row" id="gcColors"></div>
+    </div>
+    <div class="gc-cost">COST: $1,000</div>
+    <div class="gc-btns">
+      <button class="gc-btn cancel" id="gcCancel">CANCEL</button>
+      <button class="gc-btn create" id="gcCreate">CREATE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="confirm-modal" id="confirmModal">
+  <div class="cm-box">
+    <div class="cm-msg" id="cmMsg">Are you sure?</div>
+    <div class="cm-btns">
+      <button class="cm-btn no" id="cmNo">CANCEL</button>
+      <button class="cm-btn yes" id="cmYes">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-top">
+    <div class="admin-title">// ADMIN PANEL</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="admin-god" id="adminGodBtn">GOD MODE</button>
+      <button class="admin-close" id="adminClose">X</button>
+    </div>
+  </div>
+  <div class="admin-sections" id="adminSections">
+    <button class="admin-sec-btn active" data-sec="player">PLAYER</button>
+    <button class="admin-sec-btn" data-sec="factions">FACTIONS</button>
+    <button class="admin-sec-btn" data-sec="members">MEMBERS</button>
+    <button class="admin-sec-btn" data-sec="teleport">TELEPORT</button>
+    <button class="admin-sec-btn" data-sec="spawn">SPAWN</button>
+  </div>
+  <div class="admin-body" id="adminBody"></div>
+  <div class="admin-hint">PRESS ` (BACKTICK) TO TOGGLE</div>
 </div>
 
 <script type="importmap">
@@ -183,6 +399,1170 @@ let playerYaw = 0;
 const state = { mode: 'foot', hp: 100, maxHp: 100, cash: 500, xp: 0, xpNeeded: 100, lvl: 1 };
 const input = { mx: 0, my: 0, sprint: false, punch: false, gas: false, brake: false, enter: false, exit: false };
 const keys = {};
+
+// ============================================================
+// === FACTION MANAGEMENT SYSTEM ===
+// ============================================================
+
+const FACTION_DEFS = {
+  police: {
+    name: 'Police Department', type: 'police', color: '#4488ff', icon: '\u2606',
+    description: 'Serve and protect the citizens of LuxCity.',
+    maxMembers: 400,
+    ranks: [
+      { name: 'Academy Recruit', abbr: 'RCT', maxSlots: 85, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Patrol Officer', abbr: 'PO', maxSlots: 72, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Police Officer II', abbr: 'PO2', maxSlots: 60, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Police Officer III', abbr: 'PO3', maxSlots: 50, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Corporal', abbr: 'CPL', maxSlots: 40, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Detective', abbr: 'DET', maxSlots: 35, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Sergeant', abbr: 'SGT', maxSlots: 25, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Lieutenant', abbr: 'LT', maxSlots: 15, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Captain', abbr: 'CPT', maxSlots: 10, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Commander', abbr: 'CDR', maxSlots: 5, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Deputy Chief', abbr: 'DC', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+      { name: 'Chief of Police', abbr: 'CHIEF', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+    ]
+  },
+  fire: {
+    name: 'Fire Department', type: 'fire', color: '#ff6622', icon: '\u2622',
+    description: 'Protect LuxCity from fires and emergencies.',
+    maxMembers: 250,
+    ranks: [
+      { name: 'Probationary FF', abbr: 'PFF', maxSlots: 100, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Firefighter', abbr: 'FF', maxSlots: 77, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Driver/Engineer', abbr: 'ENG', maxSlots: 35, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Lieutenant', abbr: 'LT', maxSlots: 20, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Captain', abbr: 'CPT', maxSlots: 10, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Battalion Chief', abbr: 'BC', maxSlots: 5, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Assistant Chief', abbr: 'AC', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+      { name: 'Fire Chief', abbr: 'CHIEF', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+    ]
+  },
+  hospital: {
+    name: 'Hospital / EMS', type: 'hospital', color: '#22cc66', icon: '+',
+    description: 'Save lives and heal the wounded in LuxCity.',
+    maxMembers: 400,
+    ranks: [
+      { name: 'Intern', abbr: 'INT', maxSlots: 154, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Nurse', abbr: 'NRS', maxSlots: 120, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Resident', abbr: 'RES', maxSlots: 60, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Attending Physician', abbr: 'ATT', maxSlots: 40, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Chief Resident', abbr: 'CR', maxSlots: 15, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Department Head', abbr: 'DH', maxSlots: 8, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Medical Director', abbr: 'MD', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+      { name: 'Chief Medical Officer', abbr: 'CMO', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+    ]
+  },
+  military: {
+    name: 'Military', type: 'military', color: '#6a8a4a', icon: '\u2605',
+    description: 'Defend LuxCity and maintain national security.',
+    maxMembers: 800,
+    ranks: [
+      { name: 'Private', abbr: 'PVT', maxSlots: 167, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Private 2nd Class', abbr: 'PV2', maxSlots: 140, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Private First Class', abbr: 'PFC', maxSlots: 110, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Specialist', abbr: 'SPC', maxSlots: 80, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Corporal', abbr: 'CPL', maxSlots: 65, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Sergeant', abbr: 'SGT', maxSlots: 55, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Staff Sergeant', abbr: 'SSG', maxSlots: 40, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Sergeant First Class', abbr: 'SFC', maxSlots: 25, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Master Sergeant', abbr: 'MSG', maxSlots: 15, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'First Sergeant', abbr: '1SG', maxSlots: 10, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Sergeant Major', abbr: 'SGM', maxSlots: 5, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Warrant Officer 1', abbr: 'WO1', maxSlots: 15, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Chief WO 2', abbr: 'CW2', maxSlots: 12, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Chief WO 3', abbr: 'CW3', maxSlots: 8, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Second Lieutenant', abbr: '2LT', maxSlots: 20, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'First Lieutenant', abbr: '1LT', maxSlots: 15, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Captain', abbr: 'CPT', maxSlots: 10, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Major', abbr: 'MAJ', maxSlots: 5, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Lieutenant Colonel', abbr: 'LTC', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+      { name: 'Colonel', abbr: 'COL', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+    ]
+  },
+  government: {
+    name: 'City Government', type: 'government', color: '#ffd700', icon: '\u2302',
+    description: 'Govern and manage the city of LuxCity.',
+    maxMembers: 150,
+    ranks: [
+      { name: 'Intern', abbr: 'INT', maxSlots: 55, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Clerk', abbr: 'CLK', maxSlots: 40, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Admin Officer', abbr: 'AO', maxSlots: 25, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Dept Supervisor', abbr: 'SUP', maxSlots: 15, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Department Head', abbr: 'DH', maxSlots: 8, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Deputy Mayor', abbr: 'DM', maxSlots: 4, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'City Manager', abbr: 'CM', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+      { name: 'Mayor', abbr: 'MAYOR', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+    ]
+  },
+  mechanic: {
+    name: 'Mechanic Shop', type: 'mechanic', color: '#ffaa22', icon: '\u2692',
+    description: 'Fix and customize vehicles in LuxCity.',
+    maxMembers: 250,
+    ranks: [
+      { name: 'Apprentice', abbr: 'APP', maxSlots: 90, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Junior Mechanic', abbr: 'JR', maxSlots: 72, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Mechanic', abbr: 'MECH', maxSlots: 45, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Senior Mechanic', abbr: 'SR', maxSlots: 25, canInvite: false, canPromote: false, canDismiss: false },
+      { name: 'Shift Lead', abbr: 'LEAD', maxSlots: 10, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Service Manager', abbr: 'MGR', maxSlots: 5, canInvite: true, canPromote: false, canDismiss: false },
+      { name: 'Co-Owner', abbr: 'CO', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+      { name: 'Shop Owner', abbr: 'OWNER', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+    ]
+  }
+};
+
+const GANG_TEMPLATE = {
+  ranks: [
+    { name: 'Associate', abbr: 'ASC', maxSlots: 12, canInvite: false, canPromote: false, canDismiss: false },
+    { name: 'Prospect', abbr: 'PSP', maxSlots: 10, canInvite: false, canPromote: false, canDismiss: false },
+    { name: 'Soldier', abbr: 'SLD', maxSlots: 10, canInvite: false, canPromote: false, canDismiss: false },
+    { name: 'Enforcer', abbr: 'ENF', maxSlots: 7, canInvite: false, canPromote: false, canDismiss: false },
+    { name: 'Lieutenant', abbr: 'LT', maxSlots: 5, canInvite: true, canPromote: false, canDismiss: false },
+    { name: 'Underboss', abbr: 'UB', maxSlots: 3, canInvite: true, canPromote: false, canDismiss: false },
+    { name: 'Right Hand', abbr: 'RH', maxSlots: 2, canInvite: true, canPromote: true, canDismiss: true },
+    { name: 'Boss / OG', abbr: 'BOSS', maxSlots: 1, canInvite: true, canPromote: true, canDismiss: true }
+  ],
+  maxMembers: 50
+};
+
+const GANG_COLORS = ['#ff3c5f','#9b59b6','#e74c3c','#1abc9c','#e67e22','#3498db','#2ecc71','#f39c12','#c0392b','#8e44ad'];
+
+// NPC name pool
+const NPC_FIRST = ['James','John','Robert','Michael','David','Chris','Daniel','Matt','Andrew','Josh','Tyler','Ryan','Alex','Jake','Sam','Marcus','Omar','Dante','Carlos','Luis','Ray','Tony','Vic','Frank','Eddie','Miguel','Derek','Kevin','Marcus','Leo'];
+const NPC_LAST = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Harris','Clark','Lewis','Walker','Hall','Allen','Young','King','Wright','Hill'];
+
+// === FACTION STATE ===
+const factions = {}; // id -> { def, members: [{name, rankIndex, isNpc}], description }
+const gangs = {}; // id -> { name, color, motto, members, ranks, maxMembers }
+const playerFaction = { factionId: null, isGang: false }; // player's current faction
+let factionBuildings = []; // [{id, x, z, radius}] — filled after city build
+
+// Initialize city factions
+function initFactions() {
+  for (const [id, def] of Object.entries(FACTION_DEFS)) {
+    factions[id] = { def, members: [], description: def.description };
+  }
+  populateNpcMembers();
+}
+
+function randomName() {
+  return NPC_FIRST[Math.floor(Math.random() * NPC_FIRST.length)] + ' ' + NPC_LAST[Math.floor(Math.random() * NPC_LAST.length)];
+}
+
+function populateNpcMembers() {
+  for (const [id, faction] of Object.entries(factions)) {
+    const def = faction.def;
+    const targetFill = Math.floor(def.maxMembers * (0.15 + Math.random() * 0.25)); // 15-40% filled
+    let added = 0;
+    // Fill from top rank down with appropriate numbers
+    for (let r = def.ranks.length - 1; r >= 0 && added < targetFill; r--) {
+      const rank = def.ranks[r];
+      // Top rank always filled by 1 NPC leader, second rank gets 1-2, lower ranks get proportional
+      let count;
+      if (r === def.ranks.length - 1) count = 1;
+      else if (r === def.ranks.length - 2) count = Math.min(rank.maxSlots, 1 + Math.floor(Math.random() * 2));
+      else count = Math.min(rank.maxSlots, Math.max(1, Math.floor(rank.maxSlots * (0.2 + Math.random() * 0.3))));
+      if (added + count > targetFill) count = targetFill - added;
+      for (let i = 0; i < count; i++) {
+        faction.members.push({ name: randomName(), rankIndex: r, isNpc: true });
+        added++;
+      }
+    }
+  }
+}
+
+// === PERMISSION HELPERS ===
+function getPlayerRankIndex() {
+  const fid = playerFaction.factionId;
+  if (!fid) return -1;
+  const store = playerFaction.isGang ? gangs[fid] : factions[fid];
+  if (!store) return -1;
+  const mem = store.members.find(m => !m.isNpc && m.name === 'You');
+  return mem ? mem.rankIndex : -1;
+}
+
+function getPlayerRankDef() {
+  const fid = playerFaction.factionId;
+  if (!fid) return null;
+  const ri = getPlayerRankIndex();
+  if (ri < 0) return null;
+  const ranks = playerFaction.isGang ? gangs[fid].ranks : factions[fid].def.ranks;
+  return ranks[ri] || null;
+}
+
+function getRanks() {
+  const fid = playerFaction.factionId;
+  if (!fid) return [];
+  return playerFaction.isGang ? gangs[fid].ranks : factions[fid].def.ranks;
+}
+
+function getMembers() {
+  const fid = playerFaction.factionId;
+  if (!fid) return [];
+  return playerFaction.isGang ? gangs[fid].members : factions[fid].members;
+}
+
+function getFactionStore() {
+  const fid = playerFaction.factionId;
+  if (!fid) return null;
+  return playerFaction.isGang ? gangs[fid] : factions[fid];
+}
+
+function getMaxMembers() {
+  const fid = playerFaction.factionId;
+  if (!fid) return 0;
+  return playerFaction.isGang ? gangs[fid].maxMembers : factions[fid].def.maxMembers;
+}
+
+function countInRank(members, rankIndex) {
+  return members.filter(m => m.rankIndex === rankIndex).length;
+}
+
+function isTopRank(rankIndex, ranks) {
+  return rankIndex === ranks.length - 1;
+}
+
+// === FACTION ACTIONS ===
+function joinFaction(factionId) {
+  if (playerFaction.factionId) { toast('// ALREADY IN A FACTION'); return; }
+  const f = factions[factionId];
+  if (!f) return;
+  if (f.members.length >= f.def.maxMembers) { toast('// FACTION FULL'); return; }
+  const rank0 = f.def.ranks[0];
+  if (countInRank(f.members, 0) >= rank0.maxSlots) { toast('// ENTRY RANK FULL'); return; }
+  f.members.push({ name: 'You', rankIndex: 0, isNpc: false });
+  playerFaction.factionId = factionId;
+  playerFaction.isGang = false;
+  updateFactionBadge();
+  toast('// JOINED ' + f.def.name.toUpperCase());
+}
+
+function leaveFaction() {
+  const fid = playerFaction.factionId;
+  if (!fid) return;
+  const store = getFactionStore();
+  if (!store) return;
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const ri = getPlayerRankIndex();
+  // If top rank, must transfer first
+  if (isTopRank(ri, ranks)) {
+    toast('// TRANSFER LEADERSHIP FIRST');
+    return;
+  }
+  store.members = store.members.filter(m => !(m.name === 'You' && !m.isNpc));
+  const wasGang = playerFaction.isGang;
+  const name = wasGang ? store.name : store.def.name;
+  playerFaction.factionId = null;
+  playerFaction.isGang = false;
+  updateFactionBadge();
+  closeFactionPanel();
+  toast('// LEFT ' + name.toUpperCase());
+}
+
+function promoteMember(memberIndex) {
+  const store = getFactionStore();
+  if (!store) return;
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const myRank = getPlayerRankIndex();
+  const myDef = ranks[myRank];
+  if (!myDef || !myDef.canPromote) { toast('// NO PERMISSION'); return; }
+  const member = store.members[memberIndex];
+  if (!member) return;
+  if (member.rankIndex >= myRank) { toast('// CANNOT PROMOTE EQUAL OR ABOVE'); return; }
+  const newRank = member.rankIndex + 1;
+  if (newRank >= myRank) { toast('// CANNOT PROMOTE TO YOUR RANK'); return; }
+  if (countInRank(store.members, newRank) >= ranks[newRank].maxSlots) { toast('// RANK FULL (' + ranks[newRank].name + ')'); return; }
+  member.rankIndex = newRank;
+  toast('// PROMOTED ' + member.name.toUpperCase() + ' TO ' + ranks[newRank].name.toUpperCase());
+  renderFactionTab(currentFPTab);
+}
+
+function demoteMember(memberIndex) {
+  const store = getFactionStore();
+  if (!store) return;
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const myRank = getPlayerRankIndex();
+  const myDef = ranks[myRank];
+  if (!myDef || !myDef.canPromote) { toast('// NO PERMISSION'); return; }
+  const member = store.members[memberIndex];
+  if (!member) return;
+  if (member.rankIndex >= myRank) { toast('// CANNOT DEMOTE EQUAL OR ABOVE'); return; }
+  if (member.rankIndex <= 0) { toast('// ALREADY LOWEST RANK'); return; }
+  const newRank = member.rankIndex - 1;
+  if (countInRank(store.members, newRank) >= ranks[newRank].maxSlots) { toast('// RANK FULL (' + ranks[newRank].name + ')'); return; }
+  member.rankIndex = newRank;
+  toast('// DEMOTED ' + member.name.toUpperCase() + ' TO ' + ranks[newRank].name.toUpperCase());
+  renderFactionTab(currentFPTab);
+}
+
+function dismissMember(memberIndex) {
+  const store = getFactionStore();
+  if (!store) return;
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const myRank = getPlayerRankIndex();
+  const myDef = ranks[myRank];
+  if (!myDef || !myDef.canDismiss) { toast('// NO PERMISSION'); return; }
+  const member = store.members[memberIndex];
+  if (!member) return;
+  if (member.rankIndex >= myRank) { toast('// CANNOT DISMISS EQUAL OR ABOVE'); return; }
+  const mName = member.name;
+  store.members.splice(memberIndex, 1);
+  toast('// DISMISSED ' + mName.toUpperCase());
+  renderFactionTab(currentFPTab);
+}
+
+function transferLeadership(memberIndex) {
+  const store = getFactionStore();
+  if (!store) return;
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const myRank = getPlayerRankIndex();
+  if (!isTopRank(myRank, ranks)) { toast('// ONLY TOP RANK CAN TRANSFER'); return; }
+  const member = store.members[memberIndex];
+  if (!member) return;
+  const myMem = store.members.find(m => m.name === 'You' && !m.isNpc);
+  if (!myMem) return;
+  // Swap: target becomes top, player becomes second highest
+  member.rankIndex = myRank;
+  myMem.rankIndex = Math.max(0, myRank - 1);
+  toast('// LEADERSHIP TRANSFERRED TO ' + member.name.toUpperCase());
+  renderFactionTab(currentFPTab);
+  updateFactionBadge();
+}
+
+function disbandFaction() {
+  const fid = playerFaction.factionId;
+  if (!fid) return;
+  const store = getFactionStore();
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const myRank = getPlayerRankIndex();
+  if (!isTopRank(myRank, ranks)) { toast('// ONLY TOP RANK CAN DISBAND'); return; }
+  if (playerFaction.isGang) {
+    delete gangs[fid];
+  } else {
+    // Reset faction to NPC-only
+    store.members = store.members.filter(m => m.isNpc);
+  }
+  const name = playerFaction.isGang ? store.name : store.def.name;
+  playerFaction.factionId = null;
+  playerFaction.isGang = false;
+  updateFactionBadge();
+  closeFactionPanel();
+  toast('// DISBANDED ' + name.toUpperCase());
+}
+
+function inviteMember() {
+  // Simulate NPC invite
+  const store = getFactionStore();
+  if (!store) return;
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const maxMem = playerFaction.isGang ? store.maxMembers : store.def.maxMembers;
+  const myDef = getPlayerRankDef();
+  if (!myDef || !myDef.canInvite) { toast('// NO PERMISSION'); return; }
+  if (store.members.length >= maxMem) { toast('// FACTION FULL'); return; }
+  if (countInRank(store.members, 0) >= ranks[0].maxSlots) { toast('// ENTRY RANK FULL'); return; }
+  const name = randomName();
+  store.members.push({ name: name, rankIndex: 0, isNpc: true });
+  toast('// INVITED ' + name.toUpperCase());
+  renderFactionTab(currentFPTab);
+}
+
+function createGang(name, color, motto) {
+  if (playerFaction.factionId) { toast('// LEAVE CURRENT FACTION FIRST'); return false; }
+  if (state.cash < 1000) { toast('// NEED $1,000'); return false; }
+  if (!name || name.trim().length < 2) { toast('// NAME TOO SHORT'); return false; }
+  state.cash -= 1000;
+  updateHud();
+  const gid = 'gang_' + Date.now();
+  gangs[gid] = {
+    name: name.trim(),
+    color: color || '#ff3c5f',
+    motto: motto || '',
+    members: [{ name: 'You', rankIndex: 7, isNpc: false }],
+    ranks: JSON.parse(JSON.stringify(GANG_TEMPLATE.ranks)),
+    maxMembers: GANG_TEMPLATE.maxMembers
+  };
+  playerFaction.factionId = gid;
+  playerFaction.isGang = true;
+  updateFactionBadge();
+  toast('// GANG "' + name.trim().toUpperCase() + '" CREATED');
+  return true;
+}
+
+// === FACTION UI ===
+let currentFPTab = 'overview';
+let confirmCallback = null;
+
+function updateFactionBadge() {
+  const badge = document.getElementById('factionBadge');
+  const rankEl = document.getElementById('factionBadgeRank');
+  const nameEl = document.getElementById('factionBadgeName');
+  if (!playerFaction.factionId) {
+    badge.classList.remove('active');
+    return;
+  }
+  const ranks = getRanks();
+  const ri = getPlayerRankIndex();
+  const rankDef = ranks[ri];
+  const store = getFactionStore();
+  const fColor = playerFaction.isGang ? store.color : store.def.color;
+  const fName = playerFaction.isGang ? store.name : store.def.name;
+  badge.classList.add('active');
+  badge.style.borderColor = fColor;
+  rankEl.textContent = (rankDef ? rankDef.abbr : '??');
+  rankEl.style.color = fColor;
+  nameEl.textContent = fName.toUpperCase();
+}
+
+function openFactionPanel() {
+  if (!playerFaction.factionId) return;
+  const panel = document.getElementById('factionPanel');
+  const store = getFactionStore();
+  const fName = playerFaction.isGang ? store.name : store.def.name;
+  const fColor = playerFaction.isGang ? store.color : store.def.color;
+  document.getElementById('fpTitle').textContent = fName.toUpperCase();
+  document.getElementById('fpTitle').style.color = fColor;
+  panel.classList.add('open');
+  currentFPTab = 'overview';
+  setActiveTab('overview');
+  renderFactionTab('overview');
+}
+
+function closeFactionPanel() {
+  document.getElementById('factionPanel').classList.remove('open');
+}
+
+function setActiveTab(tab) {
+  document.querySelectorAll('.fp-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+}
+
+function renderFactionTab(tab) {
+  currentFPTab = tab;
+  const body = document.getElementById('fpBody');
+  const store = getFactionStore();
+  if (!store) { body.innerHTML = ''; return; }
+  const ranks = playerFaction.isGang ? store.ranks : store.def.ranks;
+  const members = store.members;
+  const myRank = getPlayerRankIndex();
+  const myDef = ranks[myRank];
+  const maxMem = playerFaction.isGang ? store.maxMembers : store.def.maxMembers;
+  const fColor = playerFaction.isGang ? store.color : store.def.color;
+
+  if (tab === 'overview') {
+    const fName = playerFaction.isGang ? store.name : store.def.name;
+    const fType = playerFaction.isGang ? 'Gang' : store.def.type.charAt(0).toUpperCase() + store.def.type.slice(1);
+    const desc = playerFaction.isGang ? (store.motto || 'No motto set.') : store.description;
+    body.innerHTML = `
+      <div class="fp-overview-row"><span class="fp-overview-lbl">FACTION</span><span class="fp-overview-val">${fName}</span></div>
+      <div class="fp-overview-row"><span class="fp-overview-lbl">TYPE</span><span class="fp-overview-val">${fType}</span></div>
+      <div class="fp-overview-row"><span class="fp-overview-lbl">YOUR RANK</span><span class="fp-overview-val" style="color:${fColor}">${ranks[myRank] ? ranks[myRank].name : '??'}</span></div>
+      <div class="fp-overview-row"><span class="fp-overview-lbl">MEMBERS</span><span class="fp-overview-val">${members.length} / ${maxMem}</span></div>
+      <div class="fp-desc">${desc}</div>
+      <button class="fp-action-btn danger" style="margin-top:12px" id="fpLeaveBtn">LEAVE FACTION</button>
+    `;
+    document.getElementById('fpLeaveBtn').addEventListener('click', () => {
+      if (isTopRank(myRank, ranks)) { toast('// TRANSFER LEADERSHIP FIRST'); return; }
+      showConfirm('Leave this faction?', () => leaveFaction());
+    });
+  }
+
+  else if (tab === 'members') {
+    let html = '';
+    if (myDef && myDef.canInvite) {
+      html += `<button class="fp-action-btn invite" id="fpInviteBtn" style="margin-bottom:10px">+ INVITE MEMBER</button>`;
+    }
+    // Sort members by rank descending
+    const sorted = members.map((m, i) => ({ ...m, idx: i })).sort((a, b) => b.rankIndex - a.rankIndex);
+    for (const m of sorted) {
+      const isYou = m.name === 'You' && !m.isNpc;
+      const rDef = ranks[m.rankIndex];
+      html += `<div class="fp-member">
+        <div class="fp-member-info">
+          <div class="fp-member-name">${m.name}${isYou ? ' <span class="fp-member-you">(YOU)</span>' : ''}</div>
+          <div class="fp-member-rank" style="color:${fColor}">${rDef ? rDef.name : '??'}</div>
+        </div>
+        <div class="fp-member-actions">`;
+      if (!isYou && m.rankIndex < myRank) {
+        if (myDef && myDef.canPromote && m.rankIndex + 1 < myRank) {
+          html += `<button class="fp-mbtn promote" data-action="promote" data-idx="${m.idx}">&#9650;</button>`;
+        }
+        if (myDef && myDef.canPromote && m.rankIndex > 0) {
+          html += `<button class="fp-mbtn demote" data-action="demote" data-idx="${m.idx}">&#9660;</button>`;
+        }
+        if (myDef && myDef.canDismiss) {
+          html += `<button class="fp-mbtn dismiss" data-action="dismiss" data-idx="${m.idx}">X</button>`;
+        }
+        if (isTopRank(myRank, ranks)) {
+          html += `<button class="fp-mbtn promote" data-action="transfer" data-idx="${m.idx}" style="font-size:8px">\u2B06 LEAD</button>`;
+        }
+      }
+      html += `</div></div>`;
+    }
+    body.innerHTML = html;
+    // Wire invite button
+    const invBtn = document.getElementById('fpInviteBtn');
+    if (invBtn) invBtn.addEventListener('click', inviteMember);
+    // Wire member action buttons
+    body.querySelectorAll('.fp-mbtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        const idx = parseInt(btn.dataset.idx);
+        if (action === 'promote') promoteMember(idx);
+        else if (action === 'demote') demoteMember(idx);
+        else if (action === 'dismiss') showConfirm('Dismiss ' + store.members[idx].name + '?', () => dismissMember(idx));
+        else if (action === 'transfer') showConfirm('Transfer leadership to ' + store.members[idx].name + '?', () => transferLeadership(idx));
+      });
+    });
+  }
+
+  else if (tab === 'ranks') {
+    let html = '';
+    for (let r = ranks.length - 1; r >= 0; r--) {
+      const rk = ranks[r];
+      const count = countInRank(members, r);
+      const isCurrent = r === myRank;
+      html += `<div class="fp-rank-row${isCurrent ? ' current' : ''}">
+        <div>
+          <div class="fp-rank-name">${r === myRank ? '\u25B6 ' : ''}${rk.name}</div>
+          <div class="fp-rank-cap">${count} / ${rk.maxSlots}</div>
+        </div>
+        <div class="fp-rank-perms">
+          <span class="fp-perm ${rk.canInvite ? 'yes' : 'no'}">INV</span>
+          <span class="fp-perm ${rk.canPromote ? 'yes' : 'no'}">PROMO</span>
+          <span class="fp-perm ${rk.canDismiss ? 'yes' : 'no'}">KICK</span>
+        </div>
+      </div>`;
+    }
+    body.innerHTML = html;
+  }
+
+  else if (tab === 'settings') {
+    const canEdit = myRank >= ranks.length - 2; // top 2 ranks
+    if (!canEdit) {
+      body.innerHTML = '<div style="font-family:VT323,monospace;color:rgba(255,255,255,.4);font-size:13px;letter-spacing:1px;text-align:center;padding:30px 0">// INSUFFICIENT RANK</div>';
+      return;
+    }
+    let html = '';
+    if (playerFaction.isGang) {
+      html += `<div class="fp-settings-row"><div class="fp-settings-lbl">MOTTO</div><input class="fp-settings-input" id="fpMottoInput" value="${store.motto || ''}" maxlength="40"></div>`;
+      html += `<button class="fp-action-btn primary" id="fpSaveMotto">SAVE MOTTO</button>`;
+    }
+    if (isTopRank(myRank, ranks)) {
+      html += `<button class="fp-action-btn danger" id="fpDisbandBtn" style="margin-top:14px">DISBAND FACTION</button>`;
+    }
+    if (!html) html = '<div style="font-family:VT323,monospace;color:rgba(255,255,255,.4);font-size:13px;letter-spacing:1px;text-align:center;padding:30px 0">// NO SETTINGS AVAILABLE</div>';
+    body.innerHTML = html;
+    const mottoBtn = document.getElementById('fpSaveMotto');
+    if (mottoBtn) mottoBtn.addEventListener('click', () => {
+      store.motto = document.getElementById('fpMottoInput').value;
+      toast('// MOTTO UPDATED');
+    });
+    const disbandBtn = document.getElementById('fpDisbandBtn');
+    if (disbandBtn) disbandBtn.addEventListener('click', () => {
+      showConfirm('DISBAND this faction forever?', disbandFaction);
+    });
+  }
+}
+
+function showConfirm(msg, callback) {
+  document.getElementById('cmMsg').textContent = msg;
+  confirmCallback = callback;
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function closeConfirm() {
+  document.getElementById('confirmModal').classList.remove('open');
+  confirmCallback = null;
+}
+
+// === PROXIMITY DETECTION ===
+let nearFaction = null;
+
+function checkFactionProximity() {
+  if (!player || state.mode !== 'foot') {
+    document.getElementById('factionJoinPrompt').classList.remove('show');
+    nearFaction = null;
+    return;
+  }
+  const px = player.position.x, pz = player.position.z;
+  let closest = null, minD = 20; // 20m detection radius
+  for (const fb of factionBuildings) {
+    const d = Math.hypot(px - fb.x, pz - fb.z);
+    if (d < minD) { minD = d; closest = fb; }
+  }
+  const prompt = document.getElementById('factionJoinPrompt');
+  if (closest && !playerFaction.factionId) {
+    nearFaction = closest;
+    if (closest.id === 'gang_hq') {
+      prompt.textContent = '// TAP TO CREATE GANG ($1,000)';
+    } else {
+      const f = factions[closest.id];
+      prompt.textContent = '// TAP TO JOIN ' + (f ? f.def.name.toUpperCase() : closest.id.toUpperCase());
+    }
+    prompt.classList.add('show');
+  } else {
+    nearFaction = null;
+    prompt.classList.remove('show');
+  }
+}
+
+// === GANG CREATE UI ===
+let selectedGangColor = GANG_COLORS[0];
+
+function openGangCreate() {
+  const modal = document.getElementById('gangCreateModal');
+  document.getElementById('gcName').value = '';
+  document.getElementById('gcMotto').value = '';
+  // Render color swatches
+  const colRow = document.getElementById('gcColors');
+  colRow.innerHTML = '';
+  GANG_COLORS.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'gc-color' + (i === 0 ? ' selected' : '');
+    div.style.background = c;
+    div.addEventListener('click', () => {
+      selectedGangColor = c;
+      colRow.querySelectorAll('.gc-color').forEach(d => d.classList.remove('selected'));
+      div.classList.add('selected');
+    });
+    colRow.appendChild(div);
+  });
+  selectedGangColor = GANG_COLORS[0];
+  modal.classList.add('open');
+}
+
+function closeGangCreate() {
+  document.getElementById('gangCreateModal').classList.remove('open');
+}
+
+// === WIRE FACTION UI EVENTS ===
+function initFactionUI() {
+  // Badge click -> open panel
+  document.getElementById('factionBadge').addEventListener('click', openFactionPanel);
+
+  // Close panel
+  document.getElementById('fpClose').addEventListener('click', closeFactionPanel);
+
+  // Tab switching
+  document.querySelectorAll('.fp-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      setActiveTab(tab.dataset.tab);
+      renderFactionTab(tab.dataset.tab);
+    });
+  });
+
+  // Join prompt click
+  document.getElementById('factionJoinPrompt').addEventListener('click', () => {
+    if (!nearFaction) return;
+    if (nearFaction.id === 'gang_hq') {
+      openGangCreate();
+    } else {
+      joinFaction(nearFaction.id);
+    }
+  });
+
+  // Gang create buttons
+  document.getElementById('gcCancel').addEventListener('click', closeGangCreate);
+  document.getElementById('gcCreate').addEventListener('click', () => {
+    const name = document.getElementById('gcName').value;
+    const motto = document.getElementById('gcMotto').value;
+    if (createGang(name, selectedGangColor, motto)) {
+      closeGangCreate();
+    }
+  });
+
+  // Confirm modal buttons
+  document.getElementById('cmNo').addEventListener('click', closeConfirm);
+  document.getElementById('cmYes').addEventListener('click', () => {
+    if (confirmCallback) confirmCallback();
+    closeConfirm();
+  });
+
+  // Close panels on background click
+  document.getElementById('factionPanel').addEventListener('click', (e) => {
+    if (e.target.id === 'factionPanel') closeFactionPanel();
+  });
+  document.getElementById('gangCreateModal').addEventListener('click', (e) => {
+    if (e.target.id === 'gangCreateModal') closeGangCreate();
+  });
+  document.getElementById('confirmModal').addEventListener('click', (e) => {
+    if (e.target.id === 'confirmModal') closeConfirm();
+  });
+}
+
+// Initialize factions and UI
+initFactions();
+initFactionUI();
+
+// ============================================================
+// === ADMIN PANEL SYSTEM ===
+// ============================================================
+let adminOpen = false;
+let adminSection = 'player';
+let godMode = false;
+
+function toggleAdmin() {
+  adminOpen = !adminOpen;
+  document.getElementById('adminPanel').classList.toggle('open', adminOpen);
+  if (adminOpen) renderAdminSection(adminSection);
+}
+
+function closeAdmin() {
+  adminOpen = false;
+  document.getElementById('adminPanel').classList.remove('open');
+}
+
+function setAdminSection(sec) {
+  adminSection = sec;
+  document.querySelectorAll('.admin-sec-btn').forEach(b => b.classList.toggle('active', b.dataset.sec === sec));
+  renderAdminSection(sec);
+}
+
+function renderAdminSection(sec) {
+  const body = document.getElementById('adminBody');
+
+  if (sec === 'player') {
+    body.innerHTML = `
+      <div class="admin-card">
+        <div class="admin-card-title">PLAYER STATS</div>
+        <div class="admin-row">
+          <span class="admin-lbl">CASH</span>
+          <input class="admin-input" id="adCash" type="number" value="${state.cash}">
+          <button class="admin-btn green" id="adCashSet">SET</button>
+        </div>
+        <div class="admin-row">
+          <span class="admin-lbl">HP</span>
+          <input class="admin-input" id="adHp" type="number" value="${state.hp}" min="0" max="${state.maxHp}">
+          <button class="admin-btn green" id="adHpSet">SET</button>
+        </div>
+        <div class="admin-row">
+          <span class="admin-lbl">MAX HP</span>
+          <input class="admin-input" id="adMaxHp" type="number" value="${state.maxHp}" min="1">
+          <button class="admin-btn green" id="adMaxHpSet">SET</button>
+        </div>
+        <div class="admin-row">
+          <span class="admin-lbl">LEVEL</span>
+          <input class="admin-input" id="adLvl" type="number" value="${state.lvl}" min="1">
+          <button class="admin-btn green" id="adLvlSet">SET</button>
+        </div>
+        <div class="admin-row">
+          <span class="admin-lbl">XP</span>
+          <input class="admin-input" id="adXp" type="number" value="${state.xp}" min="0">
+          <button class="admin-btn green" id="adXpSet">SET</button>
+        </div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">PLAYER FACTION</div>
+        <div class="admin-row">
+          <span class="admin-lbl">CURRENT</span>
+          <span style="font-family:VT323,monospace;font-size:12px;color:#fff;letter-spacing:1px">${playerFaction.factionId ? (playerFaction.isGang ? gangs[playerFaction.factionId]?.name : factions[playerFaction.factionId]?.def.name) : 'NONE'}</span>
+        </div>
+        <div class="admin-row">
+          <span class="admin-lbl">JOIN</span>
+          <select class="admin-select" id="adJoinFaction">
+            <option value="">-- Select Faction --</option>
+            ${Object.entries(FACTION_DEFS).map(([id, d]) => `<option value="${id}">${d.name}</option>`).join('')}
+          </select>
+          <button class="admin-btn blue" id="adJoinBtn">JOIN</button>
+        </div>
+        <div class="admin-row">
+          <span class="admin-lbl">SET RANK</span>
+          <select class="admin-select" id="adSetRank"></select>
+          <button class="admin-btn gold" id="adRankBtn">SET</button>
+        </div>
+        <div class="admin-row">
+          <button class="admin-btn" id="adLeaveBtn">FORCE LEAVE FACTION</button>
+        </div>
+      </div>
+    `;
+    // Wire player stat buttons
+    document.getElementById('adCashSet').onclick = () => { state.cash = parseInt(document.getElementById('adCash').value) || 0; updateHud(); toast('// CASH SET'); };
+    document.getElementById('adHpSet').onclick = () => { state.hp = Math.min(state.maxHp, Math.max(0, parseInt(document.getElementById('adHp').value) || 0)); updateHud(); toast('// HP SET'); };
+    document.getElementById('adMaxHpSet').onclick = () => { state.maxHp = Math.max(1, parseInt(document.getElementById('adMaxHp').value) || 100); state.hp = Math.min(state.hp, state.maxHp); updateHud(); toast('// MAX HP SET'); };
+    document.getElementById('adLvlSet').onclick = () => { state.lvl = Math.max(1, parseInt(document.getElementById('adLvl').value) || 1); updateHud(); toast('// LEVEL SET'); };
+    document.getElementById('adXpSet').onclick = () => { state.xp = Math.max(0, parseInt(document.getElementById('adXp').value) || 0); updateHud(); toast('// XP SET'); };
+
+    // Wire faction join
+    const joinSelect = document.getElementById('adJoinFaction');
+    const rankSelect = document.getElementById('adSetRank');
+    function populateRanks() {
+      rankSelect.innerHTML = '';
+      const fid = playerFaction.factionId;
+      if (!fid) { rankSelect.innerHTML = '<option>-- Join first --</option>'; return; }
+      const ranks = playerFaction.isGang ? gangs[fid].ranks : factions[fid].def.ranks;
+      ranks.forEach((r, i) => {
+        rankSelect.innerHTML += `<option value="${i}">${r.name} (#${i + 1})</option>`;
+      });
+      const ri = getPlayerRankIndex();
+      if (ri >= 0) rankSelect.value = ri;
+    }
+    populateRanks();
+
+    document.getElementById('adJoinBtn').onclick = () => {
+      const fid = joinSelect.value;
+      if (!fid) return;
+      // Force leave current first
+      if (playerFaction.factionId) {
+        const store = getFactionStore();
+        if (store) store.members = store.members.filter(m => !(m.name === 'You' && !m.isNpc));
+        playerFaction.factionId = null;
+        playerFaction.isGang = false;
+      }
+      // Force join (bypass capacity)
+      factions[fid].members.push({ name: 'You', rankIndex: 0, isNpc: false });
+      playerFaction.factionId = fid;
+      playerFaction.isGang = false;
+      updateFactionBadge();
+      toast('// ADMIN: JOINED ' + factions[fid].def.name.toUpperCase());
+      renderAdminSection('player');
+    };
+
+    document.getElementById('adRankBtn').onclick = () => {
+      if (!playerFaction.factionId) { toast('// JOIN A FACTION FIRST'); return; }
+      const store = getFactionStore();
+      const mem = store.members.find(m => m.name === 'You' && !m.isNpc);
+      if (!mem) return;
+      mem.rankIndex = parseInt(rankSelect.value) || 0;
+      updateFactionBadge();
+      toast('// RANK SET');
+    };
+
+    document.getElementById('adLeaveBtn').onclick = () => {
+      if (!playerFaction.factionId) { toast('// NOT IN A FACTION'); return; }
+      const store = getFactionStore();
+      if (store) store.members = store.members.filter(m => !(m.name === 'You' && !m.isNpc));
+      const name = playerFaction.isGang ? store.name : store.def.name;
+      playerFaction.factionId = null;
+      playerFaction.isGang = false;
+      updateFactionBadge();
+      closeFactionPanel();
+      toast('// ADMIN: LEFT ' + name.toUpperCase());
+      renderAdminSection('player');
+    };
+  }
+
+  else if (sec === 'factions') {
+    let html = '<div class="admin-card"><div class="admin-card-title">ALL FACTIONS</div>';
+    for (const [id, f] of Object.entries(factions)) {
+      const def = f.def;
+      html += `<div class="admin-row" style="justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);padding:4px 0">
+        <span style="font-family:VT323,monospace;font-size:12px;color:${def.color};letter-spacing:1px">${def.name}</span>
+        <span style="font-family:VT323,monospace;font-size:11px;color:rgba(255,255,255,.4)">${f.members.length}/${def.maxMembers}</span>
+        <div style="display:flex;gap:3px">
+          <button class="admin-btn blue" data-faction="${id}" data-action="fill">+10</button>
+          <button class="admin-btn" data-faction="${id}" data-action="clear">CLEAR</button>
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+
+    // Gangs
+    html += '<div class="admin-card"><div class="admin-card-title">GANGS</div>';
+    const gangEntries = Object.entries(gangs);
+    if (gangEntries.length === 0) {
+      html += '<div style="font-family:VT323,monospace;font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">No gangs created yet.</div>';
+    }
+    for (const [gid, g] of gangEntries) {
+      html += `<div class="admin-row" style="justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);padding:4px 0">
+        <span style="font-family:VT323,monospace;font-size:12px;color:${g.color};letter-spacing:1px">${g.name}</span>
+        <span style="font-family:VT323,monospace;font-size:11px;color:rgba(255,255,255,.4)">${g.members.length}/${g.maxMembers}</span>
+        <button class="admin-btn" data-gang="${gid}" data-action="deletegang">DELETE</button>
+      </div>`;
+    }
+    html += '<div class="admin-row"><button class="admin-btn green" id="adCreateGangFree">+ CREATE FREE GANG</button></div>';
+    html += '</div>';
+
+    body.innerHTML = html;
+
+    // Wire faction buttons
+    body.querySelectorAll('[data-faction]').forEach(btn => {
+      btn.onclick = () => {
+        const fid = btn.dataset.faction;
+        const action = btn.dataset.action;
+        if (action === 'fill') {
+          const f = factions[fid];
+          for (let i = 0; i < 10 && f.members.length < f.def.maxMembers; i++) {
+            const ri = Math.floor(Math.random() * Math.min(4, f.def.ranks.length));
+            f.members.push({ name: randomName(), rankIndex: ri, isNpc: true });
+          }
+          toast('// +10 MEMBERS');
+          renderAdminSection('factions');
+        } else if (action === 'clear') {
+          const f = factions[fid];
+          // Keep player if in this faction
+          f.members = f.members.filter(m => m.name === 'You' && !m.isNpc);
+          toast('// CLEARED ALL NPCs');
+          renderAdminSection('factions');
+        }
+      };
+    });
+
+    // Wire gang delete
+    body.querySelectorAll('[data-gang]').forEach(btn => {
+      btn.onclick = () => {
+        const gid = btn.dataset.gang;
+        if (playerFaction.factionId === gid) {
+          playerFaction.factionId = null;
+          playerFaction.isGang = false;
+          updateFactionBadge();
+        }
+        delete gangs[gid];
+        toast('// GANG DELETED');
+        renderAdminSection('factions');
+      };
+    });
+
+    // Free gang create
+    const freeBtn = document.getElementById('adCreateGangFree');
+    if (freeBtn) freeBtn.onclick = () => {
+      const oldCash = state.cash;
+      state.cash = 1000; // ensure enough
+      openGangCreate();
+      state.cash = oldCash;
+    };
+  }
+
+  else if (sec === 'members') {
+    let html = '<div class="admin-card"><div class="admin-card-title">MANAGE MEMBERS BY FACTION</div>';
+    html += '<div class="admin-row"><span class="admin-lbl">FACTION</span><select class="admin-select" id="adMemFaction">';
+    html += '<option value="">-- Select --</option>';
+    for (const [id, f] of Object.entries(factions)) {
+      html += `<option value="${id}">${f.def.name} (${f.members.length})</option>`;
+    }
+    for (const [gid, g] of Object.entries(gangs)) {
+      html += `<option value="gang:${gid}">${g.name} [Gang] (${g.members.length})</option>`;
+    }
+    html += '</select></div></div>';
+    html += '<div id="adMemList"></div>';
+    body.innerHTML = html;
+
+    document.getElementById('adMemFaction').onchange = () => {
+      const val = document.getElementById('adMemFaction').value;
+      renderAdminMemberList(val);
+    };
+  }
+
+  else if (sec === 'teleport') {
+    let html = '<div class="admin-card"><div class="admin-card-title">TELEPORT TO LOCATION</div><div class="admin-tp-grid">';
+    // Faction buildings
+    for (const fb of factionBuildings) {
+      const label = fb.id === 'gang_hq' ? 'Gang HQ (Gas Station)' : (factions[fb.id] ? factions[fb.id].def.name : fb.id);
+      html += `<div class="admin-tp-btn" data-tpx="${fb.x}" data-tpz="${fb.z}">${label}<div class="admin-tp-loc">${Math.round(fb.x)}, ${Math.round(fb.z)}</div></div>`;
+    }
+    // Special locations
+    html += `<div class="admin-tp-btn" data-tpx="0" data-tpz="0">CITY CENTER<div class="admin-tp-loc">0, 0</div></div>`;
+    html += `<div class="admin-tp-btn" data-tpx="235" data-tpz="-155">SUBURBS<div class="admin-tp-loc">235, -155</div></div>`;
+    html += '</div></div>';
+
+    // Custom teleport
+    html += `<div class="admin-card"><div class="admin-card-title">CUSTOM COORDINATES</div>
+      <div class="admin-row">
+        <span class="admin-lbl">X</span><input class="admin-input" id="adTpX" type="number" value="0">
+        <span class="admin-lbl">Z</span><input class="admin-input" id="adTpZ" type="number" value="0">
+        <button class="admin-btn blue" id="adTpGo">GO</button>
+      </div>
+      <div class="admin-row" style="margin-top:4px">
+        <span style="font-family:VT323,monospace;font-size:10px;color:rgba(255,255,255,.3)" id="adPlayerPos">CURRENT: ?, ?</span>
+      </div>
+    </div>`;
+    body.innerHTML = html;
+
+    // Show current position
+    if (player) {
+      document.getElementById('adPlayerPos').textContent = `CURRENT: ${Math.round(player.position.x)}, ${Math.round(player.position.z)}`;
+    }
+
+    // Wire teleport buttons
+    body.querySelectorAll('[data-tpx]').forEach(btn => {
+      btn.onclick = () => {
+        const x = parseFloat(btn.dataset.tpx);
+        const z = parseFloat(btn.dataset.tpz);
+        adminTeleport(x, z);
+      };
+    });
+    const goBtn = document.getElementById('adTpGo');
+    if (goBtn) goBtn.onclick = () => {
+      const x = parseFloat(document.getElementById('adTpX').value) || 0;
+      const z = parseFloat(document.getElementById('adTpZ').value) || 0;
+      adminTeleport(x, z);
+    };
+  }
+
+  else if (sec === 'spawn') {
+    body.innerHTML = `
+      <div class="admin-card">
+        <div class="admin-card-title">QUICK ACTIONS</div>
+        <div class="admin-row"><button class="admin-btn green" id="adHealFull">FULL HEAL</button></div>
+        <div class="admin-row"><button class="admin-btn gold" id="adAddCash">+ $10,000</button></div>
+        <div class="admin-row"><button class="admin-btn blue" id="adLvlUp">LEVEL UP x10</button></div>
+        <div class="admin-row"><button class="admin-btn" id="adResetPlayer">RESET PLAYER (Stats + Faction)</button></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">FILL ALL FACTIONS</div>
+        <div class="admin-row"><button class="admin-btn green" id="adFillAll">FILL ALL TO 50%</button></div>
+        <div class="admin-row"><button class="admin-btn" id="adClearAll">CLEAR ALL NPC MEMBERS</button></div>
+      </div>
+    `;
+    document.getElementById('adHealFull').onclick = () => { state.hp = state.maxHp; updateHud(); toast('// FULLY HEALED'); };
+    document.getElementById('adAddCash').onclick = () => { state.cash += 10000; updateHud(); toast('// +$10,000'); };
+    document.getElementById('adLvlUp').onclick = () => { state.lvl += 10; updateHud(); toast('// +10 LEVELS'); };
+    document.getElementById('adResetPlayer').onclick = () => {
+      // Leave faction
+      if (playerFaction.factionId) {
+        const store = getFactionStore();
+        if (store) store.members = store.members.filter(m => !(m.name === 'You' && !m.isNpc));
+        playerFaction.factionId = null;
+        playerFaction.isGang = false;
+        updateFactionBadge();
+        closeFactionPanel();
+      }
+      state.hp = 100; state.maxHp = 100; state.cash = 500; state.xp = 0; state.xpNeeded = 100; state.lvl = 1;
+      updateHud();
+      toast('// PLAYER RESET');
+    };
+    document.getElementById('adFillAll').onclick = () => {
+      for (const [id, f] of Object.entries(factions)) {
+        const target = Math.floor(f.def.maxMembers * 0.5);
+        while (f.members.length < target) {
+          const ri = Math.floor(Math.random() * Math.min(6, f.def.ranks.length));
+          f.members.push({ name: randomName(), rankIndex: ri, isNpc: true });
+        }
+      }
+      toast('// ALL FACTIONS FILLED TO 50%');
+    };
+    document.getElementById('adClearAll').onclick = () => {
+      for (const f of Object.values(factions)) {
+        f.members = f.members.filter(m => m.name === 'You' && !m.isNpc);
+      }
+      toast('// ALL NPC MEMBERS CLEARED');
+    };
+  }
+}
+
+function renderAdminMemberList(val) {
+  const list = document.getElementById('adMemList');
+  if (!list) return;
+  if (!val) { list.innerHTML = ''; return; }
+
+  let store, ranks, isGang = false;
+  if (val.startsWith('gang:')) {
+    const gid = val.slice(5);
+    store = gangs[gid];
+    if (!store) { list.innerHTML = ''; return; }
+    ranks = store.ranks;
+    isGang = true;
+  } else {
+    store = factions[val];
+    if (!store) { list.innerHTML = ''; return; }
+    ranks = store.def.ranks;
+  }
+
+  const members = store.members;
+  let html = '<div class="admin-card"><div class="admin-card-title">MEMBERS (' + members.length + ')</div>';
+
+  const sorted = members.map((m, i) => ({ ...m, idx: i })).sort((a, b) => b.rankIndex - a.rankIndex);
+  for (const m of sorted) {
+    const rk = ranks[m.rankIndex];
+    html += `<div class="admin-member-row">
+      <span class="admin-member-name">${m.name}${(!m.isNpc && m.name === 'You') ? ' (YOU)' : ''}</span>
+      <span class="admin-member-rank">${rk ? rk.name : '??'}</span>
+      <div class="admin-member-actions">
+        <select class="admin-select" style="width:auto;min-width:60px;font-size:10px;padding:2px 4px" data-midx="${m.idx}">
+          ${ranks.map((r, i) => `<option value="${i}"${i === m.rankIndex ? ' selected' : ''}>${r.name}</option>`).join('')}
+        </select>
+        <button class="admin-btn gold" data-setrankidx="${m.idx}" style="padding:2px 6px;font-size:10px">SET</button>
+        <button class="admin-btn blue" data-renameidx="${m.idx}" style="padding:2px 6px;font-size:10px">NAME</button>
+        <button class="admin-btn" data-kickidx="${m.idx}" style="padding:2px 6px;font-size:10px">KICK</button>
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+  list.innerHTML = html;
+
+  // Wire set rank buttons
+  list.querySelectorAll('[data-setrankidx]').forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.setrankidx);
+      const sel = list.querySelector(`select[data-midx="${idx}"]`);
+      if (!sel) return;
+      store.members[idx].rankIndex = parseInt(sel.value);
+      updateFactionBadge();
+      toast('// RANK UPDATED');
+      renderAdminMemberList(val);
+    };
+  });
+
+  // Wire rename buttons
+  list.querySelectorAll('[data-renameidx]').forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.renameidx);
+      const m = store.members[idx];
+      if (!m) return;
+      const newName = prompt('Enter new name:', m.name);
+      if (newName && newName.trim()) {
+        m.name = newName.trim();
+        toast('// RENAMED TO ' + m.name.toUpperCase());
+        renderAdminMemberList(val);
+      }
+    };
+  });
+
+  // Wire kick buttons
+  list.querySelectorAll('[data-kickidx]').forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.kickidx);
+      const m = store.members[idx];
+      if (!m) return;
+      if (m.name === 'You' && !m.isNpc) {
+        playerFaction.factionId = null;
+        playerFaction.isGang = false;
+        updateFactionBadge();
+      }
+      store.members.splice(idx, 1);
+      toast('// KICKED');
+      renderAdminMemberList(val);
+    };
+  });
+}
+
+function adminTeleport(x, z) {
+  if (!player) { toast('// PLAYER NOT LOADED'); return; }
+  player.position.x = x;
+  player.position.z = z;
+  player.position.y = 1;
+  // If in vehicle, move vehicle too
+  if (playerCar) {
+    playerCar.position.x = x;
+    playerCar.position.z = z;
+    playerCar.position.y = 0.5;
+  }
+  closeAdmin();
+  toast('// TELEPORTED TO ' + Math.round(x) + ', ' + Math.round(z));
+}
+
+// Wire admin panel events
+document.getElementById('adminClose').addEventListener('click', closeAdmin);
+document.getElementById('adminGodBtn').addEventListener('click', () => {
+  godMode = !godMode;
+  document.getElementById('adminGodBtn').classList.toggle('active', godMode);
+  if (godMode) {
+    state.hp = state.maxHp;
+    updateHud();
+  }
+  toast(godMode ? '// GOD MODE ON' : '// GOD MODE OFF');
+});
+document.querySelectorAll('.admin-sec-btn').forEach(btn => {
+  btn.addEventListener('click', () => setAdminSection(btn.dataset.sec));
+});
+
+// Backtick key to toggle admin
+document.addEventListener('keydown', (e) => {
+  if (e.key === '`' || e.key === '~') {
+    e.preventDefault();
+    toggleAdmin();
+  }
+});
 
 // === RENDERER ===
 const renderer = new THREE.WebGLRenderer({ antialias: !IS_MOBILE, powerPreference: 'high-performance', stencil: false });
@@ -1932,6 +3312,18 @@ function buildProceduralCity() {
     addBush(x, z, cityObj);
   }
 
+  // === REGISTER FACTION BUILDING POSITIONS FOR PROXIMITY ===
+  const bc = blockCenter;
+  factionBuildings = [
+    { id: 'government', x: bc(2,2).x, z: bc(2,2).z },          // City Hall
+    { id: 'hospital', x: bc(0,2).x, z: bc(0,2).z },            // Hospital
+    { id: 'police', x: bc(4,2).x, z: bc(4,2).z },              // Police Station
+    { id: 'fire', x: bc(2,0).x, z: bc(2,0).z },                // Fire Station
+    { id: 'mechanic', x: bc(2,4).x - 10, z: bc(2,4).z },       // Mechanic Shop
+    { id: 'military', x: militaryX, z: militaryZ },              // Military Base
+    { id: 'gang_hq', x: bc(2,4).x + 12, z: bc(2,4).z + 5 }    // Gas Station = Gang HQ
+  ];
+
   setProgress(80, 'CITY READY!');
   window.STATUS(`City built: ${buildingsList.length} buildings, ${TOTAL.toFixed(0)}m wide`);
 }
@@ -2182,6 +3574,8 @@ function update(dt) {
   updateCamera(dt);
   miniCounter++;
   if (miniCounter % 4 === 0) drawMinimap();
+  if (miniCounter % 8 === 0) checkFactionProximity();
+  if (godMode && state.hp < state.maxHp) { state.hp = state.maxHp; updateHud(); }
 }
 
 function updateFoot(dt) {
