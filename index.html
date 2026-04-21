@@ -69,9 +69,37 @@
   .toast{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(10,10,18,.88);border:1px solid #ffb300;color:#ffb300;padding:6px 14px;font-family:'VT323',monospace;font-size:13px;letter-spacing:2px;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:2px;z-index:6}
   .toast.show{opacity:1}
 
-  .minimap-right{width:90px;height:90px;background:rgba(10,10,18,.55);border:2px solid rgba(255,179,0,.4);border-radius:50%;overflow:hidden;pointer-events:none;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .minimap-right{width:90px;height:90px;background:rgba(10,10,18,.55);border:2px solid rgba(255,179,0,.4);border-radius:50%;overflow:hidden;pointer-events:auto;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer}
   .minimap-right canvas{display:block;width:100%;height:100%}
   .minimap-right::after{content:'';position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:#ffb300;border-radius:50%;box-shadow:0 0 6px #ffb300}
+
+  /* === FULLSCREEN MAP === */
+  .fullmap{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;background:rgba(5,5,12,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .fullmap.open{display:flex}
+  .fullmap-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,179,0,.2);flex-shrink:0}
+  .fullmap-title{font-family:'VT323',monospace;font-size:18px;letter-spacing:4px;color:#ffb300;text-shadow:0 0 10px rgba(255,179,0,.3)}
+  .fullmap-close{width:30px;height:30px;border:1px solid rgba(255,179,0,.4);border-radius:50%;background:transparent;color:#ffb300;font-family:'VT323',monospace;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .fullmap-close:active{background:rgba(255,179,0,.15)}
+  .fullmap-body{flex:1;position:relative;overflow:hidden;touch-action:none}
+  .fullmap-body canvas{display:block;width:100%;height:100%}
+  .fullmap-info{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(5,5,12,.95));pointer-events:none}
+  .fullmap-loc{font-family:'VT323',monospace;font-size:13px;color:rgba(255,255,255,.5);letter-spacing:2px}
+  .fullmap-selected{font-family:'VT323',monospace;font-size:14px;color:#ffb300;letter-spacing:2px;margin-top:4px;display:none}
+  .fullmap-selected.active{display:block}
+  .fullmap-dist{font-family:'Rajdhani',sans-serif;font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+  .fullmap-nav{display:none;pointer-events:auto;margin-top:6px}
+  .fullmap-nav.active{display:flex;gap:8px}
+  .fullmap-nav-btn{flex:0 0 auto;padding:6px 14px;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;border:1px solid rgba(255,179,0,.4);border-radius:3px;background:rgba(255,179,0,.08);color:#ffb300;cursor:pointer}
+  .fullmap-nav-btn.cancel{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);background:transparent}
+  .fullmap-nav-btn:active{opacity:.7}
+  .fullmap-legend{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:3px;pointer-events:none}
+  .fullmap-legend-item{display:flex;align-items:center;gap:6px;font-family:'VT323',monospace;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:1px}
+  .fullmap-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+  .gps-indicator{display:none;position:fixed;top:50%;right:16px;transform:translateY(-50%);padding:8px 12px;background:rgba(10,10,18,.75);border:1px solid rgba(255,179,0,.3);border-radius:4px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:8;pointer-events:auto;cursor:pointer}
+  .gps-indicator.active{display:block}
+  .gps-dest{font-family:'VT323',monospace;font-size:12px;color:#ffb300;letter-spacing:2px}
+  .gps-dist{font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(255,255,255,.4)}
+  .gps-cancel{font-family:'VT323',monospace;font-size:10px;color:rgba(255,60,95,.6);letter-spacing:1px;margin-top:2px}
 
   /* === FACTION SYSTEM === */
   .faction-badge{display:none;background:rgba(10,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,179,0,.3);border-radius:4px;padding:4px 10px;font-family:'VT323',monospace;cursor:pointer;margin-top:6px;transition:background .15s}
@@ -265,7 +293,7 @@
     </div>
 
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-      <div class="minimap-right"><canvas id="miniCanvas" width="90" height="90"></canvas></div>
+      <div class="minimap-right" id="minimapWrap"><canvas id="miniCanvas" width="90" height="90"></canvas></div>
       <div class="speed" id="speedPanel">
         <div class="speed-val" id="speedVal">0</div>
         <div class="speed-unit">KM/H</div>
@@ -335,6 +363,34 @@
       <button class="cm-btn yes" id="cmYes">CONFIRM</button>
     </div>
   </div>
+</div>
+
+<!-- Fullscreen Map -->
+<div class="fullmap" id="fullMap">
+  <div class="fullmap-header">
+    <div class="fullmap-title">// CITY MAP</div>
+    <button class="fullmap-close" id="fullMapClose">X</button>
+  </div>
+  <div class="fullmap-body" id="fullMapBody">
+    <canvas id="fullMapCanvas"></canvas>
+    <div class="fullmap-legend" id="fullMapLegend"></div>
+    <div class="fullmap-info">
+      <div class="fullmap-loc" id="fullMapLoc">YOUR LOCATION</div>
+      <div class="fullmap-selected" id="fullMapSelected"></div>
+      <div class="fullmap-dist" id="fullMapDist"></div>
+      <div class="fullmap-nav" id="fullMapNav">
+        <button class="fullmap-nav-btn" id="fullMapNavBtn">SET GPS</button>
+        <button class="fullmap-nav-btn cancel" id="fullMapNavCancel">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GPS HUD Indicator -->
+<div class="gps-indicator" id="gpsIndicator">
+  <div class="gps-dest" id="gpsDest"></div>
+  <div class="gps-dist" id="gpsDist"></div>
+  <div class="gps-cancel">TAP TO CANCEL</div>
 </div>
 
 <!-- Admin Panel -->
@@ -3575,6 +3631,7 @@ function update(dt) {
   miniCounter++;
   if (miniCounter % 4 === 0) drawMinimap();
   if (miniCounter % 8 === 0) checkFactionProximity();
+  if (gpsTarget) { updateGPSLine(); if (miniCounter % 8 === 0) updateGPSDist(); }
   if (godMode && state.hp < state.maxHp) { state.hp = state.maxHp; updateHud(); }
 }
 
@@ -3721,6 +3778,419 @@ function updateCamera(dt) {
   }
 }
 
+// ============================================================
+// FULLSCREEN MAP + GPS SYSTEM
+// ============================================================
+const fullMapEl = document.getElementById('fullMap');
+const fullMapCanvas = document.getElementById('fullMapCanvas');
+const fullMapCtx = fullMapCanvas.getContext('2d');
+const fullMapBody = document.getElementById('fullMapBody');
+const fullMapLoc = document.getElementById('fullMapLoc');
+const fullMapSelected = document.getElementById('fullMapSelected');
+const fullMapDist = document.getElementById('fullMapDist');
+const fullMapNav = document.getElementById('fullMapNav');
+const gpsIndicator = document.getElementById('gpsIndicator');
+const gpsDest = document.getElementById('gpsDest');
+const gpsDistEl = document.getElementById('gpsDist');
+
+let fullMapOpen = false;
+let mapPanX = 0, mapPanZ = 0; // pan offset in world coords
+let mapZoom = 1;
+let mapDragging = false, mapDragStartX = 0, mapDragStartY = 0, mapPanStartX = 0, mapPanStartZ = 0;
+let mapPinchDist = 0;
+let selectedPOI = null;
+let gpsTarget = null; // {x, z, name, color}
+let gpsLine = null; // THREE.Line for 3D GPS path
+
+const POI_LABELS = {
+  government: 'CITY HALL',
+  hospital: 'HOSPITAL',
+  police: 'POLICE DEPT',
+  fire: 'FIRE STATION',
+  mechanic: 'MECHANIC',
+  military: 'MILITARY BASE',
+  gang_hq: 'GANG HQ'
+};
+const POI_COLORS = {
+  government: '#ffd700',
+  hospital: '#ff4444',
+  police: '#4488ff',
+  fire: '#ff8822',
+  mechanic: '#aaaaaa',
+  military: '#88aa66',
+  gang_hq: '#cc44ff'
+};
+const POI_ICONS = {
+  government: '⚖',
+  hospital: '✚',
+  police: '★',
+  fire: '🔥',
+  mechanic: '⚙',
+  military: '⛊',
+  gang_hq: '☠'
+};
+
+function openFullMap() {
+  if (!player) return;
+  fullMapOpen = true;
+  fullMapEl.classList.add('open');
+  mapPanX = player.position.x;
+  mapPanZ = player.position.z;
+  mapZoom = 1;
+  selectedPOI = null;
+  fullMapSelected.classList.remove('active');
+  fullMapNav.classList.remove('active');
+  fullMapDist.textContent = '';
+  resizeFullMap();
+  drawFullMap();
+  buildLegend();
+}
+function closeFullMap() {
+  fullMapOpen = false;
+  fullMapEl.classList.remove('open');
+  selectedPOI = null;
+}
+
+function resizeFullMap() {
+  const r = fullMapBody.getBoundingClientRect();
+  fullMapCanvas.width = r.width * (window.devicePixelRatio || 1);
+  fullMapCanvas.height = r.height * (window.devicePixelRatio || 1);
+}
+
+function buildLegend() {
+  const leg = document.getElementById('fullMapLegend');
+  leg.innerHTML = '';
+  for (const [id, label] of Object.entries(POI_LABELS)) {
+    const item = document.createElement('div');
+    item.className = 'fullmap-legend-item';
+    const dot = document.createElement('div');
+    dot.className = 'fullmap-legend-dot';
+    dot.style.background = POI_COLORS[id] || '#fff';
+    const txt = document.createElement('span');
+    txt.textContent = label;
+    item.appendChild(dot);
+    item.appendChild(txt);
+    leg.appendChild(item);
+  }
+}
+
+function worldToMap(wx, wz) {
+  const cw = fullMapCanvas.width, ch = fullMapCanvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  const baseScale = Math.min(cw, ch) / 800; // 800 world units visible at zoom=1
+  const s = baseScale * mapZoom;
+  return {
+    x: cw / 2 + (wx - mapPanX) * s,
+    y: ch / 2 + (wz - mapPanZ) * s
+  };
+}
+function mapToWorld(mx, my) {
+  const cw = fullMapCanvas.width, ch = fullMapCanvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  const baseScale = Math.min(cw, ch) / 800;
+  const s = baseScale * mapZoom;
+  return {
+    x: mapPanX + (mx * dpr - cw / 2) / s,
+    z: mapPanZ + (my * dpr - ch / 2) / s
+  };
+}
+
+function drawFullMap() {
+  if (!fullMapOpen || !player) return;
+  const cw = fullMapCanvas.width, ch = fullMapCanvas.height;
+  const ctx = fullMapCtx;
+  ctx.clearRect(0, 0, cw, ch);
+
+  // Background
+  ctx.fillStyle = 'rgba(15,18,25,1)';
+  ctx.fillRect(0, 0, cw, ch);
+
+  const dpr = window.devicePixelRatio || 1;
+  const baseScale = Math.min(cw, ch) / 800;
+  const s = baseScale * mapZoom;
+
+  // Grid/roads
+  ctx.strokeStyle = 'rgba(60,65,80,0.5)';
+  ctx.lineWidth = Math.max(1, 14 * s);
+  const GRID = 5, BLOCK = 60, ROAD_W = 14, TOTAL = GRID * (BLOCK + ROAD_W), HALF = TOTAL / 2;
+  for (let i = 0; i <= GRID; i++) {
+    const rz = -HALF + i * (BLOCK + ROAD_W);
+    const p1 = worldToMap(-HALF, rz);
+    const p2 = worldToMap(HALF, rz);
+    ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+  }
+  for (let i = 0; i <= GRID; i++) {
+    const rx = -HALF + i * (BLOCK + ROAD_W);
+    const p1 = worldToMap(rx, -HALF);
+    const p2 = worldToMap(rx, HALF);
+    ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+  }
+  // Dirt road to military
+  const milX = -HALF - 200;
+  const drStart = worldToMap(-HALF, 0);
+  const drEnd = worldToMap(milX, 0);
+  ctx.strokeStyle = 'rgba(138,112,80,0.4)';
+  ctx.lineWidth = Math.max(1, 10 * s);
+  ctx.beginPath(); ctx.moveTo(drStart.x, drStart.y); ctx.lineTo(drEnd.x, drEnd.y); ctx.stroke();
+
+  // Buildings
+  const bColors = {
+    'building': 'rgba(80,85,95,0.6)',
+    'house': 'rgba(120,105,80,0.5)',
+    'apartment': 'rgba(100,95,80,0.5)',
+    'mansion': 'rgba(160,145,120,0.6)',
+    'hotel': 'rgba(170,120,155,0.6)',
+    'shop': 'rgba(130,130,130,0.5)',
+  };
+  for (const b of buildingsList) {
+    if (['hospital','police','fire','mechanic','cityhall','military'].includes(b.type)) continue; // draw as POIs
+    const p = worldToMap(b.x, b.z);
+    if (p.x < -20 || p.x > cw + 20 || p.y < -20 || p.y > ch + 20) continue;
+    ctx.fillStyle = bColors[b.type] || bColors.building;
+    const sz = Math.max(2, (b.w || 10) * s * 0.5);
+    ctx.fillRect(p.x - sz/2, p.y - sz/2, sz, sz);
+  }
+
+  // GPS route line on map
+  if (gpsTarget) {
+    const gp = worldToMap(player.position.x, player.position.z);
+    const gt = worldToMap(gpsTarget.x, gpsTarget.z);
+    ctx.strokeStyle = gpsTarget.color || '#ffb300';
+    ctx.lineWidth = Math.max(2, 3 * dpr);
+    ctx.setLineDash([8 * dpr, 6 * dpr]);
+    ctx.beginPath(); ctx.moveTo(gp.x, gp.y); ctx.lineTo(gt.x, gt.y); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Faction POI markers
+  for (const fb of factionBuildings) {
+    const p = worldToMap(fb.x, fb.z);
+    if (p.x < -30 || p.x > cw + 30 || p.y < -30 || p.y > ch + 30) continue;
+    const color = POI_COLORS[fb.id] || '#fff';
+    const isSelected = selectedPOI && selectedPOI.id === fb.id;
+    const radius = (isSelected ? 14 : 10) * dpr;
+
+    // Glow
+    ctx.shadowColor = color;
+    ctx.shadowBlur = isSelected ? 16 : 8;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Inner circle
+    ctx.fillStyle = 'rgba(10,10,18,0.8)';
+    ctx.beginPath(); ctx.arc(p.x, p.y, radius * 0.7, 0, Math.PI * 2); ctx.fill();
+
+    // Icon
+    ctx.fillStyle = color;
+    ctx.font = `${Math.round(radius * 1.1)}px sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(POI_ICONS[fb.id] || '●', p.x, p.y);
+
+    // Label
+    if (mapZoom > 0.7 || isSelected) {
+      ctx.fillStyle = color;
+      ctx.font = `bold ${Math.round(10 * dpr)}px 'VT323', monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(POI_LABELS[fb.id] || fb.id.toUpperCase(), p.x, p.y + radius + 4 * dpr);
+    }
+  }
+
+  // Player marker
+  const pp = worldToMap(player.position.x, player.position.z);
+  const pSize = 8 * dpr;
+  ctx.fillStyle = '#ffb300';
+  ctx.shadowColor = '#ffb300';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  // Arrow pointing in player's facing direction
+  const angle = playerYaw;
+  ctx.moveTo(pp.x + Math.sin(angle) * pSize, pp.y - Math.cos(angle) * pSize);
+  ctx.lineTo(pp.x + Math.sin(angle + 2.5) * pSize * 0.6, pp.y - Math.cos(angle + 2.5) * pSize * 0.6);
+  ctx.lineTo(pp.x + Math.sin(angle + Math.PI) * pSize * 0.3, pp.y - Math.cos(angle + Math.PI) * pSize * 0.3);
+  ctx.lineTo(pp.x + Math.sin(angle - 2.5) * pSize * 0.6, pp.y - Math.cos(angle - 2.5) * pSize * 0.6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // "YOU" label
+  ctx.fillStyle = '#ffb300';
+  ctx.font = `bold ${Math.round(9 * dpr)}px 'VT323', monospace`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText('YOU', pp.x, pp.y + pSize + 3 * dpr);
+
+  // Update location text
+  fullMapLoc.textContent = `X: ${player.position.x.toFixed(0)}  Z: ${player.position.z.toFixed(0)}`;
+
+  requestAnimationFrame(drawFullMap);
+}
+
+// Map interaction — pan and zoom
+fullMapBody.addEventListener('pointerdown', (e) => {
+  mapDragging = true;
+  mapDragStartX = e.clientX;
+  mapDragStartY = e.clientY;
+  mapPanStartX = mapPanX;
+  mapPanStartZ = mapPanZ;
+});
+fullMapBody.addEventListener('pointermove', (e) => {
+  if (!mapDragging) return;
+  const dpr = window.devicePixelRatio || 1;
+  const cw = fullMapCanvas.width, ch = fullMapCanvas.height;
+  const baseScale = Math.min(cw, ch) / 800;
+  const s = baseScale * mapZoom;
+  mapPanX = mapPanStartX - (e.clientX - mapDragStartX) * dpr / s;
+  mapPanZ = mapPanStartZ - (e.clientY - mapDragStartY) * dpr / s;
+});
+fullMapBody.addEventListener('pointerup', (e) => {
+  const dx = Math.abs(e.clientX - mapDragStartX);
+  const dy = Math.abs(e.clientY - mapDragStartY);
+  if (dx < 8 && dy < 8) handleMapTap(e); // it was a tap, not a drag
+  mapDragging = false;
+});
+fullMapBody.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  mapZoom *= e.deltaY < 0 ? 1.15 : 0.87;
+  mapZoom = Math.max(0.3, Math.min(5, mapZoom));
+}, { passive: false });
+
+// Touch pinch zoom
+fullMapBody.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    mapPinchDist = Math.sqrt(dx * dx + dy * dy);
+  }
+}, { passive: true });
+fullMapBody.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (mapPinchDist > 0) {
+      mapZoom *= dist / mapPinchDist;
+      mapZoom = Math.max(0.3, Math.min(5, mapZoom));
+      mapPinchDist = dist;
+    }
+  }
+}, { passive: true });
+
+function handleMapTap(e) {
+  const rect = fullMapBody.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const world = mapToWorld(mx, my);
+  const dpr = window.devicePixelRatio || 1;
+
+  // Check if tapped on a POI
+  let closest = null, closestDist = 30 / (mapZoom || 1); // tap radius in world units
+  for (const fb of factionBuildings) {
+    const d = Math.sqrt((fb.x - world.x) ** 2 + (fb.z - world.z) ** 2);
+    if (d < closestDist) {
+      closestDist = d;
+      closest = fb;
+    }
+  }
+
+  if (closest) {
+    selectedPOI = closest;
+    const name = POI_LABELS[closest.id] || closest.id.toUpperCase();
+    const dist = Math.sqrt((player.position.x - closest.x) ** 2 + (player.position.z - closest.z) ** 2);
+    fullMapSelected.textContent = `→ ${name}`;
+    fullMapSelected.style.color = POI_COLORS[closest.id] || '#ffb300';
+    fullMapSelected.classList.add('active');
+    fullMapDist.textContent = `${dist.toFixed(0)}m away`;
+    fullMapNav.classList.add('active');
+  } else {
+    selectedPOI = null;
+    fullMapSelected.classList.remove('active');
+    fullMapNav.classList.remove('active');
+    fullMapDist.textContent = '';
+  }
+}
+
+// GPS Navigation
+function setGPS(target) {
+  gpsTarget = {
+    x: target.x,
+    z: target.z,
+    name: POI_LABELS[target.id] || target.id.toUpperCase(),
+    color: POI_COLORS[target.id] || '#ffb300'
+  };
+  gpsDest.textContent = `→ ${gpsTarget.name}`;
+  gpsDest.style.color = gpsTarget.color;
+  gpsIndicator.classList.add('active');
+  updateGPSDist();
+  // Create 3D GPS line
+  create3DGPS();
+  closeFullMap();
+  toast('// GPS SET: ' + gpsTarget.name);
+}
+
+function cancelGPS() {
+  gpsTarget = null;
+  gpsIndicator.classList.remove('active');
+  if (gpsLine) { scene.remove(gpsLine); gpsLine = null; }
+}
+
+function create3DGPS() {
+  if (gpsLine) { scene.remove(gpsLine); gpsLine = null; }
+  if (!gpsTarget || !player) return;
+  const mat = new THREE.LineDashedMaterial({
+    color: new THREE.Color(gpsTarget.color),
+    dashSize: 3,
+    gapSize: 2,
+    transparent: true,
+    opacity: 0.6
+  });
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute('position', new THREE.Float32BufferAttribute([0,0,0,0,0,0], 3));
+  gpsLine = new THREE.Line(geom, mat);
+  gpsLine.computeLineDistances();
+  scene.add(gpsLine);
+}
+
+function updateGPSLine() {
+  if (!gpsTarget || !gpsLine || !player) return;
+  const px = player.position.x, pz = player.position.z;
+  const positions = gpsLine.geometry.attributes.position.array;
+  positions[0] = px; positions[1] = 1.5; positions[2] = pz;
+  positions[3] = gpsTarget.x; positions[4] = 1.5; positions[5] = gpsTarget.z;
+  gpsLine.geometry.attributes.position.needsUpdate = true;
+  gpsLine.computeLineDistances();
+  gpsLine.geometry.attributes.lineDistance && (gpsLine.geometry.attributes.lineDistance.needsUpdate = true);
+}
+
+function updateGPSDist() {
+  if (!gpsTarget || !player) return;
+  const d = Math.sqrt((player.position.x - gpsTarget.x) ** 2 + (player.position.z - gpsTarget.z) ** 2);
+  gpsDistEl.textContent = `${d.toFixed(0)}m`;
+  if (d < 15) {
+    toast('// ARRIVED AT ' + gpsTarget.name);
+    cancelGPS();
+  }
+}
+
+// Wire up map events
+document.getElementById('minimapWrap').addEventListener('click', (e) => {
+  e.stopPropagation();
+  openFullMap();
+});
+document.getElementById('fullMapClose').addEventListener('click', closeFullMap);
+document.getElementById('fullMapNavBtn').addEventListener('click', () => {
+  if (selectedPOI) setGPS(selectedPOI);
+});
+document.getElementById('fullMapNavCancel').addEventListener('click', () => {
+  selectedPOI = null;
+  fullMapSelected.classList.remove('active');
+  fullMapNav.classList.remove('active');
+  fullMapDist.textContent = '';
+});
+gpsIndicator.addEventListener('click', cancelGPS);
+
+// Resize handler
+window.addEventListener('resize', () => { if (fullMapOpen) resizeFullMap(); });
+
 function drawMinimap() {
   if (!player) return;
   const s = 90;
@@ -3768,6 +4238,31 @@ function drawMinimap() {
     const mx = cx + rx, my = cy + rz;
     if (mx > 2 && mx < s - 2 && my > 2 && my < s - 2) {
       miniCtx.beginPath(); miniCtx.arc(mx, my, 2, 0, Math.PI * 2); miniCtx.fill();
+    }
+  }
+
+  // GPS direction on minimap
+  if (gpsTarget) {
+    const gdx = (gpsTarget.x - px) * scale;
+    const gdz = (gpsTarget.z - pz) * scale;
+    const grx = Math.cos(-cameraYaw) * gdx - Math.sin(-cameraYaw) * gdz;
+    const grz = Math.sin(-cameraYaw) * gdx + Math.cos(-cameraYaw) * gdz;
+    // Dashed line from center to GPS target
+    miniCtx.strokeStyle = gpsTarget.color || '#ffb300';
+    miniCtx.lineWidth = 1.5;
+    miniCtx.setLineDash([3, 3]);
+    miniCtx.beginPath(); miniCtx.moveTo(cx, cy);
+    // Clamp to minimap edge
+    const gDist = Math.sqrt(grx * grx + grz * grz);
+    const gMax = s / 2 - 4;
+    const gScale = gDist > gMax ? gMax / gDist : 1;
+    miniCtx.lineTo(cx + grx * gScale, cy + grz * gScale);
+    miniCtx.stroke();
+    miniCtx.setLineDash([]);
+    // GPS target dot
+    if (gDist < gMax) {
+      miniCtx.fillStyle = gpsTarget.color || '#ffb300';
+      miniCtx.beginPath(); miniCtx.arc(cx + grx, cy + grz, 3, 0, Math.PI * 2); miniCtx.fill();
     }
   }
 
