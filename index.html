@@ -2059,6 +2059,7 @@ scene.fog = new THREE.Fog(0x87b8e0, VIEW_DISTANCE * 0.55, VIEW_DISTANCE);
 
 const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.3, VIEW_DISTANCE);
 
+let sunLight = null, ambLight = null, hemiLight = null;
 hemiLight = new THREE.HemisphereLight(0xfff4dc, 0x5a4a3a, 1.1);
 scene.add(hemiLight);
 ambLight = hemiLight;
@@ -2427,7 +2428,6 @@ function updateWanted(dt) {
 // DAY / NIGHT CYCLE
 // ============================================================
 let streetLamps = []; // filled during city build
-let sunLight = null, ambLight = null, hemiLight = null;
 function updateDayNight(dt) {
   state.gameTime += dt * 30; // 1 real min = 30 game min
   if (state.gameTime >= 1440) state.gameTime -= 1440;
